@@ -14,7 +14,7 @@
 
 int	main(int argc, char **argv, char **env)
 {
-//	char 	*line;
+	char 	*line;
 //	t_main	main;
 
 	(void)	argv;
@@ -24,9 +24,10 @@ int	main(int argc, char **argv, char **env)
 	while(1)
 	{
 		ft_putstr_fd("sh> ", 1);
+		get_next_line(1 , &line);
 //		ft_get_next_line(1, &line); //чтение
 //		parser(line, &main); //парсинг
-//		free(line);
+		free(line);
 //		executor(&main, env);
 	}
 	return (0);
