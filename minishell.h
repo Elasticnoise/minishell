@@ -11,7 +11,7 @@
 
 typedef struct	s_main
 {
-
+	char **cmd; // все аргументы
 }				t_main;
 
 #endif

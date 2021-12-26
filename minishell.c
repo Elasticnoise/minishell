@@ -12,22 +12,22 @@
 
 #include "minishell.h"
 
-void	parser(char *line, t_main *main)
-{
-	return ;
-}
-
-void	init_param(t_main *main, char **argv, char **envp)
-{
-	char **cmd;
-
-	cmd = ft_split(argv[1], ' ');
-}
+//void	parser(char *line, t_main *main)
+//{
+//	return ;
+//}
+//
+//void	init_param(t_main *main, char **argv, char **envp)
+//{
+//	char **cmd;
+//
+//	cmd = ft_split(argv[1], ' ');
+//}
 
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-	t_main	main;
+//	t_main	main;
 
 	(void)	argv;
 	(void)	argc;
@@ -35,10 +35,10 @@ int	main(int argc, char **argv, char **env)
 
 	if (argc != 1)
 		return (1);
-	while(status)
+	while(1)
 	{
 		ft_putstr_fd("sh> ", 1);
-		line = get_next_line(1 , &line);
+		get_next_line(1 , &line);
 //		ft_get_next_line(1, &line); //чтение
 //		parser(line, &main); //парсинг
 		free(line);
