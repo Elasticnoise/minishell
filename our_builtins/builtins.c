@@ -37,7 +37,7 @@ int 	ft_echo(t_main *main)
 
 	i = 1;
 	is_n = 0;
-	if (main->cmd[2] && ft_strncmp(main->cmd[2], "-n" == 0)
+	if (main->cmd[2] && ft_strncmp(main->cmd[2], "-n", 3) == 0)
 	{
 		is_n = 1;
 		i++;
@@ -52,9 +52,30 @@ int 	ft_echo(t_main *main)
 
 	return (0);
 }
-
-int 	main()
+char *get_right_env(char **envp, char *right_envp)
 {
-//	echo(main, 1);
+	int i;
+	char *result;
+
+	i = 0;
+	while (ft_strnstr(envp[i], right_envp, ft_strlen(envp[i])) == 0)
+		i++;
+	result = envp[i] + ft_strlen(right_envp ) + 1;
+	if (result != NULL)
+		return (result);
+	return (NULL);
+}
+
+int 	ft_pwd(char **env)
+{
+	printf("%s\n", get_right_env(env, "PWD"));
+	return (0);
+}
+
+int 	main(int argc, char **argv, char **envp)
+{
+	(void) argc;
+	(void) argv;
+	ft_pwd(envp);
 	return (0);
 }
