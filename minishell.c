@@ -19,7 +19,9 @@ void	parser(char *line, t_main *main)
 
 void	init_param(t_main *main, char **argv, char **envp)
 {
-	return ;
+	char **cmd;
+
+	cmd = ft_split(argv[1], ' ');
 }
 
 int	main(int argc, char **argv, char **env)
@@ -33,14 +35,14 @@ int	main(int argc, char **argv, char **env)
 
 	if (argc != 1)
 		return (1);
-	while(1)
+	while(status)
 	{
 		ft_putstr_fd("sh> ", 1);
-		get_next_line(1 , &line);
+		line = get_next_line(1 , &line);
 //		ft_get_next_line(1, &line); //чтение
 //		parser(line, &main); //парсинг
 		free(line);
-//		executor(&main, env);
+//		status = executor(&main, env);
 	}
 	return (0);
 }
