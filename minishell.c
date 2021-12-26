@@ -14,16 +14,20 @@
 
 int	main(int argc, char **argv, char **env)
 {
-	char 	*line;
-	t_main	main;
+//	char 	*line;
+//	t_main	main;
 
-	while(status)
+	(void)	argv;
+	(void)	argc;
+	(void)	(env);
+
+	while(1)
 	{
 		ft_putstr_fd("sh> ", 1);
-		ft_get_next_line(1, &line); //чтение
-		parser(line, &main); //парсинг
-		free(line);
-		executor(&main, env);
+//		ft_get_next_line(1, &line); //чтение
+//		parser(line, &main); //парсинг
+//		free(line);
+//		executor(&main, env);
 	}
 	return (0);
 }
