@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
+/* TODO 1) to split builtins for own files. 2) export, unset, cd, exit need to developed */
 int 	is_builtin(t_main *main)
 {
 	if (ft_strncmp(main->cmd[1], "echo", 5) == 0)
@@ -52,30 +53,62 @@ int 	ft_echo(t_main *main)
 
 	return (0);
 }
-char *get_right_env(char **envp, char *right_envp)
-{
-	int i;
-	char *result;
 
-	i = 0;
-	while (ft_strnstr(envp[i], right_envp, ft_strlen(envp[i])) == 0)
-		i++;
-	result = envp[i] + ft_strlen(right_envp ) + 1;
-	if (result != NULL)
-		return (result);
-	return (NULL);
-}
-
-int 	ft_pwd(char **env)
+int 	ft_pwd(t_main *main)
 {
 	printf("%s\n", get_right_env(env, "PWD"));
 	return (0);
+}
+
+int 	ft_export(char **env)
+{
+	return (0);
+}
+
+int 	ft_unset(char **env)
+{
+	return (0);
+}
+
+void 	ft_env(t_main *main)
+{
+	int i;
+
+	i = 0;
+	if (main->argc != 1)
+	{
+		ft_putstr_fd("env: ‘", param->argv[1], "’: Permission denied\n", 2);
+		return ;
+	}
+	while (main->envp[i])
+	{
+		ft_putstr_fd(param->envp[i], 1);
+		write(1, "\n", 1);
+		i++;
+	}
+}
+
+int 	ft_cd(char **env)
+{
+	return (0);
+}
+
+int check_exit_status(t_main *main)
+{
+	return (0);
+}
+
+
+int 	ft_exit(t_main *main)
+{
+	printf("exit\n");
+
 }
 
 int 	main(int argc, char **argv, char **envp)
 {
 	(void) argc;
 	(void) argv;
-	ft_pwd(envp);
+//	ft_pwd(envp);
 	return (0);
 }
