@@ -12,15 +12,27 @@
 
 #include "minishell.h"
 
+void	parser(char *line, t_main *main)
+{
+	return ;
+}
+
+void	init_param(t_main *main, char **argv, char **envp)
+{
+	return ;
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-//	t_main	main;
+	t_main	main;
 
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
 
+	if (argc != 1)
+		return (1);
 	while(1)
 	{
 		ft_putstr_fd("sh> ", 1);
