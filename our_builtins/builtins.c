@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-/* TODO 1) to split builtins for own files. 2) export, unset, cd, exit need to developed */
+/* TODO 1) to split builtins for owns files. 2) export, unset, cd, exit need to developed */
 int 	is_builtin(t_main *main)
 {
 	if (ft_strncmp(main->cmd[1], "echo", 5) == 0)
