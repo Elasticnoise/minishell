@@ -29,7 +29,7 @@ $(NAME1): $(OBJ1)
 		$(CC) $(CFLAGS) -o $(NAME_B) $(OBJ1) ./libft/libft.a
 
 %.o: %.c
-		gcc ${CFLAGS} -c $< -o $@
+		gcc $(CFLAGS) -c $< -o $@
 
 clean:
 		$(MAKE) clean -C ./libft

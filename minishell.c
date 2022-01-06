@@ -24,6 +24,8 @@
 //	cmd = ft_split(argv[1], ' ');
 //}
 
+
+
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
@@ -37,8 +39,13 @@ int	main(int argc, char **argv, char **env)
 		return (1);
 	while(1)
 	{
-		ft_putstr_fd("sh> ", 1);
-		get_next_line(1 , &line);
+//		ft_putstr_fd("sh> ", 1);
+//		get_next_line(1 , &line);
+		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
+		if (line && *line)
+			add_history(line);
+//		rl_on_new_line();
+//		rl_redisplay();
 //		ft_get_next_line(1, &line); //чтение
 //		parser(line, &main); //парсинг
 		free(line);
