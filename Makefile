@@ -8,9 +8,7 @@ NAME_B = minishell_bonus
 
 SRC = minishell.c \
 
-
-
-SRC_BONUS =
+CC = gcc
 
 LIB = ar -rcs $(NAME)
 
