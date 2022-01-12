@@ -188,19 +188,17 @@ int parser(char *line, t_list **head, char *env[])
 }
 
 
-int	main(int argc, char **argv, char **env)
-{
-	char 	*line;
+int	main(int argc, char **argv, char **env) {
+	char *line;
 //	t_main	main;
-	t_list	*list;
+	t_list *list;
 
-	(void)	argv;
-	(void)	argc;
-	(void)	(env);
+	(void) argv;
+	(void) argc;
+	(void) (env);
 	if (argc != 1)
 		return (1);
-	while(1)
-	{
+	while (1) {
 //		ft_putstr_fd("sh> ", 1);
 //		get_next_line(1 , &line);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
@@ -216,3 +214,4 @@ int	main(int argc, char **argv, char **env)
 //		status = executor(&main, env);
 	}
 	return (0);
+}

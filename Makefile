@@ -9,18 +9,15 @@ NAME_B = minishell_bonus
 SRC = minishell.c \
 
 
-
-SRC_BONUS =
-
 LIB = ar -rcs $(NAME)
 
 OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
-
+## TODO need to add Flags
 $(NAME): $(OBJ)
-		$(MAKE) $(CFLAGS)-C ./libft
-		$(CC) $(CFLAGS)-lreadline -o $(NAME) $(OBJ) ./libft/libft.a
+		$(MAKE) -C ./libft
+		$(CC) -lreadline -o $(NAME) $(OBJ) ./libft/libft.a
 
 #$(NAME1): $(OBJ1)
 #		$(MAKE) -C ./libft
