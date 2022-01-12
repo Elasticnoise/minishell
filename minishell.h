@@ -21,10 +21,7 @@ typedef struct s_list
 	char			**argv;
 	struct	s_list	*next;
 }				t_list;
-typedef struct	s_main
-{
-	char **cmd; // все аргументы
-}				t_main;
+
 
 #endif
 
