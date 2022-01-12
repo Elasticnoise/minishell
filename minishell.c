@@ -113,7 +113,6 @@ int	main(int argc, char **argv, char **env)
 //		ft_get_next_line(1, &line); //чтение
 //		parser(line, &main); //парсинг
 		free(line);
-		free_list(list);
 //		status = executor(&main, env);
 	}
 	return (0);
