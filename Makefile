@@ -19,8 +19,8 @@ OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		$(MAKE) -C ./libft
-		$(CC) -lreadline -o $(NAME) $(OBJ) ./libft/libft.a
+		$(MAKE) $(CFLAGS)-C ./libft
+		$(CC) $(CFLAGS)-lreadline -o $(NAME) $(OBJ) ./libft/libft.a
 
 #$(NAME1): $(OBJ1)
 #		$(MAKE) -C ./libft
