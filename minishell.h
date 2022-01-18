@@ -8,20 +8,52 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <stdio.h>
-
+# include "lexer.h"
 # include <readline/readline.h>
 
-#define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
-#define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным шрифтом, выделить
-#define BEGIN(x,y) "\001\033["#x";"#y"m\002"    // x: background, y: foreground
+# define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
+# define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным
+// шрифтом, выделить
+# define BEGIN(x,y) "\001\033["#x";"#y"m\002"
 
-typedef struct s_list
+
+
+enum e_TokenType{
+	CHAR_GENERAL = -1,
+	CHAR_PIPE = '|',
+	CHAR_AMPERSAND = '&',
+	CHAR_QOUTE = '\'',
+	CHAR_DQUOTE = '\"',
+	CHAR_SEMICOLON = ';',
+	CHAR_WHITESPACE = ' ',
+	CHAR_ESCAPESEQUENCE = '\\',
+	CHAR_TAB = '\t',
+	CHAR_NEWLINE = '\n',
+	CHAR_GREATER = '>',
+	CHAR_LESSER = '<',
+	CHAR_NULL = 0,
+	TOKEN	= -1,
+};
+
+typedef struct s_token
 {
-	char			*cmd;
-	char			**argv;
-	struct	s_list	*next;
-}				t_list;
+	char	*str;
+	enum	e_TokenType;
+	struct s_token *next;
+	struct s_token *prev;
+}		t_token;
 
+typedef struct s_main
+{
+	t_token *head;
+}t_main;
+
+//typedef struct s_list
+//{
+//	char			*cmd;
+//	char			**argv;
+//	struct	s_list	*next;
+//}				t_list;
 
 #endif
 

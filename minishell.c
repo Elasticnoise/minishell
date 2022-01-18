@@ -24,45 +24,45 @@
 //	cmd = ft_split(argv[1], ' ');
 //}
 
-t_list *ft_lstnew(char	*str)
-{
-	t_list *list;
-
-	list = malloc(sizeof(t_list *));
-	if (!list)
-		return (NULL);
-	list->cmd = str;
-	list->argv = NULL;
-	list->next = NULL;
-	return (list);
-}
-
-void	ft_lstadd_back(t_list **lst, t_list *new)
-{
-	t_list	*tmp;
-
-	tmp = *lst;
-	if (tmp)
-	{
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-	else
-		*lst = new;
-}
-
-void	free_list(t_list *a)
-{
-	t_list	*help;
-
-	while (a)
-	{
-		help = a->next;
-		free(a);
-		a = help;
-	}
-}
+//t_list *ft_lstnew(char	*str)
+//{
+//	t_list *list;
+//
+//	list = malloc(sizeof(t_list *));
+//	if (!list)
+//		return (NULL);
+//	list->cmd = str;
+//	list->argv = NULL;
+//	list->next = NULL;
+//	return (list);
+//}
+//
+//void	ft_lstadd_back(t_list **lst, t_list *new)
+//{
+//	t_list	*tmp;
+//
+//	tmp = *lst;
+//	if (tmp)
+//	{
+//		while (tmp->next)
+//			tmp = tmp->next;
+//		tmp->next = new;
+//	}
+//	else
+//		*lst = new;
+//}
+//
+//void	free_list(t_list *a)
+//{
+//	t_list	*help;
+//
+//	while (a)
+//	{
+//		help = a->next;
+//		free(a);
+//		a = help;
+//	}
+//}
 
 char	*set_var(char *line, int i, char **env)
 {
@@ -96,37 +96,80 @@ char	*set_var(char *line, int i, char **env)
 	return (begin);
 }
 
-int quotes(char *line)
+int quotes(char *line, int i)
 {
 	char *help;
 	char *str;
 
-	while (*line)
+	while (line[i])
 	{
-		if (*line == '\'')
+		if (line[i] == '\'')
 		{
-			*(line)++;
-			while (*line && *line != '\'')
-				*(line)++;
-			if (!(*line))
+			i++;
+			while (line[i] && line[i] != '\'')
+				i++;
+			if (!line[i])
 				return (1);
 		}
-		else if (*line == '"')
+		else if (line[i] == '"')
 		{
-			*(line)++;
-			while (*line && *line != '"')
-			{
-				*(line)++;
-			}
-			if (!(*line))
+			i++;
+			while (line[i] && line[i] != '"')
+				i++;
+			if (!(line[i]))
 				return (1);
 		}
-		*(line)++;
+		i++;
 	}
-	printf("Check Succeed\n"); //todo delete print
+//	printf("Check Succeed\n"); //todo delete print
 	return (0);
-} //todo add '$'
+}
 
+t_token *get_tokens(char *line)
+{
+	t_token *next;
+	t_token *prev;
+	int		i;
+
+	next = NULL;
+	prev = NULL;
+	while (line[i])
+	{
+		
+	}
+
+}
+
+char *destroy_space(char *line)
+{
+	char	*new_line;
+	int		i;
+	int		counter;
+	int 	j;
+
+	j = 0;
+	i = 0;
+	counter = 1;
+	new_line = malloc(sizeof(char *) * ft_strlen(line) + 1);
+	//todo malloc check or malloc for correct size
+	while (line[i])
+	{
+		if (quotes(line, i))
+			new_line[j++] = line[i];
+		else if (!counter || (line[i] != ' '))
+		{
+			new_line[j++] = line[i];
+			if (line[i] == ' ')
+				counter++;
+			else
+				counter = 0;
+		}
+		i++;
+	}
+	new_line[j] = '\0';
+	free(line);
+	return (new_line);
+}
 //int	skip(char *line, char quote, int i)
 //{
 //	while(line[++i] != quote)
@@ -134,17 +177,19 @@ int quotes(char *line)
 //	return (i);
 //}
 
-int parser(char *line, t_list **head, char *env[])
+int parser(char *line, t_main *main, char *env[])
 {
 	int i;
 	int prev;
-	t_list *cur_l;
 
-	line = set_var(line, 5, env); //echo
-	printf("%s\n", line);
+//	line = set_var(line, 5, env); //echo
+//	printf("%s\n", line);
 //	i = 0;
-//	if (quotes(line)) //todo quotes check
-//		return (printf("Quotes didnt close\n"));
+	if (quotes(line, 0)) //todo quotes check
+		return (printf("Quotes didnt close\n"));
+	line = destroy_space(line);
+	printf("New line: |%s|\n", line);
+	main->head = get_tokens();
 //	printf("Line: !%s!\n", line);
 
 	//todo add check ; and | and '\'
@@ -189,14 +234,14 @@ int parser(char *line, t_list **head, char *env[])
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-//	t_main	main;
-	t_list	*list;
+	t_main	main;
 
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
 	if (argc != 1)
 		return (1);
+
 	while(1)
 	{
 //		ft_putstr_fd("sh> ", 1);
@@ -204,13 +249,13 @@ int	main(int argc, char **argv, char **env)
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 		if (line && *line)
 			add_history(line);
-		parser(line, &list, env);
+		parser(line, &main, env);
 //		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало ctnrl + d
 //		ft_get_next_line(1, &line); //чтение
 //		parser(line, &main); //парсинг
-		free(line);
-		free_list(list);
+//		free(line);
+//		free_list(list);
 //		status = executor(&main, env);
 	}
 	return (0);
