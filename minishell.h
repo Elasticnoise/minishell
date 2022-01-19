@@ -38,7 +38,9 @@ enum e_TokenType{
 typedef struct s_token
 {
 	char	*str;
-	enum	e_TokenType;
+	char 	*infile;
+	char	*outfile;
+	enum	e_TokenType type;
 	struct s_token *next;
 	struct s_token *prev;
 }		t_token;

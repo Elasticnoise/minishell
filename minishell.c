@@ -37,32 +37,8 @@
 //	return (list);
 //}
 //
-//void	ft_lstadd_back(t_list **lst, t_list *new)
-//{
-//	t_list	*tmp;
-//
-//	tmp = *lst;
-//	if (tmp)
-//	{
-//		while (tmp->next)
-//			tmp = tmp->next;
-//		tmp->next = new;
-//	}
-//	else
-//		*lst = new;
-//}
-//
-//void	free_list(t_list *a)
-//{
-//	t_list	*help;
-//
-//	while (a)
-//	{
-//		help = a->next;
-//		free(a);
-//		a = help;
-//	}
-//}
+
+
 
 char	*set_var(char *line, int i, char **env)
 {
@@ -125,17 +101,96 @@ int quotes(char *line, int i)
 	return (0);
 }
 
+//void	ft_lstadd_back(t_list **lst, t_list *new)
+//{
+//	t_list	*tmp;
+//
+//	tmp = *lst;
+//	if (tmp)
+//	{
+//		while (tmp->next)
+//			tmp = tmp->next;
+//		tmp->next = new;
+//	}
+//	else
+//		*lst = new;
+//}
+
+t_token *new_token(char	*str)
+{
+	t_token *token;
+
+	token = malloc(sizeof(t_token *));
+	if (!token)
+		return (NULL);
+	token->str = str;
+	token->type = CHAR_NULL;
+	token->next = NULL;
+	token->prev = NULL;
+	return (token);
+}
+
+void add_token_back(t_token **head, t_token *new)
+{
+	t_token *tmp;
+	t_token *prev_help;
+
+	tmp = *head;
+	if (tmp)
+	{
+		while (tmp->next)
+		{
+			prev_help = tmp;
+			tmp = tmp->next;
+		}
+		tmp->next = new;
+		tmp->prev = prev_help;
+	}
+	else
+		*head = new;
+}
+
+
+//void	free_list(t_list *a)
+//{
+//	t_list	*help;
+//
+//	while (a)
+//	{
+//		help = a->next;
+//		free(a);
+//		a = help;
+//	}
+//}
 t_token *get_tokens(char *line)
 {
-	t_token *next;
-	t_token *prev;
+	t_token *head;
 	int		i;
+	int 	j;
 
-	next = NULL;
-	prev = NULL;
+	i = 0;
+	head = NULL;
 	while (line[i])
 	{
-		
+		j = i;
+		while (line[i] != '\0' && (line[i] != '<' && line[i] != '>'
+		&& line[i] != '|'))
+			i++;
+		add_token_back(&head, new_token(ft_substr(line, j, i)));
+		i++;
+	}
+	//	while (head)
+	//	{
+		printf("|%s| -string\n", head->str);
+	//		head = head->next;
+	//	}
+	////free list;
+	t_token *help;
+	while (head)
+	{
+		help = head->next;
+		free(head);
+		head = help;
 	}
 
 }
@@ -189,7 +244,8 @@ int parser(char *line, t_main *main, char *env[])
 		return (printf("Quotes didnt close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-	main->head = get_tokens();
+	main->head = get_tokens(line);
+//	free(line);
 //	printf("Line: !%s!\n", line);
 
 	//todo add check ; and | and '\'
@@ -252,8 +308,6 @@ int	main(int argc, char **argv, char **env)
 		parser(line, &main, env);
 //		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало ctnrl + d
-//		ft_get_next_line(1, &line); //чтение
-//		parser(line, &main); //парсинг
 //		free(line);
 //		free_list(list);
 //		status = executor(&main, env);
