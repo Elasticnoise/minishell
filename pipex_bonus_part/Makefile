@@ -1,4 +1,4 @@
-LIBFT = ./libft/libft.a
+LIBFT = ../libft/libft.a
 
 CC = gcc
 
@@ -16,18 +16,18 @@ OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		$(MAKE) -C ./libft
-		$(CC) $(CFLAGS) -o $(NAME) $(OBJ) ./libft/libft.a
+		$(MAKE) -C ../libft
+		$(CC) $(CFLAGS) -o $(NAME) $(OBJ) ../libft/libft.a
 
 %.o: %.c
 		gcc -I./ -c $< -o $@
 
 clean:
-		$(MAKE) clean -C ./libft
+		$(MAKE) clean -C ../libft
 		rm -rf $(OBJ)
 
 fclean: clean
-		$(MAKE) fclean -C ./libft
+		$(MAKE) fclean -C ../libft
 		rm -rf $(NAME)
 re: fclean all
 
