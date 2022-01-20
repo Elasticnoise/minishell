@@ -249,6 +249,30 @@ int parser(char *line, t_main *main, char *env[])
 //	printf("Line: !%s!\n", line);
 
 	//todo add check ; and | and '\'
+
+//	while (line[i] != '\0')
+//	{
+//		if (line[i] == '"' || line[i] == '\'')
+//			i = skip(line, line[i], i);
+//		i++;
+//	}
+// 	i = 0;
+//	while (line[i] == ' ')
+//		i++;
+//	prev = i;
+//	prev = 0;
+//	while(ft_isalpha(line[i]))
+//		i++;
+//	cur_l = ft_lstnew(ft_substr(line, prev, i));
+//	if (cur_l == NULL)
+//		return (0);
+//	ft_lstadd_back(head, cur_l);
+//	while (line[i] == ' ')
+//		i++;
+//	cur_l->argv = ft_split(line + i, ' ');
+//	if (cur_l->argv == NULL)
+//		return (0);
+//
 ////	//todo delete testing
 //	int k = 0;
 //	printf("(%s)\n", cur_l->cmd);
@@ -261,6 +285,7 @@ int parser(char *line, t_main *main, char *env[])
 
 	return(0);
 }
+
 
 int	main(int argc, char **argv, char **env)
 {
