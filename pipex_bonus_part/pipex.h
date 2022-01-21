@@ -5,6 +5,11 @@
 #include <stdio.h>
 #include "../libft/libft.h"
 
+#define STDIN	0
+#define STDOUT	1
+#define INFILE	0
+#define	OUTFILE	1
+
 char	*find_path(char **envp);
 
 void	ft_strdel(char **as);
