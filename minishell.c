@@ -101,6 +101,19 @@ int quotes(char *line, int i)
 	return (0);
 }
 
+//int pipes(char *line)
+//{
+//	int i;
+//	int len;
+//
+//	len = ft_strlen(line);
+//	i = 0;
+//	while (line[i])
+//	{
+//		i++;
+//	}
+//}
+
 //void	ft_lstadd_back(t_list **lst, t_list *new)
 //{
 //	t_list	*tmp;
@@ -162,6 +175,7 @@ void add_token_back(t_token **head, t_token *new)
 //		a = help;
 //	}
 //}
+
 t_token *get_tokens(char *line)
 {
 	t_token *head;
@@ -179,11 +193,7 @@ t_token *get_tokens(char *line)
 		add_token_back(&head, new_token(ft_substr(line, j, i)));
 		i++;
 	}
-	//	while (head)
-	//	{
-		printf("|%s| -string\n", head->str);
-	//		head = head->next;
-	//	}
+
 	////free list;
 	t_token *help;
 	while (head)
@@ -192,10 +202,36 @@ t_token *get_tokens(char *line)
 		free(head);
 		head = help;
 	}
-
 }
 
-char *destroy_space(char *line)
+
+int		malloc_sp(char *line)
+{
+	int i;
+	int counter;
+	int len;
+
+	counter = 0;
+	i = 0;
+	len = 0;
+	while (line[i])
+	{
+		if (quotes(line, i))
+			len++;
+		else if (!counter || (line[i] != ' '))
+		{
+			len++;
+			if (line[i] == ' ')
+				counter++;
+			else
+				counter = 0;
+		}
+		i++;
+	}
+	return (len);
+}
+
+char	*destroy_space(char *line)
 {
 	char	*new_line;
 	int		i;
@@ -205,7 +241,8 @@ char *destroy_space(char *line)
 	j = 0;
 	i = 0;
 	counter = 1;
-	new_line = malloc(sizeof(char *) * ft_strlen(line) + 1);
+	new_line = malloc(sizeof(char *) * malloc_sp(line));
+	printf("%d\n", malloc_sp(line));
 	//todo malloc check or malloc for correct size
 	while (line[i])
 	{
@@ -222,15 +259,10 @@ char *destroy_space(char *line)
 		i++;
 	}
 	new_line[j] = '\0';
+	printf("%d\n", j);
 	free(line);
 	return (new_line);
 }
-//int	skip(char *line, char quote, int i)
-//{
-//	while(line[++i] != quote)
-//	{}
-//	return (i);
-//}
 
 int parser(char *line, t_main *main, char *env[])
 {
