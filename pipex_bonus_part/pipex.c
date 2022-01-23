@@ -60,8 +60,9 @@ int	main(int ac, char **av, char **envp)
 
 	if (ac >= 5)
 	{
-		in_file = open(av[1], INFILE);
-		out_file = open(av[ac - 1], OUTFILE);
+		in_file = open(av[1], O_RDONLY);
+		out_file = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+			S_IWUSR | S_IRGRP | S_IROTH);
 		dup2(in_file, INFILE);
 		dup2(out_file, OUTFILE);
 		ft_redirect(av, envp, in_file, out_file,2);
