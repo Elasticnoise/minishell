@@ -20,7 +20,7 @@
 
 enum e_TokenType{
 	CHAR_GENERAL = -1,
-	CHAR_PIPE = '|',
+	INT_PIPE = 0,
 	CHAR_AMPERSAND = '&',
 	CHAR_QOUTE = '\'',
 	CHAR_DQUOTE = '\"',
@@ -32,12 +32,13 @@ enum e_TokenType{
 	CHAR_GREATER = '>',
 	CHAR_LESSER = '<',
 	CHAR_NULL = 0,
+	INT_HEREDOC = 0,
 	TOKEN	= -1,
 };
 
 typedef struct s_token
 {
-	char	*str;
+	char	**cmd;
 	char 	*infile;
 	char	*outfile;
 	enum	e_TokenType type;

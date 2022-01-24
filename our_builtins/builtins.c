@@ -12,6 +12,7 @@
 #include "../minishell.h"
 
 /* TODO 1) to split builtins for owns files. 2) export, unset, cd, exit need to developed */
+/* TODO 2) При исполнении $, нужно проверять текст выводимого значения и если нужно исполнять команды"
 int 	is_builtin(t_main *main)
 {
 	if (ft_strncmp(main->cmd[1], "echo", 5) == 0)

@@ -286,6 +286,27 @@ int parser(char *line, t_main *main, char *env[])
 	return(0);
 }
 
+int executor(t_token *node)
+{
+	t_token *cmd;
+
+	cmd = node;
+	while (cmd != NULL)
+	{
+		if (INT_HEREDOC)
+		{
+			return (0);
+		}
+		else if (INT_PIPE)
+		{
+			return (0);
+		}
+		else if ()
+
+		cmd = cmd->next;
+	}
+}
+
 
 int	main(int argc, char **argv, char **env)
 {
@@ -307,7 +328,7 @@ int	main(int argc, char **argv, char **env)
 			add_history(line);
 		parser(line, &main, env);
 //		rl_on_new_line();
-//		rl_redisplay(); //todo Ф-ция для того, чтобы работало ctnrl + d
+//		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
 //		free_list(list);
 //		status = executor(&main, env);
