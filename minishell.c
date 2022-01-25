@@ -68,7 +68,7 @@ char	*set_var(char *line, int i, char **env)
 	begin = ft_strjoin(begin, end);
 	free(end);
 	printf("'%s' -- cmd\n", var_value);
-	free(var_value);
+//	free(var_value);
 	return (begin);
 }
 
@@ -137,7 +137,7 @@ t_token *new_token(char	*str)
 	if (!token)
 		return (NULL);
 	token->str = str;
-	token->type = CHAR_NULL;
+	token->type = 0;
 	token->next = NULL;
 	token->prev = NULL;
 	return (token);
@@ -149,15 +149,20 @@ void add_token_back(t_token **head, t_token *new)
 	t_token *prev_help;
 
 	tmp = *head;
+
 	if (tmp)
 	{
+//		printf("ASAS\n");
 		while (tmp->next)
 		{
-			prev_help = tmp;
+//			prev_help = tmp;
 			tmp = tmp->next;
 		}
+//		printf("Class\n");
+//		printf("%s\n", tmp->str);
 		tmp->next = new;
-		tmp->prev = prev_help;
+		tmp->next->next = NULL;
+//		tmp->prev = prev_help;
 	}
 	else
 		*head = new;
@@ -176,34 +181,53 @@ void add_token_back(t_token **head, t_token *new)
 //	}
 //}
 
-t_token *get_tokens(char *line)
+void get_tokens(char *line, t_token **head)
 {
-	t_token *head;
+	t_token *help;
 	int		i;
 	int 	j;
 
 	i = 0;
-	head = NULL;
-	while (line[i])
-	{
+//	help = *head;
+//	while (line[i] != '\0')
+//	{
 		j = i;
-		while (line[i] != '\0' && (line[i] != '<' && line[i] != '>'
-		&& line[i] != '|'))
+		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
+			line[i] != '>' && line[i] != '|'))
 			i++;
-		add_token_back(&head, new_token(ft_substr(line, j, i)));
+//		printf("%d -- i %d --- j\n", i , j);
+		add_token_back(&(*head), new_token("hello"));
+	(*head)->next = new_token("Raz");
+	(*head)->next->next = new_token("Tri"); //////// BUS ERROR
+//	add_token_back(&(help), new_token(ft_substr(line, j, i - j)));
+//	add_token_back(&head, new_token(ft_substr(line, j, i - j)));
+//		printf("%d -- i j\n", i - j);
+//		if (line[i] == '\0')
+//			break ;
 		i++;
-	}
+//	}
+	//free list;
 
-	////free list;
-	t_token *help;
-	while (head)
-	{
-		help = head->next;
-		free(head);
-		head = help;
-	}
+	help = *head;
+//	while (help)
+//	{
+//		printf("{%s} -- token\n", help->str);
+//		help = help->next;
+//	}
+//	return (*help);
+
 }
 
+
+int check_delimiter(char c)
+{
+	if (c == ' ')
+		return (1);
+	else if (c == '|' || c == '<' || c == '>')
+		return (2);
+	else
+		return (0);
+}
 
 int		malloc_sp(char *line)
 {
@@ -218,10 +242,10 @@ int		malloc_sp(char *line)
 	{
 		if (quotes(line, i))
 			len++;
-		else if (!counter || (line[i] != ' '))
+		else if (!counter || !check_delimiter(line[i]))
 		{
 			len++;
-			if (line[i] == ' ')
+			if (check_delimiter(line[i]))
 				counter++;
 			else
 				counter = 0;
@@ -242,8 +266,6 @@ char	*destroy_space(char *line)
 	i = 0;
 	counter = 1;
 	new_line = malloc(sizeof(char *) * malloc_sp(line));
-	printf("%d\n", malloc_sp(line));
-	//todo malloc check or malloc for correct size
 	while (line[i])
 	{
 		if (quotes(line, i))
@@ -259,29 +281,58 @@ char	*destroy_space(char *line)
 		i++;
 	}
 	new_line[j] = '\0';
-	printf("%d\n", j);
 	free(line);
 	return (new_line);
 }
+
+//int 	check_pipes(char *line)
+//{
+//	int i;
+//
+//	i = 0;
+//	while (line[i] != '\0')
+//	{
+//		if (quotes(line, i))
+//			i++;
+//		else
+//		{
+//			if (check_delimiter(line[i]) == 2)
+//			{
+//				if (line[i] == '>' || line[i] == '<')
+//				while (line[i] != '\0')
+//			}
+//			i++;
+//		}
+//	}
+//}
 
 int parser(char *line, t_main *main, char *env[])
 {
 	int i;
 	int prev;
+	t_token *head;
 
-//	line = set_var(line, 5, env); //echo
-//	printf("%s\n", line);
-//	i = 0;
 	if (quotes(line, 0)) //todo quotes check
 		return (printf("Quotes didnt close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-	main->head = get_tokens(line);
-//	free(line);
-//	printf("Line: !%s!\n", line);
+	head = NULL;
+	get_tokens(line, &head);
+	main->head = head;
 
-	//todo add check ; and | and '\'
+	t_token *help;
+//	while (main->head)
+//	{
+//		help = main->head->next;
+//		free(main->head->str);
+//		free(main->head);
+//		main->head = help;
+//	}
+//	main->head = NULL;
+	free(line);
 
+
+//	exit(0);
 //	while (line[i] != '\0')
 //	{
 //		if (line[i] == '"' || line[i] == '\'')

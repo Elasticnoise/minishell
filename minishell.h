@@ -36,6 +36,7 @@
 //};
 
 enum e_TokenType{
+	PARSE,
 	CMD,
 	ARV,
 	PIPE,
