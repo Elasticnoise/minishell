@@ -68,7 +68,7 @@ char	*set_var(char *line, int i, char **env)
 	begin = ft_strjoin(begin, end);
 	free(end);
 	printf("'%s' -- cmd\n", var_value);
-	free(var_value);
+//	free(var_value);
 	return (begin);
 }
 
@@ -101,6 +101,19 @@ int quotes(char *line, int i)
 	return (0);
 }
 
+//int pipes(char *line)
+//{
+//	int i;
+//	int len;
+//
+//	len = ft_strlen(line);
+//	i = 0;
+//	while (line[i])
+//	{
+//		i++;
+//	}
+//}
+
 //void	ft_lstadd_back(t_list **lst, t_list *new)
 //{
 //	t_list	*tmp;
@@ -124,7 +137,7 @@ t_token *new_token(char	*str)
 	if (!token)
 		return (NULL);
 	token->str = str;
-	token->type = CHAR_NULL;
+	token->type = 0;
 	token->next = NULL;
 	token->prev = NULL;
 	return (token);
@@ -136,15 +149,20 @@ void add_token_back(t_token **head, t_token *new)
 	t_token *prev_help;
 
 	tmp = *head;
+
 	if (tmp)
 	{
+//		printf("ASAS\n");
 		while (tmp->next)
 		{
-			prev_help = tmp;
+//			prev_help = tmp;
 			tmp = tmp->next;
 		}
+//		printf("Class\n");
+//		printf("%s\n", tmp->str);
 		tmp->next = new;
-		tmp->prev = prev_help;
+		tmp->next->next = NULL;
+//		tmp->prev = prev_help;
 	}
 	else
 		*head = new;
@@ -162,40 +180,82 @@ void add_token_back(t_token **head, t_token *new)
 //		a = help;
 //	}
 //}
-t_token *get_tokens(char *line)
+
+void get_tokens(char *line, t_token **head)
 {
-	t_token *head;
+	t_token *help;
 	int		i;
 	int 	j;
 
 	i = 0;
-	head = NULL;
-	while (line[i])
-	{
+//	help = *head;
+//	while (line[i] != '\0')
+//	{
 		j = i;
-		while (line[i] != '\0' && (line[i] != '<' && line[i] != '>'
-		&& line[i] != '|'))
+		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
+			line[i] != '>' && line[i] != '|'))
 			i++;
-		add_token_back(&head, new_token(ft_substr(line, j, i)));
+//		printf("%d -- i %d --- j\n", i , j);
+		add_token_back(&(*head), new_token("hello"));
+	(*head)->next = new_token("Raz");
+	(*head)->next->next = new_token("Tri"); //////// BUS ERROR
+//	add_token_back(&(help), new_token(ft_substr(line, j, i - j)));
+//	add_token_back(&head, new_token(ft_substr(line, j, i - j)));
+//		printf("%d -- i j\n", i - j);
+//		if (line[i] == '\0')
+//			break ;
 		i++;
-	}
-	//	while (head)
-	//	{
-		printf("|%s| -string\n", head->str);
-	//		head = head->next;
-	//	}
-	////free list;
-	t_token *help;
-	while (head)
-	{
-		help = head->next;
-		free(head);
-		head = help;
-	}
+//	}
+	//free list;
+
+	help = *head;
+//	while (help)
+//	{
+//		printf("{%s} -- token\n", help->str);
+//		help = help->next;
+//	}
+//	return (*help);
 
 }
 
-char *destroy_space(char *line)
+
+int check_delimiter(char c)
+{
+	if (c == ' ')
+		return (1);
+	else if (c == '|' || c == '<' || c == '>')
+		return (2);
+	else
+		return (0);
+}
+
+int		malloc_sp(char *line)
+{
+	int i;
+	int counter;
+	int len;
+
+	counter = 0;
+	i = 0;
+	len = 0;
+	while (line[i])
+	{
+		if (quotes(line, i))
+			len++;
+		else if (!counter || !check_delimiter(line[i]))
+		{
+			len++;
+			if (check_delimiter(line[i]))
+				counter++;
+			else
+				counter = 0;
+		}
+		i++;
+	}
+	return (len);
+}
+
+char	*destroy_space(char *line)
 {
 	char	*new_line;
 	int		i;
@@ -205,8 +265,7 @@ char *destroy_space(char *line)
 	j = 0;
 	i = 0;
 	counter = 1;
-	new_line = malloc(sizeof(char *) * ft_strlen(line) + 1);
-	//todo malloc check or malloc for correct size
+	new_line = malloc(sizeof(char *) * malloc_sp(line));
 	while (line[i])
 	{
 		if (quotes(line, i))
@@ -225,31 +284,55 @@ char *destroy_space(char *line)
 	free(line);
 	return (new_line);
 }
-//int	skip(char *line, char quote, int i)
+
+//int 	check_pipes(char *line)
 //{
-//	while(line[++i] != quote)
-//	{}
-//	return (i);
+//	int i;
+//
+//	i = 0;
+//	while (line[i] != '\0')
+//	{
+//		if (quotes(line, i))
+//			i++;
+//		else
+//		{
+//			if (check_delimiter(line[i]) == 2)
+//			{
+//				if (line[i] == '>' || line[i] == '<')
+//				while (line[i] != '\0')
+//			}
+//			i++;
+//		}
+//	}
 //}
 
 int parser(char *line, t_main *main, char *env[])
 {
 	int i;
 	int prev;
+	t_token *head;
 
-//	line = set_var(line, 5, env); //echo
-//	printf("%s\n", line);
-//	i = 0;
 	if (quotes(line, 0)) //todo quotes check
 		return (printf("Quotes didnt close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-	main->head = get_tokens(line);
-//	free(line);
-//	printf("Line: !%s!\n", line);
+	head = NULL;
+	get_tokens(line, &head);
+	main->head = head;
 
-	//todo add check ; and | and '\'
+	t_token *help;
+//	while (main->head)
+//	{
+//		help = main->head->next;
+//		free(main->head->str);
+//		free(main->head);
+//		main->head = help;
+//	}
+//	main->head = NULL;
+	free(line);
 
+
+//	exit(0);
 //	while (line[i] != '\0')
 //	{
 //		if (line[i] == '"' || line[i] == '\'')
