@@ -7,6 +7,7 @@ NAME = minishell
 NAME_B = minishell_bonus
 
 SRC = minishell.c \
+					our_builtins/builtins.c
 
 CC = gcc
 

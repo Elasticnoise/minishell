@@ -80,6 +80,15 @@ void	do_exec(char **av, char **envp, int i);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
 
+/*BUILTINS*/
+int 	ft_exit(t_main *token);
+int 	ft_cd(char **env);
+void 	ft_env(t_main *main);
+int 	ft_unset(char **env);
+int 	ft_export(char **env);
+int 	ft_pwd(t_main *main);
+int 	ft_echo(t_main *main);
+int 	is_builtin(t_main *main);
 //readline add_history
 //
 //rl_clear_history,
