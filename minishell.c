@@ -376,6 +376,70 @@ int parser(char *line, t_token **token, char *env[])
 	return(0);
 }
 
+//int executor(t_token *node)
+//{
+//	t_token *cmd;
+//
+//	cmd = node;
+//	while (cmd != NULL)
+//	{
+//		if (INT_HEREDOC)
+//		{
+//			return (0);
+//		}
+//		else if (INT_PIPE)
+//		{
+//			return (0);
+//		}
+//		else if ()
+//
+//		cmd = cmd->next;
+//	}
+//}
+
+//void	set_in_out_files(t_token *token)
+//{
+//	if (!token->infile)
+//		token->infile = 0;
+//	else
+//		token->infile = open(av[1], O_RDONLY); // сделать передачу команды со структуры
+//	if (!token->outfile)
+//		token->outfile = 1;
+//	else
+//		token->outfile = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+//			S_IWUSR | S_IRGRP | S_IROTH);
+//	if (token->infile < 0)
+//	{
+//		ft_putstr_fd("cat: ", 2);
+//		ft_putstr_fd(av[1], 2); // сделать передачу команды со структуры
+//		ft_putstr_fd(": No such file or directory\n", 2);
+//		exit (1);
+//	}
+//}
+
+//int	executor(t_token **token, char **env)
+//{
+//	int 	in_file;
+//	int 	out_file;
+//	int 	i;
+//	t_token	*cmd;
+//
+//	i = 3;
+//	cmd = *token;
+//
+//	if (cmd)
+//	{
+//		set_in_out_files(*token);
+//		dup2(in_file, INFILE);
+//		dup2(out_file, OUTFILE);
+//		ft_redirect(av, env, in_file, out_file,2);
+//		while (i < ac - 2)
+//			ft_redirect(av, env, in_file, out_file, i++);
+//		do_exec(av, env, i);
+//	}
+//	return (0);
+//}
+
 
 int	main(int argc, char **argv, char **env)
 {
@@ -397,7 +461,7 @@ int	main(int argc, char **argv, char **env)
 			add_history(line);
 		parser(line, &token, env);
 //		rl_on_new_line();
-//		rl_redisplay(); //todo Ф-ция для того, чтобы работало ctnrl + d
+//		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
 //		free_list(list);
 //		status = executor(&main, env);
