@@ -55,6 +55,7 @@ typedef struct s_token
 	char	*str;
 	char 	*infile;
 	char	*outfile;
+	void			*content;
 	enum	e_TokenType type;
 	struct s_token *next;
 	struct s_token *prev;

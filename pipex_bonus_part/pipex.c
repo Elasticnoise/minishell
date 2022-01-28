@@ -22,6 +22,11 @@ void	do_exec(char **av, char **envp, int i)
 	free(cmd);
 }
 
+void	do_redirect()
+{
+
+}
+
 int	ft_redirect(char **av, char **env, int in_file, int out_file, int i)
 {
 	int		pid;

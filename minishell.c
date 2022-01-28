@@ -129,11 +129,11 @@ int quotes(char *line, int i)
 //		*lst = new;
 //}
 
-t_token *new_token(char	*str)
+t_token *new_token(void	*str)
 {
 	t_token *token;
 
-	token = malloc(sizeof(t_token *));
+	token = (t_token *)malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->str = str;
@@ -147,17 +147,17 @@ t_token *new_token(char	*str)
 
 
 
-//void	free_list(t_list *a)
-//{
-//	t_list	*help;
-//
-//	while (a)
-//	{
-//		help = a->next;
-//		free(a);
-//		a = help;
-//	}
-//}
+void	free_list(t_token *a)
+{
+	t_token	*help;
+
+	while (a)
+	{
+		help = a->next;
+		free(a);
+		a = help;
+	}
+}
 
 void add_token_back(t_token **head, t_token *new)
 {
@@ -191,14 +191,16 @@ void get_tokens(char *line, t_token **head)
 	int 	j;
 
 	i = 0;
-	help = *head;
+//	help = *head;
+//	printf("!!!!!!!\n");
 	while (line[i] != '\0')
 	{
 		j = i;
 		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
-			line[i] != '>' && line[i] != '|'))
+								   line[i] != '>' && line[i] != '|'))
 			i++;
 		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
+
 //		printf("%d -- i %d --- j\n", i , j);
 //		add_token_back(&(*head), new_token("hello"));
 //	(*head)->next = new_token("Raz");
@@ -211,7 +213,6 @@ void get_tokens(char *line, t_token **head)
 			break ;
 		i++;
 	}
-	//free list;
 
 	help = *head;
 	while (help)
@@ -220,7 +221,7 @@ void get_tokens(char *line, t_token **head)
 		help = help->next;
 	}
 //	return (*help);
-	
+
 }
 
 
@@ -460,11 +461,11 @@ int	main(int argc, char **argv, char **env)
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env);
-		ft_exit(&token);
+//		ft_exit(&token);
 //		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
-//		free_list(list);
+//		free_list(token);
 //		status = executor(&main, env);
 	}
 	return (0);
