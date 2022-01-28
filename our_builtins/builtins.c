@@ -57,7 +57,7 @@ int 	ft_echo(t_main *main)
 
 int 	ft_pwd(t_main *main)
 {
-	printf("%s\n", get_right_env(env, "PWD"));
+	printf("%s\n", do_(env, "PWD"));
 	return (0);
 }
 

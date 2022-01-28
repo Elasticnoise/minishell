@@ -191,7 +191,7 @@ void get_tokens(char *line, t_token **head)
 	int 	j;
 
 	i = 0;
-//	help = *head;
+	help = *head;
 	while (line[i] != '\0')
 	{
 		j = i;
@@ -220,7 +220,7 @@ void get_tokens(char *line, t_token **head)
 		help = help->next;
 	}
 //	return (*help);
-
+	
 }
 
 
@@ -376,25 +376,68 @@ int parser(char *line, t_token **token, char *env[])
 	return(0);
 }
 
-int executor(t_token *node)
+//int executor(t_token *node)
+//{
+//	t_token *cmd;
+//
+//	cmd = node;
+//	while (cmd != NULL)
+//	{
+//		if (INT_HEREDOC)
+//		{
+//			return (0);
+//		}
+//		else if (INT_PIPE)
+//		{
+//			return (0);
+//		}
+//		else if ()
+//
+//		cmd = cmd->next;
+//	}
+//}
+
+void	set_in_out_files(t_token *token)
 {
-	t_token *cmd;
-
-	cmd = node;
-	while (cmd != NULL)
+	if (!token->infile)
+		token->infile = 0;
+	else
+		token->infile = open(av[1], O_RDONLY); // сделать передачу команды со структуры
+	if (!token->outfile)
+		token->outfile = 1;
+	else
+		token->outfile = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+			S_IWUSR | S_IRGRP | S_IROTH);
+	if (token->infile < 0)
 	{
-		if (INT_HEREDOC)
-		{
-			return (0);
-		}
-		else if (INT_PIPE)
-		{
-			return (0);
-		}
-		else if ()
-
-		cmd = cmd->next;
+		ft_putstr_fd("cat: ", 2);
+		ft_putstr_fd(av[1], 2); // сделать передачу команды со структуры
+		ft_putstr_fd(": No such file or directory\n", 2);
+		exit (1);
 	}
+}
+
+int	executor(t_token **token, char **env)
+{
+	int 	in_file;
+	int 	out_file;
+	int 	i;
+	t_token	*cmd;
+
+	i = 3;
+	cmd = *token;
+
+	if (cmd)
+	{
+		set_in_out_files(*token);
+		dup2(in_file, INFILE);
+		dup2(out_file, OUTFILE);
+		ft_redirect(av, env, in_file, out_file,2);
+		while (i < ac - 2)
+			ft_redirect(av, env, in_file, out_file, i++);
+		do_exec(av, env, i);
+	}
+	return (0);
 }
 
 

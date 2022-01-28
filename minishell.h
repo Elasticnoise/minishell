@@ -13,6 +13,10 @@
 
 # define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
 # define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным
+# define STDIN	0
+# define STDOUT	1
+# define INFILE	0
+# define	OUTFILE	1
 // шрифтом, выделить
 # define BEGIN(x,y) "\001\033["#x";"#y"m\002"
 
@@ -69,6 +73,12 @@ typedef struct s_main
 //}				t_list;
 
 #endif
+
+/*PIPE*/
+int	ft_redirect(char **av, char **env, int in_file, int out_file, int i);
+void	do_exec(char **av, char **envp, int i);
+void	set_in_out_files(t_token *token);
+char	*get_path(char **envp, char *cmd);
 
 //readline add_history
 //
