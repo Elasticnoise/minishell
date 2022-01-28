@@ -6,6 +6,7 @@
 
 # include "libft/libft.h"
 # include <stdio.h>
+# include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include "lexer.h"
@@ -50,15 +51,23 @@ enum e_TokenType{
 	T_LESSER
 };
 
+typedef struct s_fd
+{
+	int in_file;
+	int out_file;
+}				t_fd;
+
 typedef struct s_token
 {
 	char	*str;
+	int 	count_cmd;
 	char 	*infile;
 	char	*outfile;
 	void			*content;
 	enum	e_TokenType type;
 	struct s_token *next;
 	struct s_token *prev;
+	t_fd	fd;
 }		t_token;
 
 typedef struct s_main

@@ -398,26 +398,28 @@ int parser(char *line, t_token **token, char *env[])
 //	}
 //}
 
-//void	set_in_out_files(t_token *token)
+//void	set_in_out_files(t_token
+//*token)
 //{
-//	if (!token->infile)
-//		token->infile = 0;
+//	if (token->infile)
+//		token->fd.in_file = open(token->infile, O_RDONLY);
 //	else
-//		token->infile = open(av[1], O_RDONLY); // сделать передачу команды со структуры
-//	if (!token->outfile)
-//		token->outfile = 1;
-//	else
-//		token->outfile = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+//		token->fd.in_file = 0;
+//	if (token->outfile)
+//		token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
 //			S_IWUSR | S_IRGRP | S_IROTH);
-//	if (token->infile < 0)
+//	else
+//		token->fd.out_file = 1;
+//	if (token->fd.in_file < 0)
 //	{
 //		ft_putstr_fd("cat: ", 2);
-//		ft_putstr_fd(av[1], 2); // сделать передачу команды со структуры
+//		ft_putstr_fd(token->infile, 2);
 //		ft_putstr_fd(": No such file or directory\n", 2);
 //		exit (1);
 //	}
 //}
 
+/*TODO Переделать do_exec, ft_redirect под проект*/
 //int	executor(t_token **token, char **env)
 //{
 //	int 	in_file;
@@ -425,18 +427,19 @@ int parser(char *line, t_token **token, char *env[])
 //	int 	i;
 //	t_token	*cmd;
 //
-//	i = 3;
+//	i = 0;
 //	cmd = *token;
 //
 //	if (cmd)
 //	{
 //		set_in_out_files(*token);
-//		dup2(in_file, INFILE);
-//		dup2(out_file, OUTFILE);
-//		ft_redirect(av, env, in_file, out_file,2);
-//		while (i < ac - 2)
-//			ft_redirect(av, env, in_file, out_file, i++);
-//		do_exec(av, env, i);
+//		/*TODO Нужно прравильность fd-шников на выходе(in_file, out_file)*/
+//		dup2(cmd->fd.in_file, INFILE);
+//		dup2(cmd->fd.out_file, OUTFILE);
+//		ft_redirect(cmd, env, in_file, out_file,2);
+//		while (i < cmd->count_cmd)
+//			ft_redirect(	cmd, env, in_file, out_file, i++);
+//		do_exec(cmd, env, i);
 //	}
 //	return (0);
 //}
