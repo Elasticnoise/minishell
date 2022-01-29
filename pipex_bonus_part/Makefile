@@ -7,7 +7,7 @@ CFLAGS = -Wall -Werror -Wextra -I ./
 NAME = pipex
 
 SRC = pipex.c \
-						includes/get_path.c \
+						src/get_path.c \
 
 LIB = ar -rcs $(NAME)
 

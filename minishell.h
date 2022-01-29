@@ -85,10 +85,12 @@ typedef struct s_main
 #endif
 
 /*PIPE*/
-int	ft_redirect(char **av, char **env, int in_file, int out_file, int i);
+int		ft_redirect(char **av, char **env, int in_file, int out_file, int i);
 void	do_exec(char **av, char **envp, int i);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
+int	ft_redirect_dev(t_token *token, char **env);
+void	do_exec_dev(t_token *token, char **envp);
 
 /*BUILTINS*/
 int 	ft_exit(t_main *token);
