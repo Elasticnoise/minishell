@@ -464,29 +464,47 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
-/*TODO Переделать do_exec, ft_redirect под проект*/
+/*TODO непрвильно отрабатывает executor*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
+	t_token	*tmp;
 
 	cmd = *token;
 
 	if (cmd)
 	{
 		set_in_out_files(cmd);
-		/*TODO Нужно проверить прравильность  подаваемых fd-шников(in_file, out_file)*/
 		dup2(cmd->fd.in_file, INFILE);
 		dup2(cmd->fd.out_file, OUTFILE);
 //		printf("!!!!!!!!!!!!%s\n", cmd->str);
 
 		ft_redirect_dev(cmd, env);
 //		cmd = cmd->next;
+		tmp = cmd;
+		tmp = tmp->next;
+		if (tmp)
+		{
+//			printf("?%s\n", cmd->str);
+//			cmd = cmd->next;
+			while (cmd->next)
+			{
+//				printf("??%s\n", cmd->str);
+				ft_redirect_dev(cmd, env);
+				tmp = cmd;
+				cmd = cmd->next;
+//				printf("???%s\n", cmd->str);
+			}
+			do_exec_dev(cmd, env);
+		}
 //		while (cmd)
 //		{
 //			ft_redirect_dev(cmd, env);
 //			cmd = cmd->next;
+//			printf("!!!!\n");
 //		}
-		do_exec_dev(cmd, env);
+		else
+			do_exec_dev(cmd, env);
 	}
 	return (EXIT_FAILURE);
 }
