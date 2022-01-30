@@ -31,6 +31,23 @@ void 	master_proc(int **pipe_fd, int i, char **av, char **envp)
 	char **cmd;
 	int out_file;
 
+<<<<<<< HEAD
+	if (pipe(pipe_fd) == -1)
+		return (1);
+	pid = fork();
+	if (pid == -1)
+	{
+		ft_putstr_fd("Fork failed\n", 2);
+		return (1);
+	}
+	if (pid)
+	{
+		close(pipe_fd[1]);
+		dup2(pipe_fd[0], 0);
+//		waitpid(pid, NULL, 0);
+	}
+	else
+=======
 	out_file = open(av[4], O_RDWR | O_CREAT | O_TRUNC, 777);
 	wait (0);
 	close(pipe_fd[i][1]);
@@ -39,6 +56,7 @@ void 	master_proc(int **pipe_fd, int i, char **av, char **envp)
 	close(pipe_fd[i][0]);
 	dup2(out_file, 1);
 	if (execve(get_path(envp, cmd[0]), cmd, envp) == -1)
+>>>>>>> main
 	{
 		ft_putstr_fd("pipex: command not found: ", 2);
 		ft_putstr_fd("\n", 2);

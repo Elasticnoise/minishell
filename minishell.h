@@ -61,13 +61,6 @@ typedef struct s_main
 	t_token *head;
 }t_main;
 
-//typedef struct s_list
-//{
-//	char			*cmd;
-//	char			**argv;
-//	struct	s_list	*next;
-//}				t_list;
-
 #endif
 
 //readline add_history
