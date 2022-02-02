@@ -12,6 +12,20 @@
 
 #include "minishell.h"
 
+void free_list(t_token **head)
+{
+	t_token *tmp;
+
+//	tmp = *head;
+	while (*head)
+	{
+		tmp = (*head)->next;
+		free((*head)->cmd); //todo Split free
+		free(*head);
+		*head = tmp;
+	}
+}
+
 //void	parser(char *line, t_main *main)
 //{
 //	return ;
@@ -72,20 +86,6 @@ char	*set_var(char *line, int i, char **env)
 	return (begin);
 }
 
-//int pipes(char *line)
-//{
-//	int i;
-//	int len;
-//
-//	len = ft_strlen(line);
-//	i = 0;
-//	while (line[i])
-//	{
-//		i++;
-//	}
-//}
-
-
 //int executor(t_token *node)
 //{
 //	t_token *cmd;
@@ -107,60 +107,133 @@ char	*set_var(char *line, int i, char **env)
 //	}
 //}
 
-//void	set_in_out_files(t_token *token)
-//{
-//	if (!token->infile)
-//		token->infile = 0;
-//	else
-//		token->infile = open(av[1], O_RDONLY); // сделать передачу команды со структуры
-//	if (!token->outfile)
-//		token->outfile = 1;
-//	else
-//		token->outfile = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
-//			S_IWUSR | S_IRGRP | S_IROTH);
-//	if (token->infile < 0)
-//	{
-//		ft_putstr_fd("cat: ", 2);
-//		ft_putstr_fd(av[1], 2); // сделать передачу команды со структуры
-//		ft_putstr_fd(": No such file or directory\n", 2);
-//		exit (1);
-//	}
-//}
+void	set_in_out_files(t_token *token)
+{
+	if (token->infile)
+		token->fd.in_file = open(token->infile, O_RDONLY);
+	else
+		token->fd.in_file = 0;
+	if (token->outfile)
+		token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+			S_IWUSR | S_IRGRP | S_IROTH);
+	else
+		token->fd.out_file = 1;
+	if (token->fd.in_file < 0)
+	{
+		ft_putstr_fd("cat: ", 2);
+		ft_putstr_fd(token->infile, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+	}
+//	printf("in_file=%d\n", token->fd.in_file);
+//	printf("out_file=%d\n", token->fd.out_file);
+}
 
-//int	executor(t_token **token, char **env)
-//{
-//	int 	in_file;
-//	int 	out_file;
-//	int 	i;
-//	t_token	*cmd;
-//
-//	i = 3;
-//	cmd = *token;
-//
-//	if (cmd)
-//	{
-//		set_in_out_files(*token);
-//		dup2(in_file, INFILE);
-//		dup2(out_file, OUTFILE);
-//		ft_redirect(av, env, in_file, out_file,2);
-//		while (i < ac - 2)
-//			ft_redirect(av, env, in_file, out_file, i++);
-//		do_exec(av, env, i);
-//	}
-//	return (0);
-//}
+void	do_exec_dev(t_token *token, char **envp)
+{
+//	char	**cmd;
+
+//	cmd = ft_split(token, ' ');
+
+	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
+	{
+		ft_putstr_fd("pipex: command not found: ", 2);
+		ft_putstr_fd("\n", 2);
+//		free(cmd);
+	}
+//	free(cmd);
+}
+
+int	ft_redirect_dev(t_token *token, char **env)
+{
+	int		pid;
+	pid_t	pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+		return (1);
+	pid = fork();
+	if (pid == -1)
+	{
+		ft_putstr_fd("Fork failed\n", 2);
+		return (1);
+	}
+	if (pid)
+	{
+		close(pipe_fd[1]);
+		dup2(pipe_fd[0], STDIN);
+//		waitpid(pid, NULL, 0);
+//		write(1, "!!!!!!\n", 7);
+	}
+	else
+	{
+//		write(1, "!!!!!!\n", 7);
+		close(pipe_fd[0]);
+		dup2(pipe_fd[1], STDOUT);
+		do_exec_dev(token, env);
+	}
+	return (0);
+}
+
+/*TODO непрвильно отрабатывает executor*/
+int	executor(t_token **token, char **env)
+{
+	t_token	*cmd;
+	t_token	*tmp;
+
+	cmd = *token;
+//	printf("!!!!!!%s\n", tmp->cmd);
+
+	if (cmd)
+	{
+		set_in_out_files(cmd);
+		dup2(cmd->fd.in_file, INFILE);
+		dup2(cmd->fd.out_file, OUTFILE);
+//		printf("!!!!!!!!!!!!%s\n", cmd->str);
+
+		ft_redirect_dev(cmd, env);
+//		cmd = cmd->next;
+		tmp = cmd;
+		tmp = tmp->next;
+		if (tmp)
+		{
+//			printf("?%s\n", cmd->str);
+//			cmd = cmd->next;
+			while (cmd->next)
+			{
+//				printf("??%s\n", cmd->str);
+				ft_redirect_dev(cmd, env);
+				tmp = cmd;
+				cmd = cmd->next;
+//				printf("???%s\n", cmd->str);
+			}
+			do_exec_dev(cmd, env);
+		}
+//		while (cmd)
+//		{
+//			ft_redirect_dev(cmd, env);
+//			cmd = cmd->next;
+//			printf("!!!!\n");
+//		}
+		else
+			do_exec_dev(cmd, env);
+	}
+//	return (EXIT_FAILURE);
+	return (1);
+}
 
 
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-//	t_main	main;
+	int 	status;
+	t_main	main;
 	t_token *token;
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
 	if (argc != 1)
 		return (1);
+
+	status = 1;
 
 	while(1)
 	{
@@ -170,11 +243,15 @@ int	main(int argc, char **argv, char **env)
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env);
+//		printf("%s\n", token->cmd);
+//		ft_exit(&token);
 //		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
-//		free_list(list);
-//		status = executor(&main, env);
+//		free_list(token);
+//		status = executor(&token, env);
+		executor(&token, env);
+		free_list(&token);
 	}
 	return (0);
 }

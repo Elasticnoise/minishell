@@ -196,7 +196,7 @@ void get_tokens(char *line, t_token **head)
 		help = help->next;
 	}
 
-	help = *head;
+//	help = *head;
 //	while (*head)
 //	{
 //		help = (*help).next;
@@ -250,6 +250,12 @@ int parser(char *line, t_token **token, char *env[])
 //	printf ("%d and %d and %d and %d\n", ' ', '|', '>', '<');
 //	//	head = NULL;
 	get_tokens(line, &head);
-//	*token = head;
+//	t_token *help = head;
+//	while (help)
+//	{
+//		printf("%s -- token 2\n", help->cmd);
+//		help = help->next;
+//	}
+	*token = head; ////  Чтобы работало в мейне
 	return(0);
 }

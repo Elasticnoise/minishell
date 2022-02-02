@@ -7,6 +7,8 @@ NAME = minishell
 NAME_B = minishell_bonus
 
 SRC = minishell.c ./parser/parser.c\
+					our_builtins/builtins.c \
+                    pipex_bonus_part/src/get_path.c \
 
 CC = gcc
 

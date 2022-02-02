@@ -61,7 +61,6 @@ typedef struct s_token
 {
 	char	*cmd;
 	int		type;
-	int 	count_cmd;
 	char 	*infile;
 	char	*outfile;
 	void			*content;
