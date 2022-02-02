@@ -134,12 +134,14 @@ void	do_exec_dev(t_token *token, char **envp)
 
 //	cmd = ft_split(token, ' ');
 
+//	printf("!!!!!!!!!\n");
 	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
 	{
 		ft_putstr_fd("pipex: command not found: ", 2);
 		ft_putstr_fd("\n", 2);
 //		free(cmd);
 	}
+//		printf("!!!!!!!!!\n");
 //	free(cmd);
 }
 
@@ -161,11 +163,9 @@ int	ft_redirect_dev(t_token *token, char **env)
 		close(pipe_fd[1]);
 		dup2(pipe_fd[0], STDIN);
 //		waitpid(pid, NULL, 0);
-//		write(1, "!!!!!!\n", 7);
 	}
 	else
 	{
-//		write(1, "!!!!!!\n", 7);
 		close(pipe_fd[0]);
 		dup2(pipe_fd[1], STDOUT);
 		do_exec_dev(token, env);
@@ -180,17 +180,14 @@ int	executor(t_token **token, char **env)
 	t_token	*tmp;
 
 	cmd = *token;
-//	printf("!!!!!!%s\n", tmp->cmd);
 
 	if (cmd)
 	{
 		set_in_out_files(cmd);
 		dup2(cmd->fd.in_file, INFILE);
 		dup2(cmd->fd.out_file, OUTFILE);
-//		printf("!!!!!!!!!!!!%s\n", cmd->str);
 
 		ft_redirect_dev(cmd, env);
-//		cmd = cmd->next;
 		tmp = cmd;
 		tmp = tmp->next;
 		if (tmp)
@@ -207,19 +204,12 @@ int	executor(t_token **token, char **env)
 			}
 			do_exec_dev(cmd, env);
 		}
-//		while (cmd)
-//		{
-//			ft_redirect_dev(cmd, env);
-//			cmd = cmd->next;
-//			printf("!!!!\n");
-//		}
 		else
 			do_exec_dev(cmd, env);
 	}
 //	return (EXIT_FAILURE);
 	return (1);
 }
-
 
 int	main(int argc, char **argv, char **env)
 {
@@ -251,6 +241,7 @@ int	main(int argc, char **argv, char **env)
 //		free_list(token);
 //		status = executor(&token, env);
 		executor(&token, env);
+//		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}
 	return (0);
