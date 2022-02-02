@@ -68,230 +68,94 @@ char	*set_var(char *line, int i, char **env)
 	begin = ft_strjoin(begin, end);
 	free(end);
 	printf("'%s' -- cmd\n", var_value);
-	free(var_value);
+//	free(var_value);
 	return (begin);
 }
 
-int quotes(char *line, int i)
-{
-	char *help;
-	char *str;
-
-	while (line[i])
-	{
-		if (line[i] == '\'')
-		{
-			i++;
-			while (line[i] && line[i] != '\'')
-				i++;
-			if (!line[i])
-				return (1);
-		}
-		else if (line[i] == '"')
-		{
-			i++;
-			while (line[i] && line[i] != '"')
-				i++;
-			if (!(line[i]))
-				return (1);
-		}
-		i++;
-	}
-//	printf("Check Succeed\n"); //todo delete print
-	return (0);
-}
-
-//void	ft_lstadd_back(t_list **lst, t_list *new)
+//int pipes(char *line)
 //{
-//	t_list	*tmp;
+//	int i;
+//	int len;
 //
-//	tmp = *lst;
-//	if (tmp)
-//	{
-//		while (tmp->next)
-//			tmp = tmp->next;
-//		tmp->next = new;
-//	}
-//	else
-//		*lst = new;
-//}
-
-t_token *new_token(char	*str)
-{
-	t_token *token;
-
-	token = malloc(sizeof(t_token *));
-	if (!token)
-		return (NULL);
-	token->str = str;
-	token->type = CHAR_NULL;
-	token->next = NULL;
-	token->prev = NULL;
-	return (token);
-}
-
-void add_token_back(t_token **head, t_token *new)
-{
-	t_token *tmp;
-	t_token *prev_help;
-
-	tmp = *head;
-	if (tmp)
-	{
-		while (tmp->next)
-		{
-			prev_help = tmp;
-			tmp = tmp->next;
-		}
-		tmp->next = new;
-		tmp->prev = prev_help;
-	}
-	else
-		*head = new;
-}
-
-
-//void	free_list(t_list *a)
-//{
-//	t_list	*help;
-//
-//	while (a)
-//	{
-//		help = a->next;
-//		free(a);
-//		a = help;
-//	}
-//}
-t_token *get_tokens(char *line)
-{
-	t_token *head;
-	int		i;
-	int 	j;
-
-	i = 0;
-	head = NULL;
-	while (line[i])
-	{
-		j = i;
-		while (line[i] != '\0' && (line[i] != '<' && line[i] != '>'
-								   && line[i] != '|'))
-			i++;
-		add_token_back(&head, new_token(ft_substr(line, j, i)));
-		i++;
-	}
-	//	while (head)
-	//	{
-	printf("|%s| -string\n", head->str);
-	//		head = head->next;
-	//	}
-	////free list;
-	t_token *help;
-	while (head)
-	{
-		help = head->next;
-		free(head);
-		head = help;
-	}
-
-}
-
-char *destroy_space(char *line)
-{
-	char	*new_line;
-	int		i;
-	int		counter;
-	int 	j;
-
-	j = 0;
-	i = 0;
-	counter = 1;
-	new_line = malloc(sizeof(char *) * ft_strlen(line) + 1);
-	//todo malloc check or malloc for correct size
-	while (line[i])
-	{
-		if (quotes(line, i))
-			new_line[j++] = line[i];
-		else if (!counter || (line[i] != ' '))
-		{
-			new_line[j++] = line[i];
-			if (line[i] == ' ')
-				counter++;
-			else
-				counter = 0;
-		}
-		i++;
-	}
-	new_line[j] = '\0';
-	free(line);
-	return (new_line);
-}
-//int	skip(char *line, char quote, int i)
-//{
-//	while(line[++i] != quote)
-//	{}
-//	return (i);
-//}
-
-int parser(char *line, t_main *main, char *env[])
-{
-	int i;
-	int prev;
-
-//	line = set_var(line, 5, env); //echo
-//	printf("%s\n", line);
+//	len = ft_strlen(line);
 //	i = 0;
-	if (quotes(line, 0)) //todo quotes check
-		return (printf("Quotes didnt close\n"));
-	line = destroy_space(line);
-	printf("New line: |%s|\n", line);
-	main->head = get_tokens(line);
-//	free(line);
-//	printf("Line: !%s!\n", line);
-
-	//todo add check ; and | and '\'
-
-//	while (line[i] != '\0')
+//	while (line[i])
 //	{
-//		if (line[i] == '"' || line[i] == '\'')
-//			i = skip(line, line[i], i);
 //		i++;
 //	}
-// 	i = 0;
-//	while (line[i] == ' ')
-//		i++;
-//	prev = i;
-//	prev = 0;
-//	while(ft_isalpha(line[i]))
-//		i++;
-//	cur_l = ft_lstnew(ft_substr(line, prev, i));
-//	if (cur_l == NULL)
-//		return (0);
-//	ft_lstadd_back(head, cur_l);
-//	while (line[i] == ' ')
-//		i++;
-//	cur_l->argv = ft_split(line + i, ' ');
-//	if (cur_l->argv == NULL)
-//		return (0);
+//}
+
+
+//int executor(t_token *node)
+//{
+//	t_token *cmd;
 //
-////	//todo delete testing
-//	int k = 0;
-//	printf("(%s)\n", cur_l->cmd);
-//	while (cur_l->argv[k])
+//	cmd = node;
+//	while (cmd != NULL)
 //	{
-//		printf("%s\n", cur_l->argv[k]);
-//		k++;
+//		if (INT_HEREDOC)
+//		{
+//			return (0);
+//		}
+//		else if (INT_PIPE)
+//		{
+//			return (0);
+//		}
+//		else if ()
+//
+//		cmd = cmd->next;
 //	}
-//	printf("k = %d\n", k);
+//}
 
-	return(0);
-}
+//void	set_in_out_files(t_token *token)
+//{
+//	if (!token->infile)
+//		token->infile = 0;
+//	else
+//		token->infile = open(av[1], O_RDONLY); // сделать передачу команды со структуры
+//	if (!token->outfile)
+//		token->outfile = 1;
+//	else
+//		token->outfile = open(av[ac - 1], O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+//			S_IWUSR | S_IRGRP | S_IROTH);
+//	if (token->infile < 0)
+//	{
+//		ft_putstr_fd("cat: ", 2);
+//		ft_putstr_fd(av[1], 2); // сделать передачу команды со структуры
+//		ft_putstr_fd(": No such file or directory\n", 2);
+//		exit (1);
+//	}
+//}
+
+//int	executor(t_token **token, char **env)
+//{
+//	int 	in_file;
+//	int 	out_file;
+//	int 	i;
+//	t_token	*cmd;
+//
+//	i = 3;
+//	cmd = *token;
+//
+//	if (cmd)
+//	{
+//		set_in_out_files(*token);
+//		dup2(in_file, INFILE);
+//		dup2(out_file, OUTFILE);
+//		ft_redirect(av, env, in_file, out_file,2);
+//		while (i < ac - 2)
+//			ft_redirect(av, env, in_file, out_file, i++);
+//		do_exec(av, env, i);
+//	}
+//	return (0);
+//}
 
 
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-	t_main	main;
-
+//	t_main	main;
+	t_token *token;
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
@@ -305,9 +169,9 @@ int	main(int argc, char **argv, char **env)
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 		if (line && *line)
 			add_history(line);
-		parser(line, &main, env);
+		parser(line, &token, env);
 //		rl_on_new_line();
-//		rl_redisplay(); //todo Ф-ция для того, чтобы работало ctnrl + d
+//		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
 //		free_list(list);
 //		status = executor(&main, env);

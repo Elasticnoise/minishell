@@ -6,7 +6,7 @@ NAME = minishell
 
 NAME_B = minishell_bonus
 
-SRC = minishell.c \
+SRC = minishell.c ./parser/parser.c\
 
 CC = gcc
 

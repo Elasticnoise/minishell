@@ -59,12 +59,13 @@ typedef struct s_fd
 
 typedef struct s_token
 {
-	char	*str;
+	char	*cmd;
+	int		type;
 	int 	count_cmd;
 	char 	*infile;
 	char	*outfile;
 	void			*content;
-	enum	e_TokenType type;
+//	enum	e_TokenType type;
 	struct s_token *next;
 	struct s_token *prev;
 	t_fd	fd;
@@ -118,3 +119,5 @@ int 	is_builtin(t_main *main);
 // getenv, tcsetattr,
 //tcgetattr, tgetent, tgetflag, tgetnum, tgetstr,
 //tgoto, tputs
+
+int parser(char *line, t_token **token, char *env[]);
