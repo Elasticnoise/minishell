@@ -132,14 +132,21 @@ char	*destroy_space(char *line)
 t_token *new_token(char	*str)
 {
 	t_token *token;
+	int		i;
 
+	i = 0;
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->cmd = str;
+//	token->cmd = str;
+	token->str = str;
 	token->type = 0;
 	token->next = NULL;
 	token->prev = NULL;
+	while (str[i])
+	{
+
+	}
 	return (token);
 }
 
@@ -170,20 +177,13 @@ void get_tokens(char *line, t_token **head)
 	while (line[i] != '\0')
 	{
 		j = i;
-		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
-								   line[i] != '>' && line[i] != '|'))
+//		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
+//								   line[i] != '>' && line[i] != '|'))
+		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '|'))
 			i++;
 		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
 			i++;
 		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
-//		printf("%d -- i %d --- j\n", i , j);
-//		add_token_back(&(*head), new_token("hello"));
-//	(*head)->next = new_token("Raz");
-//	printf("%p\n",(*head)->next->next);
-//	(*head)->next->next = new_token("Tri"); //////// BUS ERROR
-//		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
-//	add_token_back(&head, new_token(ft_substr(line, j, i - j)));
-//		printf("%d -- i j\n", i - j);
 		if (line[i] == '\0')
 			break ;
 		i++;
@@ -195,15 +195,6 @@ void get_tokens(char *line, t_token **head)
 		printf("{%s} -- token\n", help->cmd);
 		help = help->next;
 	}
-
-//	help = *head;
-//	while (*head)
-//	{
-//		help = (*help).next;
-//		free((*help).cmd);
-//		help = *head;
-//	}
-//	return (*help);
 }
 
 int delim_check(char *line)
@@ -247,15 +238,7 @@ int parser(char *line, t_token **token, char *env[])
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-//	printf ("%d and %d and %d and %d\n", ' ', '|', '>', '<');
-//	//	head = NULL;
 	get_tokens(line, &head);
-//	t_token *help = head;
-//	while (help)
-//	{
-//		printf("%s -- token 2\n", help->cmd);
-//		help = help->next;
-//	}
 	*token = head; ////  Чтобы работало в мейне
 	return(0);
 }

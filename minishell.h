@@ -59,11 +59,12 @@ typedef struct s_fd
 
 typedef struct s_token
 {
-	char	*cmd;
+	char	**cmd; //[1] ls [2] -la [3]
+	char	*str;  // >>. <<<
 	int		type;
 	char 	*infile;
 	char	*outfile;
-	void			*content;
+//	void			*content;
 //	enum	e_TokenType type;
 	struct s_token *next;
 	struct s_token *prev;
