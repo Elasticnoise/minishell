@@ -118,31 +118,36 @@ void	set_in_out_files(t_token *token)
 			S_IWUSR | S_IRGRP | S_IROTH);
 	else
 		token->fd.out_file = 1;
-	if (token->fd.in_file < 0)
-	{
-		ft_putstr_fd("cat: ", 2);
-		ft_putstr_fd(token->infile, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-	}
+//	if (token->fd.in_file < 0)
+//	{
+//		ft_putstr_fd("cat: ", 2);
+//		ft_putstr_fd(token->infile, 2);
+//		ft_putstr_fd(": No such file or directory\n", 2);
+//	}
 //	printf("in_file=%d\n", token->fd.in_file);
 //	printf("out_file=%d\n", token->fd.out_file);
 }
 
 void	do_exec_dev(t_token *token, char **envp)
 {
-//	char	**cmd;
+	int		pid;
+	pid_t	pipe_fd[2];
 
-//	cmd = ft_split(token, ' ');
-
-//	printf("!!!!!!!!!\n");
-	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
+	pid = fork();
+/*TODO Previous code*/
+//	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
+//	{
+//		ft_putstr_fd("pipex: command not found: ", 2);
+//		ft_putstr_fd("\n", 2);
+////		free(cmd);
+//	}
+/*Code for find errors */
+//	printf("???????? - %s\n", get_path(envp, token->cmd));
+	if (pid == 0)
 	{
-		ft_putstr_fd("pipex: command not found: ", 2);
-		ft_putstr_fd("\n", 2);
-//		free(cmd);
+		execve(get_path(envp, token->cmd), &token->cmd, envp);
+		printf("???????? - %s\n", get_path(envp, token->cmd));
 	}
-//		printf("!!!!!!!!!\n");
-//	free(cmd);
 }
 
 int	ft_redirect_dev(t_token *token, char **env)
@@ -192,15 +197,12 @@ int	executor(t_token **token, char **env)
 		tmp = tmp->next;
 		if (tmp)
 		{
-//			printf("?%s\n", cmd->str);
 //			cmd = cmd->next;
 			while (cmd->next)
 			{
-//				printf("??%s\n", cmd->str);
 				ft_redirect_dev(cmd, env);
 				tmp = cmd;
 				cmd = cmd->next;
-//				printf("???%s\n", cmd->str);
 			}
 			do_exec_dev(cmd, env);
 		}
@@ -208,8 +210,13 @@ int	executor(t_token **token, char **env)
 			do_exec_dev(cmd, env);
 	}
 //	return (EXIT_FAILURE);
-	return (1);
+	return (0);
 }
+//
+//void	rl_redisplay(char **env)
+//{
+//
+//}
 
 int	main(int argc, char **argv, char **env)
 {
@@ -233,6 +240,13 @@ int	main(int argc, char **argv, char **env)
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env);
+		t_token *help;
+		help = token;
+		while (help)
+		{
+			printf("%s --- cmd\n", help->cmd);
+			help = help->next;
+		}
 //		printf("%s\n", token->cmd);
 //		ft_exit(&token);
 //		rl_on_new_line();

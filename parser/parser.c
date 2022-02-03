@@ -138,6 +138,8 @@ t_token *new_token(char	*str)
 		return (NULL);
 	token->cmd = str;
 	token->type = 0;
+	token->infile = NULL;
+	token->outfile = NULL;
 	token->next = NULL;
 	token->prev = NULL;
 	return (token);
