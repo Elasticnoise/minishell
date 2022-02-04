@@ -130,6 +130,11 @@ void	set_in_out_files(t_token *token)
 
 void	do_exec_dev(t_token *token, char **envp)
 {
+//	pid_t		pid;
+//	t_token		*tmp;
+//
+//	tmp = token;
+//	tmp = tmp->next;
 /*TODO Previous code*/
 //	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
 //	{
@@ -139,7 +144,16 @@ void	do_exec_dev(t_token *token, char **envp)
 //	}
 /*Code for find errors */
 //	printf("???????? - %s\n", get_path(envp, token->cmd));
-		execve(get_path(envp, token->cmd), &token->cmd, envp);
+//	if (!tmp)
+//	{
+//		if (!(pid = fork()))
+//		{
+			execve(get_path(envp, token->cmd), &token->cmd, envp);
+//		}
+//	}
+//	else
+//		execve(get_path(envp, token->cmd), &token->cmd, envp);
+//	wait(&pid);
 }
 
 int	ft_redirect_dev(t_token *token, char **env)
@@ -175,40 +189,41 @@ int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
 	t_token	*tmp;
+	int		pid;
 
-	cmd = *token;
-
-	if (cmd)
+	pid = fork();
+	if (pid == 0)
 	{
-		set_in_out_files(cmd);
-		dup2(cmd->fd.in_file, INFILE);
-		dup2(cmd->fd.out_file, OUTFILE);
-
-		ft_redirect_dev(cmd, env);
-		tmp = cmd;
-		tmp = tmp->next;
-		if (tmp)
+		cmd = *token;
+		if (cmd)
 		{
-//			cmd = cmd->next;
-			while (cmd->next)
+			set_in_out_files(cmd);
+			dup2(cmd->fd.in_file, INFILE);
+			dup2(cmd->fd.out_file, OUTFILE);
+
+			ft_redirect_dev(cmd, env);
+			tmp = cmd;
+			tmp = tmp->next;
+			if (tmp)
 			{
-				ft_redirect_dev(cmd, env);
-				tmp = cmd;
-				cmd = cmd->next;
+//			cmd = cmd->next;
+				while (cmd->next)
+				{
+					ft_redirect_dev(cmd, env);
+					tmp = cmd;
+					cmd = cmd->next;
+				}
+				do_exec_dev(cmd, env);
 			}
-			do_exec_dev(cmd, env);
+			else
+				do_exec_dev(cmd, env); // Don't remove this!!! Need correct check
 		}
-		else
-			do_exec_dev(cmd, env);
 	}
+	else
+		waitpid(pid, NULL, 0);
 //	return (EXIT_FAILURE);
 	return (0);
 }
-//
-//void	rl_redisplay(char **env)
-//{
-//
-//}
 
 int	main(int argc, char **argv, char **env)
 {
