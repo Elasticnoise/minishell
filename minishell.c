@@ -20,7 +20,7 @@ void free_list(t_token **head)
 	while (*head)
 	{
 		tmp = (*head)->next;
-		free((*head)->cmd); //todo Split free
+		free((*head)->str); //todo Split free
 		free(*head);
 		*head = tmp;
 	}
@@ -240,7 +240,7 @@ int	main(int argc, char **argv, char **env)
 //		free(line);
 //		free_list(token);
 //		status = executor(&token, env);
-		executor(&token, env);
+//		executor(&token, env);
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}

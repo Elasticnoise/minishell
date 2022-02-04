@@ -61,9 +61,10 @@ typedef struct s_token
 {
 	char	**cmd; //[1] ls [2] -la [3]
 	char	*str;  // >>. <<<
-	int		type;
 	char 	*infile;
 	char	*outfile;
+//	char	*greater;
+//	char	*lesser;
 //	void			*content;
 //	enum	e_TokenType type;
 	struct s_token *next;
@@ -121,3 +122,5 @@ int 	is_builtin(t_main *main);
 //tgoto, tputs
 
 int parser(char *line, t_token **token, char *env[]);
+int quotes(char *line, int i);
+char	**ft_q_split(char const *s, char c);

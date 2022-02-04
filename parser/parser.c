@@ -129,24 +129,70 @@ char	*destroy_space(char *line)
 }
 
 
+# include <string.h>
 t_token *new_token(char	*str)
 {
 	t_token *token;
 	int		i;
-
+	int		help;
+	char 	*new_string;
+	char	*to_free;
+	char	*to_free2;
 	i = 0;
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
+	ft_memset((void *)token, 0, sizeof(t_token));
 //	token->cmd = str;
 	token->str = str;
-	token->type = 0;
 	token->next = NULL;
 	token->prev = NULL;
+//	token->outfile = NULL;
+//	token->infile = NULL;
+	to_free2 = NULL;
+	new_string = NULL;
 	while (str[i])
 	{
-
+		if (!check_delimiter(str[i]) || check_delimiter(str[i]) == 1 ||
+		quotes(str, i))
+		{
+			help = i;
+			while (str[i] && ((!check_delimiter(str[i]) || check_delimiter
+			(str[i]) == 1)))
+				i++;
+			to_free = new_string;
+			if (!new_string)
+				new_string = ft_substr(str, help, i - help);
+			else
+			{
+				to_free2 = ft_substr(str, help, i - help);
+				new_string = ft_strjoin(new_string, to_free2);
+			}
+//			if (to_free)
+//				free(to_free);
+//			free(to_free2); //todo add clean
+		}
+		else if (check_delimiter(str[i]) == 4)
+		{
+			i++;
+			help = i;
+			while(str[i] && !check_delimiter(str[i]))
+				i++;
+			if (token->outfile)
+			{
+				free(token->outfile);
+				close(token->fd.out_file);
+			}
+			token->outfile = ft_substr(str, help, i - help);
+			token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+			S_IWUSR | S_IRGRP | S_IROTH);
+		}
+		else
+			i++;
 	}
+//	printf("%s -- cmd str\n", new_string);
+	token->cmd = ft_split(new_string, ' ');
+	free(new_string);
 	return (token);
 }
 
@@ -192,7 +238,17 @@ void get_tokens(char *line, t_token **head)
 	help = *head;
 	while (help)
 	{
-		printf("{%s} -- token\n", help->cmd);
+		i = 0;
+		while (help->cmd[i])
+		{
+			if (i == 0)
+				printf("CMD:    |%s|\n", help->cmd[i]);
+			else
+				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
+			i++;
+		}
+		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
+			   help->fd.out_file);
 		help = help->next;
 	}
 }
