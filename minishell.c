@@ -130,10 +130,6 @@ void	set_in_out_files(t_token *token)
 
 void	do_exec_dev(t_token *token, char **envp)
 {
-	int		pid;
-	pid_t	pipe_fd[2];
-
-	pid = fork();
 /*TODO Previous code*/
 //	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
 //	{
@@ -143,11 +139,7 @@ void	do_exec_dev(t_token *token, char **envp)
 //	}
 /*Code for find errors */
 //	printf("???????? - %s\n", get_path(envp, token->cmd));
-	if (pid == 0)
-	{
 		execve(get_path(envp, token->cmd), &token->cmd, envp);
-		printf("???????? - %s\n", get_path(envp, token->cmd));
-	}
 }
 
 int	ft_redirect_dev(t_token *token, char **env)
@@ -256,7 +248,7 @@ int	main(int argc, char **argv, char **env)
 //		status = executor(&token, env);
 		executor(&token, env);
 //		printf("1111!!!!!!!!!\n");
-		free_list(&token);
+//		free_list(&token);
 	}
 	return (0);
 }
