@@ -129,19 +129,70 @@ char	*destroy_space(char *line)
 }
 
 
+# include <string.h>
 t_token *new_token(char	*str)
 {
 	t_token *token;
-
+	int		i;
+	int		help;
+	char 	*new_string;
+	char	*to_free;
+	char	*to_free2;
+	i = 0;
 	token = malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
-	token->cmd = str;
-	token->type = 0;
-	token->infile = NULL;
-	token->outfile = NULL;
+	ft_memset((void *)token, 0, sizeof(t_token));
+//	token->cmd = str;
+	token->str = str;
 	token->next = NULL;
 	token->prev = NULL;
+//	token->outfile = NULL;
+//	token->infile = NULL;
+	to_free2 = NULL;
+	new_string = NULL;
+	while (str[i])
+	{
+		if (!check_delimiter(str[i]) || check_delimiter(str[i]) == 1 ||
+		quotes(str, i))
+		{
+			help = i;
+			while (str[i] && ((!check_delimiter(str[i]) || check_delimiter
+			(str[i]) == 1)))
+				i++;
+			to_free = new_string;
+			if (!new_string)
+				new_string = ft_substr(str, help, i - help);
+			else
+			{
+				to_free2 = ft_substr(str, help, i - help);
+				new_string = ft_strjoin(new_string, to_free2);
+			}
+//			if (to_free)
+//				free(to_free);
+//			free(to_free2); //todo add clean
+		}
+		else if (check_delimiter(str[i]) == 4)
+		{
+			i++;
+			help = i;
+			while(str[i] && !check_delimiter(str[i]))
+				i++;
+			if (token->outfile)
+			{
+				free(token->outfile);
+				close(token->fd.out_file);
+			}
+			token->outfile = ft_substr(str, help, i - help);
+			token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
+			S_IWUSR | S_IRGRP | S_IROTH);
+		}
+		else
+			i++;
+	}
+//	printf("%s -- cmd str\n", new_string);
+	token->cmd = ft_split(new_string, ' ');
+	free(new_string);
 	return (token);
 }
 
@@ -172,20 +223,13 @@ void get_tokens(char *line, t_token **head)
 	while (line[i] != '\0')
 	{
 		j = i;
-		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
-								   line[i] != '>' && line[i] != '|'))
+//		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
+//								   line[i] != '>' && line[i] != '|'))
+		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '|'))
 			i++;
 		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
 			i++;
 		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
-//		printf("%d -- i %d --- j\n", i , j);
-//		add_token_back(&(*head), new_token("hello"));
-//	(*head)->next = new_token("Raz");
-//	printf("%p\n",(*head)->next->next);
-//	(*head)->next->next = new_token("Tri"); //////// BUS ERROR
-//		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
-//	add_token_back(&head, new_token(ft_substr(line, j, i - j)));
-//		printf("%d -- i j\n", i - j);
 		if (line[i] == '\0')
 			break ;
 		i++;
@@ -194,18 +238,19 @@ void get_tokens(char *line, t_token **head)
 	help = *head;
 	while (help)
 	{
-		printf("{%s} -- token\n", help->cmd);
+		i = 0;
+		while (help->cmd[i])
+		{
+			if (i == 0)
+				printf("CMD:    |%s|\n", help->cmd[i]);
+			else
+				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
+			i++;
+		}
+		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
+			   help->fd.out_file);
 		help = help->next;
 	}
-
-//	help = *head;
-//	while (*head)
-//	{
-//		help = (*help).next;
-//		free((*help).cmd);
-//		help = *head;
-//	}
-//	return (*help);
 }
 
 int delim_check(char *line)
@@ -249,15 +294,7 @@ int parser(char *line, t_token **token, char *env[])
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-//	printf ("%d and %d and %d and %d\n", ' ', '|', '>', '<');
-//	//	head = NULL;
 	get_tokens(line, &head);
-//	t_token *help = head;
-//	while (help)
-//	{
-//		printf("%s -- token 2\n", help->cmd);
-//		help = help->next;
-//	}
 	*token = head; ////  Чтобы работало в мейне
 	return(0);
 }

@@ -20,7 +20,7 @@ void free_list(t_token **head)
 	while (*head)
 	{
 		tmp = (*head)->next;
-		free((*head)->cmd); //todo Split free
+		free((*head)->str); //todo Split free
 		free(*head);
 		*head = tmp;
 	}
@@ -118,42 +118,24 @@ void	set_in_out_files(t_token *token)
 			S_IWUSR | S_IRGRP | S_IROTH);
 	else
 		token->fd.out_file = 1;
-//	if (token->fd.in_file < 0)
-//	{
-//		ft_putstr_fd("cat: ", 2);
-//		ft_putstr_fd(token->infile, 2);
-//		ft_putstr_fd(": No such file or directory\n", 2);
-//	}
+	if (token->fd.in_file < 0)
+	{
+		ft_putstr_fd("cat: ", 2);
+		ft_putstr_fd(token->infile, 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+	}
 //	printf("in_file=%d\n", token->fd.in_file);
 //	printf("out_file=%d\n", token->fd.out_file);
 }
 
 void	do_exec_dev(t_token *token, char **envp)
 {
-//	pid_t		pid;
-//	t_token		*tmp;
-//
-//	tmp = token;
-//	tmp = tmp->next;
-/*TODO Previous code*/
-//	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
-//	{
-//		ft_putstr_fd("pipex: command not found: ", 2);
-//		ft_putstr_fd("\n", 2);
-////		free(cmd);
-//	}
-/*Code for find errors */
-//	printf("???????? - %s\n", get_path(envp, token->cmd));
-//	if (!tmp)
-//	{
-//		if (!(pid = fork()))
-//		{
-			execve(get_path(envp, token->cmd), &token->cmd, envp);
-//		}
-//	}
-//	else
-//		execve(get_path(envp, token->cmd), &token->cmd, envp);
-//	wait(&pid);
+	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
+	{
+		ft_putstr_fd("pipex: command not found: ", 2);
+		ft_putstr_fd("\n", 2);
+//		free(cmd);
+	}
 }
 
 int	ft_redirect_dev(t_token *token, char **env)
@@ -184,20 +166,21 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
-/*TODO непрвильно отрабатывает executor*/
+/*TODO uncorrect work with incorrect CMD and incorrect redirect*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
 	t_token	*tmp;
-	int		pid;
+	pid_t	pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		cmd = *token;
+
 		if (cmd)
 		{
-			set_in_out_files(cmd);
+//		set_in_out_files(cmd);
 			dup2(cmd->fd.in_file, INFILE);
 			dup2(cmd->fd.out_file, OUTFILE);
 
@@ -206,23 +189,28 @@ int	executor(t_token **token, char **env)
 			tmp = tmp->next;
 			if (tmp)
 			{
+//			printf("?%s\n", cmd->str);
 //			cmd = cmd->next;
 				while (cmd->next)
 				{
+//				printf("??%s\n", cmd->str);
+//					dup2(cmd->fd.in_file, INFILE);
+//					dup2(cmd->fd.out_file, OUTFILE);
 					ft_redirect_dev(cmd, env);
 					tmp = cmd;
 					cmd = cmd->next;
+//				printf("???%s\n", cmd->str);
 				}
 				do_exec_dev(cmd, env);
 			}
 			else
-				do_exec_dev(cmd, env); // Don't remove this!!! Need correct check
+				do_exec_dev(cmd, env);
 		}
 	}
 	else
 		waitpid(pid, NULL, 0);
 //	return (EXIT_FAILURE);
-	return (0);
+	return (1);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -247,13 +235,6 @@ int	main(int argc, char **argv, char **env)
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env);
-		t_token *help;
-		help = token;
-		while (help)
-		{
-			printf("%s --- cmd\n", help->cmd);
-			help = help->next;
-		}
 //		printf("%s\n", token->cmd);
 //		ft_exit(&token);
 //		rl_on_new_line();
@@ -263,7 +244,7 @@ int	main(int argc, char **argv, char **env)
 //		status = executor(&token, env);
 		executor(&token, env);
 //		printf("1111!!!!!!!!!\n");
-//		free_list(&token);
+		free_list(&token);
 	}
 	return (0);
 }
