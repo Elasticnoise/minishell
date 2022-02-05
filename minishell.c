@@ -130,19 +130,12 @@ void	set_in_out_files(t_token *token)
 
 void	do_exec_dev(t_token *token, char **envp)
 {
-//	char	**cmd;
-
-//	cmd = ft_split(token, ' ');
-
-//	printf("!!!!!!!!!\n");
 	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
 	{
 		ft_putstr_fd("pipex: command not found: ", 2);
 		ft_putstr_fd("\n", 2);
 //		free(cmd);
 	}
-//		printf("!!!!!!!!!\n");
-//	free(cmd);
 }
 
 int	ft_redirect_dev(t_token *token, char **env)
@@ -173,40 +166,49 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
-/*TODO непрвильно отрабатывает executor*/
+/*TODO uncorrect work with incorrect CMD and incorrect redirect*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
 	t_token	*tmp;
+	pid_t	pid;
 
-	cmd = *token;
-
-	if (cmd)
+	pid = fork();
+	if (pid == 0)
 	{
-//		set_in_out_files(cmd);
-		dup2(cmd->fd.in_file, INFILE);
-		dup2(cmd->fd.out_file, OUTFILE);
+		cmd = *token;
 
-		ft_redirect_dev(cmd, env);
-		tmp = cmd;
-		tmp = tmp->next;
-		if (tmp)
+		if (cmd)
 		{
+//		set_in_out_files(cmd);
+			dup2(cmd->fd.in_file, INFILE);
+			dup2(cmd->fd.out_file, OUTFILE);
+
+			ft_redirect_dev(cmd, env);
+			tmp = cmd;
+			tmp = tmp->next;
+			if (tmp)
+			{
 //			printf("?%s\n", cmd->str);
 //			cmd = cmd->next;
-			while (cmd->next)
-			{
+				while (cmd->next)
+				{
 //				printf("??%s\n", cmd->str);
-				ft_redirect_dev(cmd, env);
-				tmp = cmd;
-				cmd = cmd->next;
+//					dup2(cmd->fd.in_file, INFILE);
+//					dup2(cmd->fd.out_file, OUTFILE);
+					ft_redirect_dev(cmd, env);
+					tmp = cmd;
+					cmd = cmd->next;
 //				printf("???%s\n", cmd->str);
+				}
+				do_exec_dev(cmd, env);
 			}
-			do_exec_dev(cmd, env);
+			else
+				do_exec_dev(cmd, env);
 		}
-		else
-			do_exec_dev(cmd, env);
 	}
+	else
+		waitpid(pid, NULL, 0);
 //	return (EXIT_FAILURE);
 	return (1);
 }
