@@ -135,7 +135,7 @@ void	do_exec_dev(t_token *token, char **envp)
 //	cmd = ft_split(token, ' ');
 
 //	printf("!!!!!!!!!\n");
-	if (execve(get_path(envp, token->cmd), &token->cmd, envp) == -1)
+	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
 	{
 		ft_putstr_fd("pipex: command not found: ", 2);
 		ft_putstr_fd("\n", 2);
@@ -183,7 +183,7 @@ int	executor(t_token **token, char **env)
 
 	if (cmd)
 	{
-		set_in_out_files(cmd);
+//		set_in_out_files(cmd);
 		dup2(cmd->fd.in_file, INFILE);
 		dup2(cmd->fd.out_file, OUTFILE);
 
@@ -240,7 +240,7 @@ int	main(int argc, char **argv, char **env)
 //		free(line);
 //		free_list(token);
 //		status = executor(&token, env);
-//		executor(&token, env);
+		executor(&token, env);
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}
