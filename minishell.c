@@ -166,43 +166,28 @@ int	ft_redirect_dev(t_token *token, char **env)
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
-	t_token	*tmp;
 	pid_t	pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		cmd = *token;
-
 		if (cmd)
 		{
-//		set_in_out_files(cmd);
-			dup2(cmd->fd.in_file, INFILE);
-			dup2(cmd->fd.out_file, OUTFILE);
-
-			ft_redirect_dev(cmd, env);
-			tmp = cmd;
-			tmp = tmp->next;
-			if (tmp)
+			while (cmd->next)
 			{
-//			printf("?%s\n", cmd->str);
-//			cmd = cmd->next;
-				while (cmd->next)
-				{
-//				printf("??%s\n", cmd->str);
-//					dup2(cmd->fd.in_file, INFILE);
-					ft_redirect_dev(cmd, env);
-					tmp = cmd;
-					cmd = cmd->next;
-//				printf("???%s\n", cmd->str);
-				}
-				{
-					dup2(cmd->fd.out_file, OUTFILE);
-					do_exec_dev(cmd, env);
-				}
+//				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+				ft_redirect_dev(cmd, env);
+//				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+				cmd = cmd->next;
 			}
-			else
-				do_exec_dev(cmd, env);
+			if (cmd->outfile)
+			{
+//				dup2(cmd->fd.in_file, INFILE);
+				dup2(cmd->fd.out_file, OUTFILE);
+			}
+//			printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+			do_exec_dev(cmd, env);
 		}
 	}
 	else
