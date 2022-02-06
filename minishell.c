@@ -191,13 +191,15 @@ int	executor(t_token **token, char **env)
 				{
 //				printf("??%s\n", cmd->str);
 //					dup2(cmd->fd.in_file, INFILE);
-//					dup2(cmd->fd.out_file, OUTFILE);
 					ft_redirect_dev(cmd, env);
 					tmp = cmd;
 					cmd = cmd->next;
 //				printf("???%s\n", cmd->str);
 				}
-				do_exec_dev(cmd, env);
+				{
+					dup2(cmd->fd.out_file, OUTFILE);
+					do_exec_dev(cmd, env);
+				}
 			}
 			else
 				do_exec_dev(cmd, env);
