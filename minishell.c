@@ -124,18 +124,10 @@ void	set_in_out_files(t_token *token)
 		ft_putstr_fd(token->infile, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
 	}
-//	printf("in_file=%d\n", token->fd.in_file);
-//	printf("out_file=%d\n", token->fd.out_file);
 }
 
 void	do_exec_dev(t_token *token, char **envp)
 {
-//	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
-//	{
-//		ft_putstr_fd("pipex: command not found: ", 2);
-//		ft_putstr_fd("\n", 2);
-////		free(cmd);
-//	}
 	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
 	{
 		printf("Shkad: %s: command not found\n", token->cmd[0]);
