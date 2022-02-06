@@ -163,6 +163,7 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
+/*TODO works incorrectly ls -al | echo hi > a.txt | pwd*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
