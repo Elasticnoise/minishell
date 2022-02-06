@@ -130,11 +130,16 @@ void	set_in_out_files(t_token *token)
 
 void	do_exec_dev(t_token *token, char **envp)
 {
+//	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
+//	{
+//		ft_putstr_fd("pipex: command not found: ", 2);
+//		ft_putstr_fd("\n", 2);
+////		free(cmd);
+//	}
 	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
 	{
-		ft_putstr_fd("pipex: command not found: ", 2);
-		ft_putstr_fd("\n", 2);
-//		free(cmd);
+		printf("Shkad: %s: command not found\n", token->cmd[0]);
+		exit(127);
 	}
 }
 
@@ -166,7 +171,6 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
-/*TODO uncorrect work with incorrect CMD and incorrect redirect*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
