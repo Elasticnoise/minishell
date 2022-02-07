@@ -155,7 +155,6 @@ int	ft_redirect_dev(t_token *token, char **env)
 			dup2(pipe_fd[0], STDIN);
 		else
 			dup2(token->fd.in_file, STDIN);
-//		waitpid(pid, NULL, 0);
 	}
 	else
 	{
@@ -169,11 +168,9 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
-/*TODO works incorrectly ls -al | echo hi > a.txt | pwd*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
-	t_token	*prev_cmd;
 	pid_t	pid;
 
 	pid = fork();
@@ -182,22 +179,11 @@ int	executor(t_token **token, char **env)
 		cmd = *token;
 		if (cmd)
 		{
-//			dup2(cmd->fd.in_file, STDIN);
-//			dup2(cmd->fd.out_file, STDOUT);
 			while (cmd->next)
 			{
-//				ft_redirect_dev(cmd, env);
-//				prev_cmd = cmd;
-//				if (cmd->outfile)
-//				{
-//					printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
-////					dup2(cmd->fd.in_file, STDIN);
-//					dup2(cmd->fd.out_file, STDOUT);
-//				}
 				ft_redirect_dev(cmd, env);
 //				dup2(0, STDIN);
 //				dup2(1, STDOUT);
-//				prev_cmd = cmd;
 				cmd = cmd->next;
 			}
 			if (cmd->outfile)
@@ -205,7 +191,6 @@ int	executor(t_token **token, char **env)
 				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
 				dup2(cmd->fd.out_file, OUTFILE);
 			}
-//			printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
 //			dup2(cmd->fd.in_file, INFILE);
 //			dup2(cmd->fd.out_file, OUTFILE);
 			do_exec_dev(cmd, env);
