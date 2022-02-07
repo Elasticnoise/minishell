@@ -168,6 +168,14 @@ int	ft_redirect_dev(t_token *token, char **env)
 	return (0);
 }
 
+void handle_heredoc(t_token *cmd)
+{
+	if (cmd->limiter)
+	{
+
+	}
+}
+
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
@@ -179,27 +187,20 @@ int	executor(t_token **token, char **env)
 		cmd = *token;
 		if (cmd)
 		{
+			handle_heredoc(cmd);
 			dup2(cmd->fd.in_file, INFILE);
 			while (cmd->next)
 			{
 				ft_redirect_dev(cmd, env);
-//				dup2(0, STDIN);
-//				dup2(1, STDOUT);
 				cmd = cmd->next;
 			}
 			if (cmd->outfile)
-			{
-				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
 				dup2(cmd->fd.out_file, OUTFILE);
-			}
-//			dup2(cmd->fd.in_file, INFILE);
-//			dup2(cmd->fd.out_file, OUTFILE);
 			do_exec_dev(cmd, env);
 		}
 	}
 	else
 		waitpid(pid, NULL, 0);
-//	return (EXIT_FAILURE);
 	return (1);
 }
 
