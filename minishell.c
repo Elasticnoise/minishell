@@ -179,6 +179,7 @@ int	executor(t_token **token, char **env)
 		cmd = *token;
 		if (cmd)
 		{
+			dup2(cmd->fd.in_file, INFILE);
 			while (cmd->next)
 			{
 				ft_redirect_dev(cmd, env);
