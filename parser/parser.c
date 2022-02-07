@@ -235,22 +235,22 @@ void get_tokens(char *line, t_token **head)
 		i++;
 	}
 
-//	help = *head;
-//	while (help)
-//	{
-//		i = 0;
-//		while (help->cmd[i])
-//		{
-//			if (i == 0)
-//				printf("CMD:    |%s|\n", help->cmd[i]);
-//			else
-//				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
-//			i++;
-//		}
-//		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
-//			   help->fd.out_file);
-//		help = help->next;
-//	}
+	help = *head;
+	while (help)
+	{
+		i = 0;
+		while (help->cmd[i])
+		{
+			if (i == 0)
+				printf("CMD:    |%s|\n", help->cmd[i]);
+			else
+				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
+			i++;
+		}
+		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
+			   help->fd.out_file);
+		help = help->next;
+	}
 }
 
 int delim_check(char *line)

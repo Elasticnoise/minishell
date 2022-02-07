@@ -231,7 +231,9 @@ int	main(int argc, char **argv, char **env)
 //		free(line);
 //		free_list(token);
 //		status = executor(&token, env);
-		executor(&token, env);
+//		printf("|%c| 000000 CHAR\n",token->str[0]);
+//		if (token->str[0] != ' ')
+			executor(&token, env);
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}
