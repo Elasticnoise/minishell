@@ -24,24 +24,24 @@ void 	command_handler(char **cmd)
 	/*TODO Need to add some code */
 }
 
-void	execute(char **cmd)
+void	execute(t_token *token)
 {
-	if (ft_strncmp(main->cmd[1], "echo", 5) == 0)
-		ft_echo(cmd);
-	else if (ft_strncmp(main->cmd[1], "cd", 3) == 0)
-		ft_cd(cmd);
-	else if (ft_strncmp(main->cmd[1], "pwd", 4) == 0)
-		ft_pwd(cmd);
-	else if (ft_strncmp(main->cmd[1], "export", 7) == 0)
-		ft_export(cmd);
-	else if (ft_strncmp(main->cmd[1], "unset", 6) == 0)
-		ft_unset(cmd);
-	else if (ft_strncmp(main->cmd[1], "env", 4) == 0)
-		ft_env(cmd);
-	else if (ft_strncmp(main->cmd[1], "exit", 5) == 0)
-		ft_exit(cmd);
+	if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
+		ft_echo(token);
+	else if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
+		ft_cd(token);
+	else if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
+		ft_pwd(token);
+	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
+		ft_export(token);
+	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
+		ft_unset(token);
+	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
+		ft_env(token);
+	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
+		ft_exit(token);
 	else
-		command_handler(cmd);
+		command_handler(token);
 
 
 }

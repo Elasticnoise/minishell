@@ -124,17 +124,14 @@ void	set_in_out_files(t_token *token)
 		ft_putstr_fd(token->infile, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
 	}
-//	printf("in_file=%d\n", token->fd.in_file);
-//	printf("out_file=%d\n", token->fd.out_file);
 }
 
 void	do_exec_dev(t_token *token, char **envp)
 {
 	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
 	{
-		ft_putstr_fd("pipex: command not found: ", 2);
-		ft_putstr_fd("\n", 2);
-//		free(cmd);
+		printf("Shkad: %s: command not found\n", token->cmd[0]);
+		exit(127);
 	}
 }
 
@@ -154,57 +151,49 @@ int	ft_redirect_dev(t_token *token, char **env)
 	if (pid)
 	{
 		close(pipe_fd[1]);
-		dup2(pipe_fd[0], STDIN);
-//		waitpid(pid, NULL, 0);
+		if (!token->infile)
+			dup2(pipe_fd[0], STDIN);
+		else
+			dup2(token->fd.in_file, STDIN);
 	}
 	else
 	{
 		close(pipe_fd[0]);
-		dup2(pipe_fd[1], STDOUT);
+		if (!token->outfile)
+			dup2(pipe_fd[1], STDOUT);
+		else
+			dup2(token->fd.out_file, STDOUT);
 		do_exec_dev(token, env);
 	}
 	return (0);
 }
 
-/*TODO uncorrect work with incorrect CMD and incorrect redirect*/
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
-	t_token	*tmp;
 	pid_t	pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		cmd = *token;
-
 		if (cmd)
 		{
-//		set_in_out_files(cmd);
-			dup2(cmd->fd.in_file, INFILE);
-			dup2(cmd->fd.out_file, OUTFILE);
-
-			ft_redirect_dev(cmd, env);
-			tmp = cmd;
-			tmp = tmp->next;
-			if (tmp)
+			while (cmd->next)
 			{
-//			printf("?%s\n", cmd->str);
-//			cmd = cmd->next;
-				while (cmd->next)
-				{
-//				printf("??%s\n", cmd->str);
-//					dup2(cmd->fd.in_file, INFILE);
-//					dup2(cmd->fd.out_file, OUTFILE);
-					ft_redirect_dev(cmd, env);
-					tmp = cmd;
-					cmd = cmd->next;
-//				printf("???%s\n", cmd->str);
-				}
-				do_exec_dev(cmd, env);
+				ft_redirect_dev(cmd, env);
+//				dup2(0, STDIN);
+//				dup2(1, STDOUT);
+				cmd = cmd->next;
 			}
-			else
-				do_exec_dev(cmd, env);
+			if (cmd->outfile)
+			{
+				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+				dup2(cmd->fd.out_file, OUTFILE);
+			}
+//			dup2(cmd->fd.in_file, INFILE);
+//			dup2(cmd->fd.out_file, OUTFILE);
+			do_exec_dev(cmd, env);
 		}
 	}
 	else
@@ -242,7 +231,9 @@ int	main(int argc, char **argv, char **env)
 //		free(line);
 //		free_list(token);
 //		status = executor(&token, env);
-		executor(&token, env);
+//		printf("|%c| 000000 CHAR\n",token->str[0]);
+//		if (token->str[0] != ' ')
+			executor(&token, env);
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}
