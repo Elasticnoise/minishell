@@ -91,14 +91,13 @@ char	*destroy_space(char *line)
 {
 	char	*new_line;
 	int		i;
-	int		counter;
+	int		help;
 	int 	j;
-	int 	max;
+	int 	redir_type;
 
 	j = 0;
-	max = 0;
+	redir_type = 0;
 	i = 0;
-	counter = 1;
 	new_line = malloc(sizeof(char *) * malloc_sp(line));
 	while (line[i])
 	{
@@ -108,17 +107,20 @@ char	*destroy_space(char *line)
 			new_line[j++] = line[i];
 		else
 		{
-			max = 0;
+			redir_type = 0;
 			while (line[i] && check_delimiter(line[i]))
 			{
-				if (check_delimiter(line[i]) > max)
-					max = check_delimiter(line[i]);
+				if (check_delimiter(line[i]) > redir_type)
+				{
+					redir_type = check_delimiter(line[i]);
+					help = i;
+				}
 				i++;
 			}
-			new_line[j++] = set_del(max);
-			if (check_delimiter(line[i - 1]) > 2 && line[i - 2] && line[i - 1]
-			== line[i - 2])
-				new_line[j++] = set_del(max);
+			new_line[j++] = set_del(redir_type);
+			if (check_delimiter(line[help]) > 2 && line[help + 1] && line[help]
+			== line[help + 1])
+				new_line[j++] = set_del(redir_type);
 			i--;
 		}
 		i++;
@@ -143,12 +145,9 @@ t_token *new_token(char	*str)
 	if (!token)
 		return (NULL);
 	ft_memset((void *)token, 0, sizeof(t_token));
-//	token->cmd = str;
 	token->str = str;
 	token->next = NULL;
 	token->prev = NULL;
-//	token->outfile = NULL;
-//	token->infile = NULL;
 	to_free2 = NULL;
 	new_string = NULL;
 	while (str[i])
@@ -175,6 +174,8 @@ t_token *new_token(char	*str)
 		else if (check_delimiter(str[i]) == 4)
 		{
 			i++;
+			if (str[i] == '>')
+				i++;
 			help = i;
 			while(str[i] && !check_delimiter(str[i]))
 				i++;
@@ -184,8 +185,41 @@ t_token *new_token(char	*str)
 				close(token->fd.out_file);
 			}
 			token->outfile = ft_substr(str, help, i - help);
-			token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
-			S_IWUSR | S_IRGRP | S_IROTH);
+			if (str[help - 2] == '>')
+				token->fd.out_file = open(token->outfile, O_APPEND |
+														  O_WRONLY | O_CREAT,
+										  S_IRUSR |
+										  S_IWUSR | S_IRGRP | S_IROTH);
+			else
+				token->fd.out_file = open(token->outfile,
+										  O_TRUNC | O_WRONLY | O_CREAT,
+										  S_IRUSR |
+										  S_IWUSR | S_IRGRP | S_IROTH);
+		}
+		else if (check_delimiter(str[i]) == 3)
+		{
+			i++;
+			if (str[i] == '<')
+				i++;
+			help = i;
+			while(str[i] && !check_delimiter(str[i]))
+				i++;
+			if (token->infile)
+			{
+				free(token->infile);
+				close(token->fd.in_file);
+			}
+			if (str[help - 2] == '<')
+			{
+				if (token->limiter)
+					free(token->limiter);
+				token->limiter = ft_substr(str, help, i - help);
+			}
+			else
+			{
+				token->infile = ft_substr(str, help, i - help);
+				token->fd.in_file = open(token->infile, O_RDONLY);
+			}
 		}
 		else
 			i++;
@@ -249,6 +283,8 @@ void get_tokens(char *line, t_token **head)
 		}
 		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
 			   help->fd.out_file);
+		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
+			   help->fd.in_file);
 		help = help->next;
 	}
 }
