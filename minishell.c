@@ -151,13 +151,19 @@ int	ft_redirect_dev(t_token *token, char **env)
 	if (pid)
 	{
 		close(pipe_fd[1]);
-		dup2(pipe_fd[0], STDIN);
+		if (!token->infile)
+			dup2(pipe_fd[0], STDIN);
+		else
+			dup2(token->fd.in_file, STDIN);
 //		waitpid(pid, NULL, 0);
 	}
 	else
 	{
 		close(pipe_fd[0]);
-		dup2(pipe_fd[1], STDOUT);
+		if (!token->outfile)
+			dup2(pipe_fd[1], STDOUT);
+		else
+			dup2(token->fd.out_file, STDOUT);
 		do_exec_dev(token, env);
 	}
 	return (0);
@@ -167,6 +173,7 @@ int	ft_redirect_dev(t_token *token, char **env)
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
+	t_token	*prev_cmd;
 	pid_t	pid;
 
 	pid = fork();
@@ -175,19 +182,32 @@ int	executor(t_token **token, char **env)
 		cmd = *token;
 		if (cmd)
 		{
+//			dup2(cmd->fd.in_file, STDIN);
+//			dup2(cmd->fd.out_file, STDOUT);
 			while (cmd->next)
 			{
-//				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+//				ft_redirect_dev(cmd, env);
+//				prev_cmd = cmd;
+//				if (cmd->outfile)
+//				{
+//					printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+////					dup2(cmd->fd.in_file, STDIN);
+//					dup2(cmd->fd.out_file, STDOUT);
+//				}
 				ft_redirect_dev(cmd, env);
-//				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+//				dup2(0, STDIN);
+//				dup2(1, STDOUT);
+//				prev_cmd = cmd;
 				cmd = cmd->next;
 			}
 			if (cmd->outfile)
 			{
-//				dup2(cmd->fd.in_file, INFILE);
+				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
 				dup2(cmd->fd.out_file, OUTFILE);
 			}
 //			printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
+//			dup2(cmd->fd.in_file, INFILE);
+//			dup2(cmd->fd.out_file, OUTFILE);
 			do_exec_dev(cmd, env);
 		}
 	}
