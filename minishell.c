@@ -164,15 +164,33 @@ int	ft_redirect_dev(t_token *token, char **env)
 		else
 			dup2(token->fd.out_file, STDOUT);
 		do_exec_dev(token, env);
+		waitpid(pid, NULL, 0);
 	}
 	return (0);
 }
 
-void handle_heredoc(t_token *cmd)
+void	handle_heredoc(t_token **cmd)
 {
-	if (cmd->limiter)
-	{
+	int 	limiter;
+	int		fd;
+	char 	*line;
 
+	if ((*cmd)->limiter)
+	{
+		fd = open("tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+		while (1)
+		{
+			line = readline("> ");
+			limiter = ft_strncmp(line, (*cmd)->limiter, ft_strlen((*cmd)->limiter) + 1);
+			if (limiter == 0)
+				break ;
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+			free(line);
+		}
+		free(line);
+		(*cmd)->fd.in_file = fd;
+		close(fd);
 	}
 }
 
@@ -187,7 +205,9 @@ int	executor(t_token **token, char **env)
 		cmd = *token;
 		if (cmd)
 		{
-			handle_heredoc(cmd);
+			handle_heredoc(&cmd);
+			if (cmd->fd.in_file)
+				cmd->fd.in_file = open("tmp_file", O_RDONLY);
 			dup2(cmd->fd.in_file, INFILE);
 			while (cmd->next)
 			{

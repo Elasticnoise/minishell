@@ -267,25 +267,25 @@ void get_tokens(char *line, t_token **head)
 		i++;
 	}
 
-//	help = *head;
-//	while (help)
-//	{
-//		i = 0;
-//		while (help->cmd[i])
-//		{
-//			if (i == 0)
-//				printf("CMD:    |%s|\n", help->cmd[i]);
-//			else
-//				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
-//			i++;
-//		}
-//		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
-//			   help->fd.out_file);
-//		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
-//			   help->fd.in_file);
-//		printf("%s (limiter Name) and \n", help->limiter);
-//		help = help->next;
-//	}
+	help = *head;
+	while (help)
+	{
+		i = 0;
+		while (help->cmd[i])
+		{
+			if (i == 0)
+				printf("CMD:    |%s|\n", help->cmd[i]);
+			else
+				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
+			i++;
+		}
+		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
+			   help->fd.out_file);
+		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
+			   help->fd.in_file);
+		printf("%s (limiter Name) and \n", help->limiter);
+		help = help->next;
+	}
 }
 
 int delim_check(char *line)
@@ -328,7 +328,7 @@ int parser(char *line, t_token **token, char *env[])
 	if (delim_check(line))
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
-//	printf("New line: |%s|\n", line);
+	printf("New line: |%s|\n", line);
 	get_tokens(line, &head);
 	*token = head; ////  Чтобы работало в мейне
 	return(0);
