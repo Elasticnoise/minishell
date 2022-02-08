@@ -4,18 +4,24 @@
 
 #include "../minishell.h"
 
-int quotes(char *line, int i)
+int quotes(char *line, int j)
 {
 	char *help;
 	char *str;
+	int i;
 
+	i = 0;
 	while (line[i])
 	{
 		if (line[i] == '\'')
 		{
 			i++;
 			while (line[i] && line[i] != '\'')
+			{
 				i++;
+				if (i == j)
+					return (1);
+			}
 			if (!line[i])
 				return (1);
 		}
@@ -23,7 +29,11 @@ int quotes(char *line, int i)
 		{
 			i++;
 			while (line[i] && line[i] != '"')
+			{
 				i++;
+				if (i == j)
+					return (1);
+			}
 			if (!(line[i]))
 				return (1);
 		}
@@ -257,9 +267,7 @@ void get_tokens(char *line, t_token **head)
 	while (line[i] != '\0')
 	{
 		j = i;
-//		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
-//								   line[i] != '>' && line[i] != '|'))
-		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '|'))
+		while (line[i] != '\0' && !(!quotes(line, i) && line[i] == '|'))
 			i++;
 		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
 			i++;
