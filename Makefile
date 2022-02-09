@@ -1,7 +1,6 @@
 LIBFT = ./libft/libft.a
 
 CFLAGS = -Wall -Werror -Wextra -I./
-
 NAME = minishell
 
 NAME_B = minishell_bonus

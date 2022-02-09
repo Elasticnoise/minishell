@@ -1,4 +1,4 @@
-//
+ //
 // Created by Leota Chalmers on 12/25/21.
 //
 #ifndef MINISHELL_MINISHELL_H
@@ -38,6 +38,13 @@ typedef struct s_token
 	struct s_token *prev;
 	t_fd	fd;
 }		t_token;
+
+typedef struct s_env
+{
+	char *name;
+	char *data;
+	struct s_env *next;
+} t_env;
 
 typedef struct s_main
 {

@@ -26,33 +26,6 @@ void free_list(t_token **head)
 	}
 }
 
-//void	parser(char *line, t_main *main)
-//{
-//	return ;
-//}
-//
-//void	init_param(t_main *main, char **argv, char **envp)
-//{
-//	char **cmd;
-//
-//	cmd = ft_split(argv[1], ' ');
-//}
-
-//t_list *ft_lstnew(char	*str)
-//{
-//	t_list *list;
-//
-//	list = malloc(sizeof(t_list *));
-//	if (!list)
-//		return (NULL);
-//	list->cmd = str;
-//	list->argv = NULL;
-//	list->next = NULL;
-//	return (list);
-//}
-//
-
-
 
 char	*set_var(char *line, int i, char **env)
 {
@@ -85,27 +58,6 @@ char	*set_var(char *line, int i, char **env)
 //	free(var_value);
 	return (begin);
 }
-
-//int executor(t_token *node)
-//{
-//	t_token *cmd;
-//
-//	cmd = node;
-//	while (cmd != NULL)
-//	{
-//		if (INT_HEREDOC)
-//		{
-//			return (0);
-//		}
-//		else if (INT_PIPE)
-//		{
-//			return (0);
-//		}
-//		else if ()
-//
-//		cmd = cmd->next;
-//	}
-//}
 
 void	set_in_out_files(t_token *token)
 {
@@ -203,6 +155,74 @@ int	executor(t_token **token, char **env)
 	return (1);
 }
 
+
+t_env	*new_env(char *name, char *data)
+{
+	t_env *n_env;
+
+	n_env = malloc(sizeof(t_env *));
+	if (!n_env)
+		return (NULL);
+	n_env->name = name;
+	n_env->data = data;
+	n_env->next = NULL;
+	return (n_env);
+}
+
+void add_env(t_env	**start, t_env *new)
+{
+	t_env *tmp;
+
+	tmp = *start;
+	if (tmp)
+	{
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+	}
+	else
+		*start = new;
+}
+
+void	get_env(char **env, t_env **n_env) ////todo malloc check
+{
+//	char	*line;
+	int		i;
+	int 	j;
+	int		start;
+	char	*data;
+	char 	*name;
+
+	j = 0;
+	i = 0;
+	while (env[i])
+	{
+		start = 0;
+		j = 0;
+		while (env[i][j])
+		{
+			if (start == 0 && env[i][j] == '=')
+			{
+				name = ft_substr(env[i], 0, j);
+				start = j + 1;
+			}
+			j++;
+		}
+		data = ft_substr(env[i], start, j);
+		printf("%s=%s HELP\n", name, data);
+		add_env(&(*n_env), new_env(name, data));
+		i++;
+	}
+
+//	t_env *help;
+//	help = *n_env;
+//	while (help)
+//	{
+//		printf("%s=%s HELP\n", help->name, help->data);
+//		help=help->next;
+//	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
@@ -212,11 +232,13 @@ int	main(int argc, char **argv, char **env)
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
+	t_env	*n_env;
 	if (argc != 1)
 		return (1);
 
 	status = 1;
-
+	n_env = NULL;
+//	get_env(env, &n_env); //todo SEG FAULT
 	while(1)
 	{
 //		ft_putstr_fd("sh> ", 1);
@@ -229,8 +251,6 @@ int	main(int argc, char **argv, char **env)
 //		ft_exit(&token);
 //		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
-//		free(line);
-//		free_list(token);
 //		status = executor(&token, env);
 //		printf("|%c| 000000 CHAR\n",token->str[0]);
 //		if (token->str[0] != ' ')

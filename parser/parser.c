@@ -4,36 +4,24 @@
 
 #include "../minishell.h"
 
-int quotes(char *line, int j)
+int quotes(char *line, int i)
 {
 	char *help;
 	char *str;
-	int i;
 
-	i = 0;
 	while (line[i])
 	{
 		if (line[i] == '\'')
 		{
 			i++;
 			while (line[i] && line[i] != '\'')
-			{
 				i++;
-				if (i == j)
-					return (1);
-			}
-			if (!line[i])
-				return (1);
 		}
 		else if (line[i] == '"')
 		{
 			i++;
 			while (line[i] && line[i] != '"')
-			{
 				i++;
-				if (i == j)
-					return (1);
-			}
 			if (!(line[i]))
 				return (1);
 		}
@@ -106,7 +94,6 @@ char	*destroy_space(char *line)
 	int 	redir_type;
 
 	j = 0;
-	redir_type = 0;
 	i = 0;
 	new_line = malloc(sizeof(char *) * malloc_sp(line));
 	while (line[i])
@@ -234,9 +221,21 @@ t_token *new_token(char	*str)
 		else
 			i++;
 	}
-//	printf("%s -- cmd str\n", new_string);
-	token->cmd = ft_split(new_string, ' ');
+	printf("%s -- cmd str\n", new_string);
+	token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
+	i = 0;
+	char *tmp;
+	while (token->cmd[i])
+	{
+		if (token->cmd[i][0] == '"' || token->cmd[i][0] == '\'')
+		{
+			tmp = token->cmd[i];
+			token->cmd[i] = ft_substr(token->cmd[i], 1, ft_strlen(tmp) - 1);
+			free(tmp);
+		}
+		i++;
+	}
 	return (token);
 }
 
