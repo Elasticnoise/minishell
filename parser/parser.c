@@ -224,18 +224,35 @@ t_token *new_token(char	*str)
 	printf("%s -- cmd str\n", new_string);
 	token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
+
 	i = 0;
-	char *tmp;
+	int j = 0;
 	while (token->cmd[i])
 	{
-		if (token->cmd[i][0] == '"' || token->cmd[i][0] == '\'')
+		if (token->cmd[i][0] == '\'')
+			continue ;
+		while (token->cmd[i][j])
 		{
-			tmp = token->cmd[i];
-			token->cmd[i] = ft_substr(token->cmd[i], 1, ft_strlen(tmp) - 1);
-			free(tmp);
+			if (token->cmd[i][j] == '$')
+			{
+				do_smth;
+			}
+			j++;
 		}
-		i++;
 	}
+	////todo under is func to delete first """ or "'"
+//	i = 0;
+//	char *tmp;
+//	while (token->cmd[i])
+//	{
+//		if (token->cmd[i][0] == '"' || token->cmd[i][0] == '\'')
+//		{
+//			tmp = token->cmd[i];
+//			token->cmd[i] = ft_substr(token->cmd[i], 1, ft_strlen(tmp) - 1);
+//			free(tmp);
+//		}
+//		i++;
+//	}
 	return (token);
 }
 

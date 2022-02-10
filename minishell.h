@@ -97,4 +97,5 @@ int 	is_builtin(t_main *main);
 
 int parser(char *line, t_token **token, char *env[]);
 int quotes(char *line, int i);
-char	**ft_q_split(char const *s, char c);
+char	**ft_q_split(char *s, char c);
+int check_delimiter(char c);
