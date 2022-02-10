@@ -128,8 +128,49 @@ char	*destroy_space(char *line)
 }
 
 
-# include <string.h>
-t_token *new_token(char	*str)
+void	set_dollar(char **str, int *start, t_env **env)
+{
+	int i;
+	char *begin;
+	char *new;
+	char *end;
+	char *tmp;
+	t_env *help;
+	char *s;
+
+	s = *str;
+	i = *start;
+	help = *env;
+	begin = ft_substr(s, 0, *start); //todo malloc check
+	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
+		i++;
+	new = ft_substr(s, *start, i - *start); //todo malloc check
+	while (help)
+	{
+		if (!ft_strncmp(help->name, new, ft_strlen(new) + 1))
+		{
+			free(new);
+			tmp = ft_strjoin(begin, new);
+			free(begin);
+			free(new);
+		}
+		help = help->next;
+	}
+
+	*start = i;
+	while (s[i])
+		i++;
+	end = ft_substr(s, *start, i);
+	free(*str);
+//	begin = ft_strjoin(tmp, end);
+	*str = ft_strjoin(tmp, end);
+//	free(begin);
+//	free(new);
+//	free(end);
+//	return (s);
+}
+
+t_token *new_token(char	*str, t_env **env)
 {
 	t_token *token;
 	int		i;
@@ -234,11 +275,10 @@ t_token *new_token(char	*str)
 		while (token->cmd[i][j])
 		{
 			if (token->cmd[i][j] == '$')
-			{
-				do_smth;
-			}
+				set_dollar(&token->cmd[i], &j, &(*env));
 			j++;
 		}
+		i++;
 	}
 	////todo under is func to delete first """ or "'"
 //	i = 0;
@@ -272,7 +312,7 @@ void	add_token_back(t_token **head, t_token *new)
 		*head = new;
 }
 
-void get_tokens(char *line, t_token **head)
+void get_tokens(char *line, t_token **head, t_env **env)
 {
 	t_token *help;
 	int		i;
@@ -287,7 +327,7 @@ void get_tokens(char *line, t_token **head)
 			i++;
 		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
 			i++;
-		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
+		add_token_back(&(*head), new_token(ft_substr(line, j, i - j), &(*env)) );
 		if (line[i] == '\0')
 			break ;
 		i++;
@@ -342,7 +382,7 @@ int delim_check(char *line)
 	return (0);
 }
 
-int parser(char *line, t_token **token, char *env[])
+int parser(char *line, t_token **token, char *env[], t_env **n_env)
 {
 	int i;
 	int prev;
@@ -355,7 +395,7 @@ int parser(char *line, t_token **token, char *env[])
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-	get_tokens(line, &head);
+	get_tokens(line, &head, &(*n_env));
 	*token = head; ////  Чтобы работало в мейне
 	return(0);
 }

@@ -269,7 +269,7 @@ int	main(int argc, char **argv, char **env)
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 		if (line && *line)
 			add_history(line);
-		parser(line, &token, env);
+		parser(line, &token, env, &n_env);
 //		print_env(&n_env);
 //		printf("%s\n", token->cmd);
 //		ft_exit(&token);

@@ -68,31 +68,6 @@ static size_t	segments(char const *s, char c)
 	return (i);
 }
 
-char	*set_dollar(char *s, int start)
-{
-	int i;
-	char *begin;
-	char *new;
-	char *end;
-	char *tmp;
-
-	i = start;
-	begin = ft_substr(s, 0, start); //todo malloc check
-	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
-		i++;
-	new = ft_substr(s, start, i - start);
-	start = i;
-	while (s[i])
-		i++;
-	end = ft_substr(s, start, i);
-//	free(s);
-	tmp = ft_strjoin(begin, new);
-	s = ft_strjoin(tmp, end);
-//	free(begin);
-//	free(new);
-//	free(end);
-	return (s);
-}
 
 static size_t	elem_size(char *s, char c)
 {
@@ -102,15 +77,7 @@ static size_t	elem_size(char *s, char c)
 	flag = 1;
 	len = 0;
 	while (s[len] != '\0' && (s[len] != c || new_quotes(s, len)))
-	{
-//		if (s[len] == '\'' && !new_quotes(s, len))
-//			flag = 0;
-//		if (flag == 1 && s[len] == '$')
-//			s = set_dollar(s, len);
 		len++;
-//		if (!new_quotes(s, len))
-//			flag = 1;
-	}
 	if (s[len - 1] == '"' || s[len - 1] == '\'')
 		len--;
 	return (len);
