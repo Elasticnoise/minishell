@@ -273,7 +273,8 @@ int	main(int argc, char **argv, char **env)
 //		print_env(&n_env);
 //		printf("%s\n", token->cmd);
 //		ft_exit(&token);
-//		rl_on_new_line();
+
+		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		status = executor(&token, env);
 //		printf("|%c| 000000 CHAR\n",token->str[0]);

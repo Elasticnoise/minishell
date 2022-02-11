@@ -112,8 +112,8 @@ static char	**arr_fill(char *s, char c, size_t num_segment, char **arr)
 		j = 0;
 		while (j < len)
 			arr[i][j++] = *s++;
-		if (*s == '\'' || *s == '"')
-			*s++;
+//		if (*s == '\'' || *s == '"')
+//			*s++;
 		arr[i][j] = '\0';
 		i++;
 	}
