@@ -157,11 +157,14 @@ int	main(int argc, char **argv, char **env)
 
 	status = 1;
 
+	signal(SIGQUIT, SIG_IGN);
 	while(1)
 	{
 //		ft_putstr_fd("sh> ", 1);
 //		get_next_line(1 , &line);
+		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
+		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env);
@@ -175,6 +178,7 @@ int	main(int argc, char **argv, char **env)
 //		printf("|%c| 000000 CHAR\n",token->str[0]);
 //		if (token->str[0] != ' ')
 			executor(&token, env);
+		unlink("tmp_file");
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}

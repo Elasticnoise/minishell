@@ -21,6 +21,8 @@
 // шрифтом, выделить
 # define BEGIN(x,y) "\001\033["#x";"#y"m\002"
 
+int signal_exit_status;
+
 typedef struct s_fd
 {
 	int in_file;
@@ -70,6 +72,10 @@ int 	ft_export(char **env);
 int 	ft_pwd(t_main *main);
 int 	ft_echo(t_main *main);
 int 	is_builtin(t_main *main);
+
+/*SIGNALS*/
+void	sig_handler(int signum);
+void	sig_handler2(int signum);
 //readline add_history
 //
 //rl_clear_history,
