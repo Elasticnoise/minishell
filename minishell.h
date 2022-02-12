@@ -10,8 +10,10 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include "lexer.h"
-# include <readline/readline.h>
-# include <readline/history.h>
+//# include <readline/readline.h>
+//# include <readline/history.h>
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 
 # define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
 # define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным

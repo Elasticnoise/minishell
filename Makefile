@@ -1,6 +1,6 @@
 LIBFT = ./libft/libft.a
 
-CFLAGS = -Wall -Werror -Wextra -I./
+CFLAGS = -Wall -Werror -Wextra -I../../.brew/opt/readline/include  -I./
 NAME = minishell
 
 NAME_B = minishell_bonus
@@ -20,7 +20,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 		$(MAKE) -C ./libft
-		$(CC) -lreadline -o $(NAME) $(OBJ) ./libft/libft.a
+		$(CC) -lreadline -L ../../.brew/opt/readline/lib  $(CFLAGS) -o $(NAME) $(OBJ) ./libft/libft.a
 
 #$(NAME1): $(OBJ1)
 #		$(MAKE) -C ./libft

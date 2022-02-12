@@ -323,7 +323,6 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
-//	list_to_env(&n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);
 	new_env = list_to_env(&n_env);
@@ -348,7 +347,7 @@ int	main(int argc, char **argv, char **env)
 //		status = executor(&token, env);
 //		printf("|%c| 000000 CHAR\n",token->str[0]);
 //		if (token->str[0] != ' ')
-			executor(&token, new_env);
+			executor(&token, env);
 		unlink("tmp_file");
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
