@@ -16,7 +16,7 @@ int quotes(char *line, int i)
 			i++;
 			while (line[i] && line[i] != '\'')
 				i++;
-			if (!line[i])
+			if (!(line[i]))
 				return (1);
 		}
 		else if (line[i] == '"')
@@ -96,7 +96,6 @@ char	*destroy_space(char *line)
 	int 	redir_type;
 
 	j = 0;
-	redir_type = 0;
 	i = 0;
 	new_line = malloc(sizeof(char *) * malloc_sp(line));
 	while (line[i])
@@ -130,7 +129,61 @@ char	*destroy_space(char *line)
 	return (new_line);
 }
 
-t_token *new_token(char	*str)
+
+void	set_dollar(char **str, int start, t_env **env)
+{
+
+	int i = start;
+	char *s;
+	char *new;
+	t_env *help;
+	char *res;
+	int end;
+
+	help = *env;
+	s = *str;
+	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
+		i++;
+	end = i;
+	new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
+	while (help)
+	{
+		if (!ft_strncmp(help->name, new, ft_strlen(new)))
+		{
+			free(new);
+			break ;
+		}
+		help = help->next;
+	}
+	if (help)
+	{
+		res = ft_calloc(ft_strlen(s) - 1 - (i - start) + ft_strlen(help->data),
+						1);
+		i = 0;
+		while (i < start)
+		{
+			res[i] = s[i];
+			i++;
+		}
+		int j = 0;
+		while (j < ft_strlen(help->data))
+		{
+			res[i] = help->data[j];
+			i++;
+			j++;
+		}
+		while (s[end])
+		{
+			res[i] = s[end];
+			i++;
+			end++;
+		}
+		free(*str);
+		*str = res;
+	}
+}
+
+t_token *new_token(char	*str, t_env **env)
 {
 	t_token *token;
 	int		i;
@@ -222,9 +275,46 @@ t_token *new_token(char	*str)
 		else
 			i++;
 	}
-//	printf("%s -- cmd str\n", new_string);
-	token->cmd = ft_split(new_string, ' ');
+	printf("%s -- cmd str\n", new_string);
+	token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
+//	printf("%s -- cmd str\n", new_string);
+	i = 0;
+	int j;
+	while (token->cmd[i])
+	{
+		if (token->cmd[i][0] == '\'')
+		{
+			i++;
+			continue;
+		}
+		j = 0;
+		while (token->cmd[i][j])
+		{
+			if (token->cmd[i][j] == '$' && token->cmd[i][j + 1] &&
+			token->cmd[i][j + 1] != check_delimiter(token->cmd[i][j + 1]) &&
+			token->cmd[i][j + 1] != '\'' && token->cmd[i][j + 1] != '"')
+			{
+				set_dollar(&token->cmd[i], j, &(*env));
+				j = 0; //todo maybe to delete
+			}
+			j++;
+		}
+		i++;
+	}
+	////todo under is func to delete first """ or "'"
+//	i = 0;
+//	char *tmp;
+//	while (token->cmd[i])
+//	{
+//		if (token->cmd[i][0] == '"' || token->cmd[i][0] == '\'')
+//		{
+//			tmp = token->cmd[i];
+//			token->cmd[i] = ft_substr(token->cmd[i], 1, ft_strlen(tmp) - 1);
+//			free(tmp);
+//		}
+//		i++;
+//	}
 	return (token);
 }
 
@@ -244,7 +334,7 @@ void	add_token_back(t_token **head, t_token *new)
 		*head = new;
 }
 
-void get_tokens(char *line, t_token **head)
+void get_tokens(char *line, t_token **head, t_env **env)
 {
 	t_token *help;
 	int		i;
@@ -255,13 +345,11 @@ void get_tokens(char *line, t_token **head)
 	while (line[i] != '\0')
 	{
 		j = i;
-//		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '<' &&
-//								   line[i] != '>' && line[i] != '|'))
-		while (line[i] != '\0' && (!quotes(line, i) && line[i] != '|'))
+		while (line[i] != '\0' && !(!quotes(line, i) && line[i] == '|'))
 			i++;
 		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
 			i++;
-		add_token_back(&(*head), new_token(ft_substr(line, j, i - j)));
+		add_token_back(&(*head), new_token(ft_substr(line, j, i - j), &(*env)) );
 		if (line[i] == '\0')
 			break ;
 		i++;
@@ -283,7 +371,6 @@ void get_tokens(char *line, t_token **head)
 			   help->fd.out_file);
 		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
 			   help->fd.in_file);
-		printf("%s (limiter Name) and \n", help->limiter);
 		help = help->next;
 	}
 }
@@ -316,7 +403,7 @@ int delim_check(char *line)
 	return (0);
 }
 
-int parser(char *line, t_token **token, char *env[])
+int parser(char *line, t_token **token, char *env[], t_env **n_env)
 {
 	int i;
 	int prev;
@@ -329,7 +416,7 @@ int parser(char *line, t_token **token, char *env[])
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
 	printf("New line: |%s|\n", line);
-	get_tokens(line, &head);
+	get_tokens(line, &head, &(*n_env));
 	*token = head; ////  Чтобы работало в мейне
 	return(0);
 }

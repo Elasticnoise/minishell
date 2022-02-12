@@ -26,6 +26,39 @@ void free_list(t_token **head)
 	}
 }
 
+
+char	*set_var(char *line, int i, char **env)
+{
+	char	*begin;
+	char	*end;
+	char	*var;
+	char	*var_value;
+	int		j;
+
+	i++;
+	j = i;
+	begin = ft_substr(line, 0, i);
+	while (line[j] != ' ')
+		j++;
+	if (j != i)
+		var_value = "$";
+	else
+		var_value = ft_substr(env[i], ft_strlen(var) + 1,
+							  ft_strlen(env[i]) - (ft_strlen(var) + 1));
+	var = ft_substr(line, i, j - i);
+	end = ft_substr(line, j, ft_strlen(line) - j);
+	i = 0;
+	while (ft_strncmp(env[i], var, ft_strlen(var)) != 0)
+		i++;
+	begin = ft_strjoin(begin, var_value);
+	begin = ft_strjoin(begin, " ");
+	begin = ft_strjoin(begin, end);
+	free(end);
+	printf("'%s' -- cmd\n", var_value);
+//	free(var_value);
+	return (begin);
+}
+
 void	set_in_out_files(t_token *token)
 {
 	if (token->infile)
@@ -143,6 +176,96 @@ int	executor(t_token **token, char **env)
 	return (1);
 }
 
+
+t_env	*new_env(char *name, char *data)
+{
+	t_env	*n_env;
+
+	n_env = malloc(sizeof(t_env));
+	if (!n_env)
+		return (NULL);
+	n_env->name = name;
+	n_env->data = data;
+	n_env->next = NULL;
+	return (n_env);
+}
+
+void add_env(t_env	**start, t_env *new)
+{
+	t_env *tmp;
+
+	tmp = *start;
+	if (tmp)
+	{
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+	}
+	else
+		*start = new;
+}
+
+void	set_env(char **env, t_env **n_env) ////todo malloc check
+{
+	int		i;
+	int 	j;
+	int		start;
+	char	*data;
+	char 	*name;
+
+	j = 0;
+	i = 0;
+	while (env[i])
+	{
+		start = 0;
+		j = 0;
+		while (env[i][j])
+		{
+			if (start == 0 && env[i][j] == '=')
+			{
+				name = ft_substr(env[i], 0, j);
+				start = j + 1;
+			}
+			j++;
+		}
+		data = ft_substr(env[i], start, j);
+		add_env(&(*n_env), new_env(name, data));
+		i++;
+	}
+}
+
+void print_env(t_env **start)
+{
+	t_env *help;
+
+	help = *start;
+	while (help)
+	{
+		printf("%s=%s\n", help->name, help->data);
+		help=help->next;
+	}
+}
+
+void lvl_up(t_env **start)
+{
+	t_env	*tmp;
+	int		lvl;
+
+	tmp = *start;
+	while (tmp)
+	{
+		if (!ft_strncmp(tmp->name, "SHLVL", 6))
+		{
+			lvl = ft_atoi(tmp->data);
+			lvl++;
+			free(tmp->data);
+			tmp->data = ft_itoa(lvl);
+			break;
+		}
+		tmp = tmp->next;
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
@@ -152,12 +275,16 @@ int	main(int argc, char **argv, char **env)
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
+	t_env	*n_env;
 	if (argc != 1)
 		return (1);
 
 	status = 1;
 
 	signal(SIGQUIT, SIG_IGN);
+	n_env = NULL;
+	set_env(env, &n_env);
+	lvl_up(&n_env);
 	while(1)
 	{
 //		ft_putstr_fd("sh> ", 1);
@@ -167,10 +294,12 @@ int	main(int argc, char **argv, char **env)
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
-		parser(line, &token, env);
+		parser(line, &token, env, &n_env);
+//		print_env(&n_env);
 //		printf("%s\n", token->cmd);
 //		ft_exit(&token);
-//		rl_on_new_line();
+
+		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
 //		free_list(token);

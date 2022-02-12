@@ -1,4 +1,4 @@
-//
+ //
 // Created by Leota Chalmers on 12/25/21.
 //
 #ifndef MINISHELL_MINISHELL_H
@@ -40,6 +40,13 @@ typedef struct s_token
 	struct s_token *prev;
 	t_fd	fd;
 }		t_token;
+
+typedef struct s_env
+{
+	char *name;
+	char *data;
+	struct s_env *next;
+} t_env;
 
 typedef struct s_main
 {
@@ -94,6 +101,7 @@ void	sig_handler2(int signum);
 //tcgetattr, tgetent, tgetflag, tgetnum, tgetstr,
 //tgoto, tputs
 
-int parser(char *line, t_token **token, char *env[]);
+int parser(char *line, t_token **token, char *env[], t_env **n_env);
 int quotes(char *line, int i);
-char	**ft_q_split(char const *s, char c);
+char	**ft_q_split(char *s, char c);
+int check_delimiter(char c);
