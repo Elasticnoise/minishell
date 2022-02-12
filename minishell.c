@@ -225,6 +225,46 @@ void print_env(t_env **start)
 	}
 }
 
+char **list_to_env(t_env **start)
+{
+	t_env *help;
+	char **new_env;
+	char *tmp;
+	int i;
+	int j;
+
+	j = 0;
+	help = *start;
+	while (help)
+	{
+		help = help->next;
+		j++;
+	}
+//	printf("%d\n", j);
+	help = *start;
+	new_env = malloc(sizeof(char *) * j); //todo malloc check
+//	printf("%s\n", new_env[i]);
+	i = 0;
+	while (i < j)
+	{
+//		printf("%d\n", i);
+		tmp = ft_strjoin(help->name, "=");
+		new_env[i] = ft_strjoin(tmp, help->data);
+		i++;
+		free(tmp);
+		help = help->next;
+	}
+	new_env[i] = NULL;
+//	i = 0;
+//	while (new_env[i])
+//	{
+//		printf("%s -- FROM NEW\n", new_env[i]);
+//		i++;
+//	}
+//	printf("END\n");
+	return (new_env);
+}
+
 void lvl_up(t_env **start)
 {
 	t_env	*tmp;
@@ -261,6 +301,7 @@ int	main(int argc, char **argv, char **env)
 	status = 1;
 	n_env = NULL;
 	set_env(env, &n_env);
+//	list_to_env(&n_env);
 	lvl_up(&n_env);
 	while(1)
 	{
