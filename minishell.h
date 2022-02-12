@@ -11,6 +11,7 @@
 # include <stdio.h>
 # include "lexer.h"
 # include <readline/readline.h>
+# include <readline/history.h>
 
 # define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
 # define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным
@@ -20,6 +21,8 @@
 # define	OUTFILE	1
 // шрифтом, выделить
 # define BEGIN(x,y) "\001\033["#x";"#y"m\002"
+
+int signal_exit_status;
 
 typedef struct s_fd
 {
@@ -77,6 +80,10 @@ int 	ft_export(char **env);
 int 	ft_pwd(t_main *main);
 int 	ft_echo(t_main *main);
 int 	is_builtin(t_main *main);
+
+/*SIGNALS*/
+void	sig_handler(int signum);
+void	sig_handler2(int signum);
 //readline add_history
 //
 //rl_clear_history,

@@ -371,7 +371,6 @@ void get_tokens(char *line, t_token **head, t_env **env)
 			   help->fd.out_file);
 		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
 			   help->fd.in_file);
-		printf("%s (limiter Name) \n", help->limiter);
 		help = help->next;
 	}
 }

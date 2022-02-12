@@ -116,8 +116,34 @@ int	ft_redirect_dev(t_token *token, char **env)
 		else
 			dup2(token->fd.out_file, STDOUT);
 		do_exec_dev(token, env);
+		waitpid(pid, NULL, 0);
 	}
 	return (0);
+}
+
+void	handle_heredoc(t_token **cmd)
+{
+	int 	limiter;
+	int		fd;
+	char 	*line;
+
+	if ((*cmd)->limiter)
+	{
+		fd = open("tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+		while (1)
+		{
+			line = readline("> ");
+			limiter = ft_strncmp(line, (*cmd)->limiter, ft_strlen((*cmd)->limiter) + 1);
+			if (limiter == 0)
+				break ;
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+			free(line);
+		}
+		free(line);
+		(*cmd)->fd.in_file = fd;
+		close(fd);
+	}
 }
 
 int	executor(t_token **token, char **env)
@@ -131,27 +157,22 @@ int	executor(t_token **token, char **env)
 		cmd = *token;
 		if (cmd)
 		{
+			handle_heredoc(&cmd);
+			if (cmd->fd.in_file)
+				cmd->fd.in_file = open("tmp_file", O_RDONLY);
 			dup2(cmd->fd.in_file, INFILE);
 			while (cmd->next)
 			{
 				ft_redirect_dev(cmd, env);
-//				dup2(0, STDIN);
-//				dup2(1, STDOUT);
 				cmd = cmd->next;
 			}
 			if (cmd->outfile)
-			{
-				printf("!!!!!!!!!!!!-%s\n",cmd->cmd[0]);
 				dup2(cmd->fd.out_file, OUTFILE);
-			}
-//			dup2(cmd->fd.in_file, INFILE);
-//			dup2(cmd->fd.out_file, OUTFILE);
 			do_exec_dev(cmd, env);
 		}
 	}
 	else
 		waitpid(pid, NULL, 0);
-//	return (EXIT_FAILURE);
 	return (1);
 }
 
@@ -299,6 +320,8 @@ int	main(int argc, char **argv, char **env)
 		return (1);
 
 	status = 1;
+
+	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
 //	list_to_env(&n_env);
@@ -307,7 +330,9 @@ int	main(int argc, char **argv, char **env)
 	{
 //		ft_putstr_fd("sh> ", 1);
 //		get_next_line(1 , &line);
+//		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
+//		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env, &n_env);
@@ -317,10 +342,13 @@ int	main(int argc, char **argv, char **env)
 
 		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
+//		free(line);
+//		free_list(token);
 //		status = executor(&token, env);
 //		printf("|%c| 000000 CHAR\n",token->str[0]);
 //		if (token->str[0] != ' ')
 			executor(&token, env);
+		unlink("tmp_file");
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}
