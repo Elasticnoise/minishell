@@ -9,7 +9,7 @@ char *get_path(char **envp, char *cmd)
 	char *row_path;
 
 	i = 0;
-	while (ft_strnstr(envp[i], "PATH", ft_strlen(envp[i]) == 0))
+	while (ft_strnstr(envp[i], "PATH", 4) == 0)
 		i++;
 	paths = ft_split(envp[i] + 5, ':');
 	i = 0;

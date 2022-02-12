@@ -261,10 +261,8 @@ char **list_to_env(t_env **start)
 		help = help->next;
 		j++;
 	}
-//	printf("%d\n", j);
 	help = *start;
 	new_env = malloc(sizeof(char *) * j); //todo malloc check
-//	printf("%s\n", new_env[i]);
 	i = 0;
 	while (i < j)
 	{
@@ -327,6 +325,7 @@ int	main(int argc, char **argv, char **env)
 	set_env(env, &n_env);
 //	list_to_env(&n_env);
 	lvl_up(&n_env);
+//	new_env = list_to_env(&n_env);
 	new_env = list_to_env(&n_env);
 	while(1)
 	{
@@ -349,7 +348,7 @@ int	main(int argc, char **argv, char **env)
 //		status = executor(&token, env);
 //		printf("|%c| 000000 CHAR\n",token->str[0]);
 //		if (token->str[0] != ' ')
-			executor(&token, env);
+			executor(&token, new_env);
 		unlink("tmp_file");
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
