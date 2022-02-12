@@ -289,9 +289,9 @@ int	main(int argc, char **argv, char **env)
 	{
 //		ft_putstr_fd("sh> ", 1);
 //		get_next_line(1 , &line);
-		signal(SIGINT, &sig_handler);
+//		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
-		signal(SIGINT, &sig_handler2);
+//		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env, &n_env);
