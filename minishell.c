@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/errno.h>
 #include "minishell.h"
 
 void free_list(t_token **head)
@@ -151,6 +152,8 @@ int	executor(t_token **token, char **env)
 	t_token	*cmd;
 	pid_t	pid;
 
+	int status;
+//	perror("1ERror: ");
 	pid = fork();
 	if (pid == 0)
 	{
@@ -172,7 +175,12 @@ int	executor(t_token **token, char **env)
 		}
 	}
 	else
-		waitpid(pid, NULL, 0);
+		waitpid(pid, &status, 0);
+//	if (WIFEXITED(status) && status != 0)
+//	{
+//		printf("exit status = %d\n", WIFEXITED(status));
+//		fflush(NULL);
+//	}
 	return (1);
 }
 
@@ -274,23 +282,25 @@ int	main(int argc, char **argv, char **env)
 	t_token *token;
 	(void)	argv;
 	(void)	argc;
-	(void)	(env);
+//	(void)	(env);
 	t_env	*n_env;
 	if (argc != 1)
 		return (1);
 
 	status = 1;
 
-	signal(SIGQUIT, SIG_IGN);
+//	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
-	set_env(env, &n_env);
+//	set_env(env, &n_env);
 	lvl_up(&n_env);
 	while(1)
 	{
+		errno = 0;
 //		ft_putstr_fd("sh> ", 1);
 //		get_next_line(1 , &line);
 //		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
+
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
@@ -299,7 +309,7 @@ int	main(int argc, char **argv, char **env)
 //		printf("%s\n", token->cmd);
 //		ft_exit(&token);
 
-		rl_on_new_line();
+//		rl_on_new_line();
 //		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
 //		free(line);
 //		free_list(token);
@@ -310,6 +320,7 @@ int	main(int argc, char **argv, char **env)
 		unlink("tmp_file");
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
+
 	}
 	return (0);
 }
