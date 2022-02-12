@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/errno.h>
 #include "minishell.h"
 
 void free_list(t_token **head)
@@ -152,8 +151,6 @@ int	executor(t_token **token, char **env)
 	t_token	*cmd;
 	pid_t	pid;
 
-	int status;
-//	perror("1ERror: ");
 	pid = fork();
 	if (pid == 0)
 	{
@@ -175,12 +172,7 @@ int	executor(t_token **token, char **env)
 		}
 	}
 	else
-		waitpid(pid, &status, 0);
-//	if (WIFEXITED(status) && status != 0)
-//	{
-//		printf("exit status = %d\n", WIFEXITED(status));
-//		fflush(NULL);
-//	}
+		waitpid(pid, NULL, 0);
 	return (1);
 }
 
@@ -254,6 +246,46 @@ void print_env(t_env **start)
 	}
 }
 
+char **list_to_env(t_env **start)
+{
+	t_env *help;
+	char **new_env;
+	char *tmp;
+	int i;
+	int j;
+
+	j = 0;
+	help = *start;
+	while (help)
+	{
+		help = help->next;
+		j++;
+	}
+//	printf("%d\n", j);
+	help = *start;
+	new_env = malloc(sizeof(char *) * j); //todo malloc check
+//	printf("%s\n", new_env[i]);
+	i = 0;
+	while (i < j)
+	{
+//		printf("%d\n", i);
+		tmp = ft_strjoin(help->name, "=");
+		new_env[i] = ft_strjoin(tmp, help->data);
+		i++;
+		free(tmp);
+		help = help->next;
+	}
+	new_env[i] = NULL;
+//	i = 0;
+//	while (new_env[i])
+//	{
+//		printf("%s -- FROM NEW\n", new_env[i]);
+//		i++;
+//	}
+//	printf("END\n");
+	return (new_env);
+}
+
 void lvl_up(t_env **start)
 {
 	t_env	*tmp;
@@ -280,27 +312,28 @@ int	main(int argc, char **argv, char **env)
 	int 	status;
 	t_main	main;
 	t_token *token;
+	char **new_env;
 	(void)	argv;
 	(void)	argc;
-//	(void)	(env);
+	(void)	(env);
 	t_env	*n_env;
 	if (argc != 1)
 		return (1);
 
 	status = 1;
 
-//	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
-//	set_env(env, &n_env);
+	set_env(env, &n_env);
+//	list_to_env(&n_env);
 	lvl_up(&n_env);
+	new_env = list_to_env(&n_env);
 	while(1)
 	{
-		errno = 0;
 //		ft_putstr_fd("sh> ", 1);
 //		get_next_line(1 , &line);
 //		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
-
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
@@ -320,7 +353,6 @@ int	main(int argc, char **argv, char **env)
 		unlink("tmp_file");
 //		printf("1111!!!!!!!!!\n");
 		free_list(&token);
-
 	}
 	return (0);
 }

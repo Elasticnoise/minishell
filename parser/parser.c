@@ -281,7 +281,7 @@ t_token *new_token(char	*str, t_env **env)
 //	printf("%s -- cmd str\n", new_string);
 	i = 0;
 	int j;
-	while (token->cmd[i])
+	while (token->cmd && token->cmd[i])
 	{
 		if (token->cmd[i][0] == '\'')
 		{
@@ -359,7 +359,7 @@ void get_tokens(char *line, t_token **head, t_env **env)
 	while (help)
 	{
 		i = 0;
-		while (help->cmd[i])
+		while (help->cmd && help->cmd[i])
 		{
 			if (i == 0)
 				printf("CMD:    |%s|\n", help->cmd[i]);
