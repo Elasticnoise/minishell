@@ -312,6 +312,7 @@ int	main(int argc, char **argv, char **env)
 	int 	status;
 	t_main	main;
 	t_token *token;
+	char **new_env;
 	(void)	argv;
 	(void)	argc;
 	(void)	(env);
@@ -326,6 +327,7 @@ int	main(int argc, char **argv, char **env)
 	set_env(env, &n_env);
 //	list_to_env(&n_env);
 	lvl_up(&n_env);
+	new_env = list_to_env(&n_env);
 	while(1)
 	{
 //		ft_putstr_fd("sh> ", 1);
