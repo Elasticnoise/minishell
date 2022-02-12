@@ -328,28 +328,17 @@ int	main(int argc, char **argv, char **env)
 	new_env = list_to_env(&n_env);
 	while(1)
 	{
-//		ft_putstr_fd("sh> ", 1);
-//		get_next_line(1 , &line);
+
 //		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env, &n_env);
-//		print_env(&n_env);
-//		printf("%s\n", token->cmd);
-//		ft_exit(&token);
 
 		rl_on_new_line();
-//		rl_redisplay(); //todo Ф-ция для того, чтобы работало cntrl + d
-//		free(line);
-//		free_list(token);
-//		status = executor(&token, env);
-//		printf("|%c| 000000 CHAR\n",token->str[0]);
-//		if (token->str[0] != ' ')
-			executor(&token, env);
+			executor(&token, new_env);
 		unlink("tmp_file");
-//		printf("1111!!!!!!!!!\n");
 		free_list(&token);
 	}
 	return (0);
