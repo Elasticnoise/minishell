@@ -130,58 +130,58 @@ char	*destroy_space(char *line)
 }
 
 
-void	set_dollar(char **str, int start, t_env **env)
-{
-
-	int i = start;
-	char *s;
-	char *new;
-	t_env *help;
-	char *res;
-	int end;
-
-	help = *env;
-	s = *str;
-	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
-		i++;
-	end = i;
-	new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
-	while (help)
-	{
-		if (!ft_strncmp(help->name, new, ft_strlen(new)))
-		{
-			free(new);
-			break ;
-		}
-		help = help->next;
-	}
-	if (help)
-	{
-		res = ft_calloc(ft_strlen(s) - 1 - (i - start) + ft_strlen(help->data),
-						1);
-		i = 0;
-		while (i < start)
-		{
-			res[i] = s[i];
-			i++;
-		}
-		int j = 0;
-		while (j < ft_strlen(help->data))
-		{
-			res[i] = help->data[j];
-			i++;
-			j++;
-		}
-		while (s[end])
-		{
-			res[i] = s[end];
-			i++;
-			end++;
-		}
-		free(*str);
-		*str = res;
-	}
-}
+//void	set_dollar(char **str, int start, t_env **env)
+//{
+//
+//	int i = start;
+//	char *s;
+//	char *new;
+//	t_env *help;
+//	char *res;
+//	int end;
+//
+//	help = *env;
+//	s = *str;
+//	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
+//		i++;
+//	end = i;
+//	new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
+//	while (help)
+//	{
+//		if (!ft_strncmp(help->name, new, ft_strlen(new)))
+//		{
+//			free(new);
+//			break ;
+//		}
+//		help = help->next;
+//	}
+//	if (help)
+//	{
+//		res = ft_calloc(ft_strlen(s) - 1 - (i - start) + ft_strlen(help->data),
+//						1);
+//		i = 0;
+//		while (i < start)
+//		{
+//			res[i] = s[i];
+//			i++;
+//		}
+//		int j = 0;
+//		while (j < ft_strlen(help->data))
+//		{
+//			res[i] = help->data[j];
+//			i++;
+//			j++;
+//		}
+//		while (s[end])
+//		{
+//			res[i] = s[end];
+//			i++;
+//			end++;
+//		}
+//		free(*str);
+//		*str = res;
+//	}
+//}
 
 t_token *new_token(char	*str, t_env **env)
 {
@@ -236,6 +236,7 @@ t_token *new_token(char	*str, t_env **env)
 				close(token->fd.out_file);
 			}
 			token->outfile = ft_substr(str, help, i - help);
+			dollar_outfile(&token, env);
 			if (str[help - 2] == '>')
 				token->fd.out_file = open(token->outfile, O_APPEND |
 														  O_WRONLY | O_CREAT,
@@ -269,6 +270,7 @@ t_token *new_token(char	*str, t_env **env)
 			else
 			{
 				token->infile = ft_substr(str, help, i - help);
+				dollar_infile(&token, env);
 				token->fd.in_file = open(token->infile, O_RDONLY);
 			}
 		}
@@ -279,29 +281,8 @@ t_token *new_token(char	*str, t_env **env)
 	token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
 //	printf("%s -- cmd str\n", new_string);
-	i = 0;
-	int j;
-	while (token->cmd && token->cmd[i])
-	{
-		if (token->cmd[i][0] == '\'')
-		{
-			i++;
-			continue;
-		}
-		j = 0;
-		while (token->cmd[i][j])
-		{
-			if (token->cmd[i][j] == '$' && token->cmd[i][j + 1] &&
-			token->cmd[i][j + 1] != check_delimiter(token->cmd[i][j + 1]) &&
-			token->cmd[i][j + 1] != '\'' && token->cmd[i][j + 1] != '"')
-			{
-				set_dollar(&token->cmd[i], j, &(*env));
-				j = 0; //todo maybe to delete
-			}
-			j++;
-		}
-		i++;
-	}
+
+	dollar_cmd(&token, env);
 	////todo under is func to delete first """ or "'"
 //	i = 0;
 //	char *tmp;
@@ -405,8 +386,6 @@ int delim_check(char *line)
 
 int parser(char *line, t_token **token, char *env[], t_env **n_env)
 {
-	int i;
-	int prev;
 	t_token *head;
 
 	head = *token;

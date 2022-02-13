@@ -102,3 +102,9 @@ int parser(char *line, t_token **token, char *env[], t_env **n_env);
 int quotes(char *line, int i);
 char	**ft_q_split(char *s, char c);
 int check_delimiter(char c);
+
+/*Dollar_set*/
+void	dollar_cmd(t_token **token, t_env **env);
+ void dollar_infile(t_token **token, t_env **env);
+void	set_dollar(char **str, int start, t_env **env);
+void	dollar_outfile(t_token **token, t_env **env);

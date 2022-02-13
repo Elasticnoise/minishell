@@ -158,7 +158,7 @@ int	executor(t_token **token, char **env)
 		if (cmd)
 		{
 			handle_heredoc(&cmd);
-			if (cmd->fd.in_file)
+			if (cmd->limiter)
 				cmd->fd.in_file = open("tmp_file", O_RDONLY);
 			dup2(cmd->fd.in_file, INFILE);
 			while (cmd->next)
@@ -350,7 +350,7 @@ int	main(int argc, char **argv, char **env)
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);
-	new_env = list_to_env(&n_env);
+//	new_env = list_to_env(&n_env);
 	while(1)
 	{
 
@@ -361,6 +361,7 @@ int	main(int argc, char **argv, char **env)
 			add_history(line);
 		parser(line, &token, env, &n_env);
 		rl_on_new_line();
+		new_env = list_to_env(&n_env);
 		executor(&token, new_env);
 		unlink("tmp_file");
 //		free(line);
