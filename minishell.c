@@ -78,14 +78,18 @@ void	set_in_out_files(t_token *token)
 	}
 }
 
+/*TODO need to change char **envp to t_env *envp*/
 void	do_exec_dev(t_token *token, char **envp)
 {
-//	if (is_builtin(token->cmd[0]))
-//		do_builtins(token, env)
-	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
+	if (is_builtin(token->cmd[0]))
+		do_builtins(token, envp);
+	else
 	{
-		printf("Shkad: %s: command not found\n", token->cmd[0]);
-		exit(127);
+		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
+		{
+			printf("Shkad: %s: command not found\n", token->cmd[0]);
+			exit(127);
+		}
 	}
 }
 
@@ -307,6 +311,27 @@ void lvl_up(t_env **start)
 	}
 }
 
+void lvl_down(t_env **start)
+{
+	t_env	*tmp;
+	int		lvl;
+
+	tmp = *start;
+	while (tmp)
+	{
+		if (!ft_strncmp(tmp->name, "SHLVL", 6))
+		{
+			lvl = ft_atoi(tmp->data);
+			if (lvl > 1)
+				lvl--;
+			free(tmp->data);
+			tmp->data = ft_itoa(lvl);
+			break;
+		}
+		tmp = tmp->next;
+	}
+}
+
 
 #include <termios.h>
 #include <unistd.h>
@@ -349,7 +374,9 @@ int	main(int argc, char **argv, char **env)
 	rc = tcsetattr(0, 0, &termios_save );
 
 	signal(SIGQUIT, SIG_IGN);
+
 	n_env = NULL;
+	printf("sigterm: %d\n", SIGTERM);
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);
