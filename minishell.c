@@ -168,6 +168,7 @@ int	executor(t_token **token, char **env)
 			}
 			if (cmd->outfile)
 				dup2(cmd->fd.out_file, OUTFILE);
+			waitpid(pid, NULL, 0);
 			do_exec_dev(cmd, env);
 		}
 	}
@@ -356,13 +357,14 @@ int	main(int argc, char **argv, char **env)
 
 		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
-//		signal(SIGINT, &sig_handler2);
+		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env, &n_env);
+		new_env = list_to_env(&n_env);
 		rl_on_new_line();
 		new_env = list_to_env(&n_env);
-		executor(&token, new_env);
+		executor(&token, env);
 		unlink("tmp_file");
 //		free(line);
 		free_list(&token);
