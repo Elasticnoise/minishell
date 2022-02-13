@@ -415,8 +415,10 @@ int parser(char *line, t_token **token, char *env[], t_env **n_env)
 	if (delim_check(line))
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
+//	printf("%p -- line\n", line);
 	printf("New line: |%s|\n", line);
 	get_tokens(line, &head, &(*n_env));
+	free(line);
 	*token = head; ////  Чтобы работало в мейне
 	return(0);
 }

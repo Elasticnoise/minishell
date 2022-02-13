@@ -304,6 +304,18 @@ void lvl_up(t_env **start)
 	}
 }
 
+
+#include <termios.h>
+#include <unistd.h>
+#include <signal.h>
+
+struct termios termios_save;
+
+void reset_the_terminal(void)
+{
+	tcsetattr(0, 0, &termios_save );
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
@@ -320,6 +332,19 @@ int	main(int argc, char **argv, char **env)
 
 	status = 1;
 
+
+//	struct termios termios_new;
+	int rc;
+	rc = tcgetattr(0, &termios_save );
+//	if (rc) {perror("tcgetattr"); exit(1); }
+
+	rc = atexit(reset_the_terminal);
+//	if (rc) {perror("atexit"); exit(1); }
+
+//	termios_new = termios_save;
+	termios_save.c_lflag &= ~ECHOCTL;
+	rc = tcsetattr(0, 0, &termios_save );
+
 	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
@@ -329,16 +354,16 @@ int	main(int argc, char **argv, char **env)
 	while(1)
 	{
 
-//		signal(SIGINT, &sig_handler);
+		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		parser(line, &token, env, &n_env);
-
 		rl_on_new_line();
-			executor(&token, new_env);
+		executor(&token, new_env);
 		unlink("tmp_file");
+//		free(line);
 		free_list(&token);
 	}
 	return (0);
