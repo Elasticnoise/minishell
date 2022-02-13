@@ -68,6 +68,8 @@ int	ft_redirect_dev(t_token *token, char **env);
 void	do_exec_dev(t_token *token, char **envp);
 
 /*BUILTINS*/
+//void	do_builtins(t_token *token,  t_env **env);
+//int 	is_builtin(char *cmd);
 int 	ft_exit(t_main *token);
 int 	ft_cd(char **env);
 void 	ft_env(t_main *main);

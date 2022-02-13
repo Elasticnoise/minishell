@@ -80,6 +80,8 @@ void	set_in_out_files(t_token *token)
 
 void	do_exec_dev(t_token *token, char **envp)
 {
+//	if (is_builtin(token->cmd[0]))
+//		do_builtins(token, env)
 	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
 	{
 		printf("Shkad: %s: command not found\n", token->cmd[0]);
@@ -263,7 +265,7 @@ char **list_to_env(t_env **start)
 		j++;
 	}
 	help = *start;
-	new_env = malloc(sizeof(char *) * j); //todo malloc check
+	new_env = malloc(sizeof(char *) * j + 1); //todo malloc check
 	i = 0;
 	while (i < j)
 	{
@@ -354,17 +356,15 @@ int	main(int argc, char **argv, char **env)
 //	new_env = list_to_env(&n_env);
 	while(1)
 	{
-
 		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
+		new_env = list_to_env(&n_env);
 		parser(line, &token, env, &n_env);
-		new_env = list_to_env(&n_env);
-		rl_on_new_line();
-		new_env = list_to_env(&n_env);
-		executor(&token, env);
+//		new_env = list_to_env(&n_env);
+		executor(&token, new_env);
 		unlink("tmp_file");
 //		free(line);
 		free_list(&token);
