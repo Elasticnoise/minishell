@@ -311,6 +311,27 @@ void lvl_up(t_env **start)
 	}
 }
 
+void lvl_down(t_env **start)
+{
+	t_env	*tmp;
+	int		lvl;
+
+	tmp = *start;
+	while (tmp)
+	{
+		if (!ft_strncmp(tmp->name, "SHLVL", 6))
+		{
+			lvl = ft_atoi(tmp->data);
+			if (lvl > 1)
+				lvl--;
+			free(tmp->data);
+			tmp->data = ft_itoa(lvl);
+			break;
+		}
+		tmp = tmp->next;
+	}
+}
+
 
 #include <termios.h>
 #include <unistd.h>
@@ -353,7 +374,9 @@ int	main(int argc, char **argv, char **env)
 	rc = tcsetattr(0, 0, &termios_save );
 
 	signal(SIGQUIT, SIG_IGN);
+
 	n_env = NULL;
+	printf("sigterm: %d\n", SIGTERM);
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);
