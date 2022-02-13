@@ -129,60 +129,6 @@ char	*destroy_space(char *line)
 	return (new_line);
 }
 
-
-//void	set_dollar(char **str, int start, t_env **env)
-//{
-//
-//	int i = start;
-//	char *s;
-//	char *new;
-//	t_env *help;
-//	char *res;
-//	int end;
-//
-//	help = *env;
-//	s = *str;
-//	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
-//		i++;
-//	end = i;
-//	new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
-//	while (help)
-//	{
-//		if (!ft_strncmp(help->name, new, ft_strlen(new)))
-//		{
-//			free(new);
-//			break ;
-//		}
-//		help = help->next;
-//	}
-//	if (help)
-//	{
-//		res = ft_calloc(ft_strlen(s) - 1 - (i - start) + ft_strlen(help->data),
-//						1);
-//		i = 0;
-//		while (i < start)
-//		{
-//			res[i] = s[i];
-//			i++;
-//		}
-//		int j = 0;
-//		while (j < ft_strlen(help->data))
-//		{
-//			res[i] = help->data[j];
-//			i++;
-//			j++;
-//		}
-//		while (s[end])
-//		{
-//			res[i] = s[end];
-//			i++;
-//			end++;
-//		}
-//		free(*str);
-//		*str = res;
-//	}
-//}
-
 t_token *new_token(char	*str, t_env **env)
 {
 	t_token *token;
@@ -271,7 +217,7 @@ t_token *new_token(char	*str, t_env **env)
 			{
 				token->infile = ft_substr(str, help, i - help);
 				dollar_infile(&token, env);
-				token->fd.in_file = open(token->infile, O_RDONLY);
+				token->fd.in_file = open(token->infile, O_RDONLY); //TODO ADD IF
 			}
 		}
 		else
