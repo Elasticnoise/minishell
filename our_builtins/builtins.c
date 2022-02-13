@@ -13,27 +13,123 @@
 
 /* TODO 1) to split builtins for owns files. 2) export, unset, cd, exit need to developed */
 /* TODO 2) При исполнении $, нужно проверять текст выводимого значения и если нужно исполнять команды" */
-//int 	is_builtin(char *cmd)
-//{
-//	if (ft_strncmp(cmd, "echo", 5) == 0)
-//		return (1);
-//	if (ft_strncmp(cmd, "cd", 3) == 0)
-//		return (2);
-//	if (ft_strncmp(cmd, "pwd", 4) == 0)
-//		return (3);
-//	if (ft_strncmp(cmd, "export", 7) == 0)
-//		return (4);
-//	if (ft_strncmp(cmd, "unset", 6) == 0)
-//		return (5);
-//	if (ft_strncmp(cmd, "env", 4) == 0)
-//		return (6);
-//	if (ft_strncmp(cmd, "exit", 5) == 0)
-//		return (7);
-//	return (0);
-//}
+int 	is_builtin(char *cmd)
+{
+	if (ft_strncmp(cmd, "echo", 5) == 0)
+		return (1);
+	if (ft_strncmp(cmd, "cd", 3) == 0)
+		return (2);
+	if (ft_strncmp(cmd, "pwd", 4) == 0)
+		return (3);
+	if (ft_strncmp(cmd, "export", 7) == 0)
+		return (4);
+	if (ft_strncmp(cmd, "unset", 6) == 0)
+		return (5);
+	if (ft_strncmp(cmd, "env", 4) == 0)
+		return (6);
+	if (ft_strncmp(cmd, "exit", 5) == 0)
+		return (7);
+	return (0);
+}
 
-//void do_builtins(t_token *token, t_env **env)
-//{
+int	ft_check_exit_status(char *str)
+{
+	int	i;
+	int	sign;
+
+	sign = 0;
+	i = 0;
+	if (str && (str[i] == '-' || str[i] == '+'))
+	{
+		i++;
+		sign++;
+	}
+	while (str && str[i] != '\0')
+	{
+		if (!ft_isdigit(str[i]))
+			return (-1);
+		i++;
+	}
+	if ((i - sign) > 19)
+		return (-1);
+	return (0);
+}
+
+int	ft_check_n(long long int n, char c)
+{
+	long long int	max;
+	long long int	min;
+
+	max = 9223372036854775807;
+	min = -9223372036854775807;
+	if (n > max / 10 || n < min / 10)
+		return (-1);
+	if (n == (max / 10) && (c == '8' || c == '9'))
+		return (-1);
+	if (n == (min / 10) && c == '9')
+		return (-1);
+	return (0);
+}
+
+int	ft_exit_status(char *str)
+{
+	long long int	n;
+	int				i;
+	int				sign;
+
+	if (str && ft_strncmp("-9223372036854775808", str, ft_strlen(str)) == 0)
+		return (0);
+	n = 0;
+	sign = 1;
+	i = 0;
+	if (str && str[i] == '-')
+		sign = -1;
+	if (str && (str[i] == '-' || str[i] == '+'))
+		i++;
+	while (str && ft_isdigit(str[i]))
+	{
+		if (ft_check_n(n, str[i]))
+			return (-1);
+		n = 10 * n + (str[i] - 48) * sign;
+		i++;
+	}
+	n = n % 256;
+	while (n < 0)
+		n = n + 256;
+	return (n);
+}
+
+void	ft_exit_err_msg(char *str)
+{
+	signal_exit_status = 255;
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(str, 2);
+	ft_putstr_fd(": numeric argument required\n", 2);
+}
+
+int 	ft_exit(t_token *token)
+{
+	ft_putstr_fd("exit\n", 1);
+	if (ft_check_exit_status(token->cmd[1]))
+		ft_exit_err_msg(token->cmd[1]);
+	else
+	{
+		if (token->cmd[1] && token->cmd[2])
+		{
+			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+			return (1);
+		}
+		signal_exit_status = ft_exit_status(token->cmd[1]);
+		if (signal_exit_status == -1)
+			ft_exit_err_msg(token->cmd[1]);
+	}
+	printf("%d\n", signal_exit_status);
+	return (signal_exit_status);
+	exit(signal_exit_status);
+}
+
+int	do_builtins(t_token *token, char **env)
+{
 //	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
 //		signal_exit_status = ft_cd(token, env);
 //	else if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
@@ -42,13 +138,13 @@
 //		signal_exit_status = ft_echo(token);
 //	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
 //		signal_exit_status = ft_env(token, env);
-//	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
-//		signal_exit_status = ft_exit(token);
+	if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
+		return (signal_exit_status = ft_exit(token));
 //	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
 //		signal_exit_status = ft_unset(token, env);
 //	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
 //		signal_exit_status = ft_export(token, env);
-//}
+}
 
 //int 	ft_echo(t_main *main)
 //{
@@ -116,31 +212,6 @@ int check_exit_status(t_main *main)
 {
 	return (0);
 }
-
-
-//int 	ft_exit(t_main *token)
-//{
-//
-//	mini->exit = 1;
-//	ft_putstr_fd("exit ", STDERR);
-//	cmd[1] ? ft_putendl_fd("❤️", STDERR) : ft_putendl_fd("💚", STDERR);
-//	if (cmd[1] && cmd[2])
-//	{
-//		mini->ret = 1;
-//		ft_putendl_fd("minishell: exit: too many arguments", STDERR);
-//	}
-//	else if (cmd[1] && ft_strisnum(cmd[1]) == 0)
-//	{
-//		mini->ret = 255;
-//		ft_putstr_fd("minishell: exit: ", STDERR);
-//		ft_putstr_fd(cmd[1], STDERR);
-//		ft_putendl_fd(": numeric argument required", STDERR);
-//	}
-//	else if (cmd[1])
-//		mini->ret = ft_atoi(cmd[1]);
-//	else
-//		mini->ret = 0;
-//}
 
 //int 	main(int argc, char **argv, char **envp)
 //{

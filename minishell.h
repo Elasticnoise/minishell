@@ -68,16 +68,15 @@ int	ft_redirect_dev(t_token *token, char **env);
 void	do_exec_dev(t_token *token, char **envp);
 
 /*BUILTINS*/
-//void	do_builtins(t_token *token,  t_env **env);
-//int 	is_builtin(char *cmd);
-int 	ft_exit(t_main *token);
+int		do_builtins(t_token *token, char **env);
+int 	is_builtin(char *cmd);
+int 	ft_exit(t_token *token);
 int 	ft_cd(char **env);
 void 	ft_env(t_main *main);
 int 	ft_unset(char **env);
 int 	ft_export(char **env);
 int 	ft_pwd(t_main *main);
 int 	ft_echo(t_main *main);
-int 	is_builtin(t_main *main);
 
 /*SIGNALS*/
 void	sig_handler(int signum);

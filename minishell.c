@@ -78,14 +78,18 @@ void	set_in_out_files(t_token *token)
 	}
 }
 
+/*TODO need to change char **envp to t_env *envp*/
 void	do_exec_dev(t_token *token, char **envp)
 {
-//	if (is_builtin(token->cmd[0]))
-//		do_builtins(token, env)
-	if (execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1)
+	if (is_builtin(token->cmd[0]))
+		do_builtins(token, envp);
+	else
 	{
-		printf("Shkad: %s: command not found\n", token->cmd[0]);
-		exit(127);
+		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
+		{
+			printf("Shkad: %s: command not found\n", token->cmd[0]);
+			exit(127);
+		}
 	}
 }
 
