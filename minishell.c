@@ -81,16 +81,16 @@ void	set_in_out_files(t_token *token)
 /*TODO need to change char **envp to t_env *envp*/
 void	do_exec_dev(t_token *token, char **envp)
 {
-	if (is_builtin(token->cmd[0]))
-		do_builtins(token, envp);
-	else
-	{
+//	if (is_builtin(token->cmd[0]))
+//		do_builtins(token, envp);
+//	else
+//	{
 		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
 		{
 			printf("Shkad: %s: command not found\n", token->cmd[0]);
 			exit(127);
 		}
-	}
+//	}
 }
 
 int	ft_redirect_dev(t_token *token, char **env)
@@ -155,8 +155,16 @@ void	handle_heredoc(t_token **cmd)
 int	executor(t_token **token, char **env)
 {
 	t_token	*cmd;
+	t_token *next;
 	pid_t	pid;
 
+	next = cmd;
+	next = next->next;
+	if (next == NULL)
+	{
+		printf("!!!!!!\n");
+		do_exec_dev(cmd, env);
+	}
 	pid = fork();
 	if (pid == 0)
 	{
@@ -169,6 +177,7 @@ int	executor(t_token **token, char **env)
 			dup2(cmd->fd.in_file, INFILE);
 			while (cmd->next)
 			{
+				printf("!!!!!!\n");
 				ft_redirect_dev(cmd, env);
 				cmd = cmd->next;
 			}
@@ -311,7 +320,7 @@ void lvl_up(t_env **start)
 	}
 }
 
-void lvl_down(t_env **start)
+int	lvl_down(t_env **start)
 {
 	t_env	*tmp;
 	int		lvl;
@@ -322,14 +331,14 @@ void lvl_down(t_env **start)
 		if (!ft_strncmp(tmp->name, "SHLVL", 6))
 		{
 			lvl = ft_atoi(tmp->data);
-			if (lvl > 1)
-				lvl--;
+			lvl--;
 			free(tmp->data);
 			tmp->data = ft_itoa(lvl);
 			break;
 		}
 		tmp = tmp->next;
 	}
+	return (lvl);
 }
 
 
@@ -342,6 +351,17 @@ struct termios termios_save;
 void reset_the_terminal(void)
 {
 	tcsetattr(0, 0, &termios_save );
+}
+
+void	check_exit_status(t_env **env)
+{
+	if (signal_exit_status != 0)
+	{
+		if (lvl_down(env) == 0)
+			exit(signal_exit_status);
+		else
+			signal_exit_status = 0;
+	}
 }
 
 int	main(int argc, char **argv, char **env)
@@ -373,7 +393,7 @@ int	main(int argc, char **argv, char **env)
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
 
-	signal(SIGQUIT, SIG_IGN);
+//	signal(SIGQUIT, SIG_IGN);
 
 	n_env = NULL;
 	printf("sigterm: %d\n", SIGTERM);
@@ -383,6 +403,7 @@ int	main(int argc, char **argv, char **env)
 //	new_env = list_to_env(&n_env);
 	while(1)
 	{
+		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
 		signal(SIGINT, &sig_handler2);
