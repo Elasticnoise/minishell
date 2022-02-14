@@ -383,11 +383,10 @@ int	main(int argc, char **argv, char **env)
 //	new_env = list_to_env(&n_env);
 	while(1)
 	{
-		signal(SIGQUIT, SIG_IGN);
-		signal(SIGINT, &sig_handler);
+//		signal(SIGQUIT, SIG_IGN);
+//		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
-		printf("LINE==%s\n", line);
-		signal(SIGINT, &sig_handler2);
+//		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		new_env = list_to_env(&n_env);
@@ -395,11 +394,30 @@ int	main(int argc, char **argv, char **env)
 			parser(line, &token, env, &n_env);
 //		new_env = list_to_env(&n_env);
 		executor(&token, new_env, &n_env);
-		printf("sig_status:%d\n", signal_exit_status);
-		check_exit_status(&n_env);
+//		printf("sig_status:%d\n", signal_exit_status);
+//		printf("shell_lvl2 = %d\n", get_shlvl(&n_env));
 		unlink("tmp_file");
 //		free(line);
 		free_list(&token);
+//		if (signal_exit_status != 0)
+//		{
+//			printf("asd\n");
+//			exit(0);
+//		}
+		if (check_exit_status(&n_env))
+		{
+			printf("tut\n");
+//			kill(-1, SIGKILL);
+			exit(0);
+//			exit(signal_exit_status);
+//			return (printf("!tut\n"));
+		}
+//		exit(0);
+//		printf("tut\n");
 	}
+	printf("%d\n", get_shlvl(&n_env));
+	printf("!!!!!!!\n");
+	exit(0);
+	//		printf("tut\n");
 	return (0);
 }

@@ -77,7 +77,7 @@ int 	ft_unset(char **env);
 int 	ft_export(char **env);
 int 	ft_pwd(t_main *main);
 int 	ft_echo(t_main *main);
-void	check_exit_status(t_env **env);
+ int	check_exit_status(t_env **env);
 
 /*SIGNALS*/
 void	sig_handler(int signum);

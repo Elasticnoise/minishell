@@ -137,7 +137,7 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 //		signal_exit_status = ft_env(token, env);
 	if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 	{
-		printf("stop!!!\n");
+//		printf("stop!!!\n");
 		ft_exit(token, n_env);
 	}
 //	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
@@ -226,12 +226,15 @@ int	get_shlvl(t_env **n_env)
 	return (lvl);
 }
 
-void	check_exit_status(t_env **env)
+int	check_exit_status(t_env **env)
 {
-	if (get_shlvl(env) == 0)
-		exit(signal_exit_status);
+	if (get_shlvl(env) == 1)
+		return (1);
 	else
+	{
 		signal_exit_status = 0;
+		return (0);
+	}
 }
 
 //int 	main(int argc, char **argv, char **envp)
