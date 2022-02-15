@@ -19,8 +19,8 @@ int 	is_builtin(char *cmd)
 		return (1);
 	if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (2);
-	if (ft_strncmp(cmd, "pwd", 4) == 0)
-		return (3);
+//	if (ft_strncmp(cmd, "pwd", 4) == 0)
+//		return (3);
 	if (ft_strncmp(cmd, "export", 7) == 0)
 		return (4);
 	if (ft_strncmp(cmd, "unset", 6) == 0)
@@ -29,6 +29,7 @@ int 	is_builtin(char *cmd)
 		return (6);
 	if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (7);
+//		exit(126);
 	return (0);
 }
 
