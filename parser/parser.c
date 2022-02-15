@@ -223,7 +223,7 @@ t_token *new_token(char	*str, t_env **env)
 		else
 			i++;
 	}
-	printf("%s -- cmd str\n", new_string);
+//	printf("%s -- cmd str\n", new_string);
 	token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
 //	printf("%s -- cmd str\n", new_string);
@@ -282,24 +282,24 @@ void get_tokens(char *line, t_token **head, t_env **env)
 		i++;
 	}
 
-	help = *head;
-	while (help)
-	{
-		i = 0;
-		while (help->cmd && help->cmd[i])
-		{
-			if (i == 0)
-				printf("CMD:    |%s|\n", help->cmd[i]);
-			else
-				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
-			i++;
-		}
-		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
-			   help->fd.out_file);
-		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
-			   help->fd.in_file);
-		help = help->next;
-	}
+//	help = *head;
+//	while (help)
+//	{
+//		i = 0;
+//		while (help->cmd && help->cmd[i])
+//		{
+//			if (i == 0)
+//				printf("CMD:    |%s|\n", help->cmd[i]);
+//			else
+//				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
+//			i++;
+//		}
+//		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
+//			   help->fd.out_file);
+//		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
+//			   help->fd.in_file);
+//		help = help->next;
+//	}
 }
 
 int delim_check(char *line)
@@ -341,7 +341,7 @@ int parser(char *line, t_token **token, char *env[], t_env **n_env)
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
 //	printf("%p -- line\n", line);
-	printf("New line: |%s|\n", line);
+//	printf("New line: |%s|\n", line);
 	get_tokens(line, &head, &(*n_env));
 	free(line);
 	*token = head; ////  Чтобы работало в мейне

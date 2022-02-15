@@ -81,16 +81,16 @@ void	set_in_out_files(t_token *token)
 /*TODO need to change char **envp to t_env *envp*/
 void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 {
-	if (is_builtin(token->cmd[0]))
-		do_builtins(token, envp, n_env);
-	else
-	{
+//	if (is_builtin(token->cmd[0]))
+//		do_builtins(token, envp, n_env);
+//	else
+//	{
 		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
 		{
 			printf("Shkad: %s: command not found\n", token->cmd[0]);
 			exit(127);
 		}
-	}
+//	}
 }
 
 int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
@@ -106,25 +106,32 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 		ft_putstr_fd("Fork failed\n", 2);
 		return (1);
 	}
-	if (pid)
+	if (pid == 0)
 	{
 		close(pipe_fd[1]);
 		if (!token->infile)
+		{
 			dup2(pipe_fd[0], STDIN);
+		}
 		else
 			dup2(token->fd.in_file, STDIN);
+//		printf("2-!!!!!\n");
 	}
 	else
 	{
+//		printf("1-!!!!!\n");
 		close(pipe_fd[0]);
 		if (!token->outfile)
 			dup2(pipe_fd[1], STDOUT);
 		else
 			dup2(token->fd.out_file, STDOUT);
+//		close(pipe_fd[1]); ////
+//		dup2(token->fd.in_file, STDIN); ///
 		do_exec_dev(token, env, n_env);
 		waitpid(pid, NULL, 0);
 	}
 	return (0);
+//	waitpid(pid, NULL, 0);
 }
 
 void	handle_heredoc(t_token **cmd)
@@ -158,10 +165,10 @@ int	executor(t_token **token, char **env, t_env **n_env)
 	pid_t	pid;
 
 	cmd = *token;
-	if (cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_builtins(cmd, env, n_env);
-	else
-	{
+//	if (cmd->next == NULL && is_builtin(cmd->cmd[0]))
+//		do_builtins(cmd, env, n_env);
+//	else
+//	{
 		cmd = *token;
 		pid = fork();
 		if (pid == 0)
@@ -170,7 +177,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 			{
 				handle_heredoc(&cmd);
 				if (cmd->limiter)
-					cmd->fd.in_file = open("tmp_file", O_RDONLY);
+					cmd->fd.in_file = open(".tmp_file", O_RDONLY);
 				dup2(cmd->fd.in_file, INFILE);
 				while (cmd->next)
 				{
@@ -185,7 +192,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 		}
 		else
 			waitpid(pid, NULL, 0);
-	}
+//	}
 	return (1);
 }
 
@@ -379,7 +386,7 @@ int	main(int argc, char **argv, char **env)
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
 
-//	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 
 	n_env = NULL;
 	printf("sigterm: %d\n", SIGTERM);
@@ -391,7 +398,7 @@ int	main(int argc, char **argv, char **env)
 	{
 //		signal(SIGQUIT, SIG_IGN);
 //		signal(SIGINT, &sig_handler);
-		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
+		line = readline("Shkad $ ");
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
@@ -400,30 +407,10 @@ int	main(int argc, char **argv, char **env)
 			parser(line, &token, env, &n_env);
 //		new_env = list_to_env(&n_env);
 		executor(&token, new_env, &n_env);
-//		printf("sig_status:%d\n", signal_exit_status);
-//		printf("shell_lvl2 = %d\n", get_shlvl(&n_env));
 		unlink(".tmp_file");
 //		free(line);
 		free_list(&token);
-//		if (signal_exit_status != 0)
-//		{
-//			printf("asd\n");
-//			exit(0);
-//		}
 		if (check_exit_status(&n_env))
-		{
-			printf("tut\n");
-//			kill(-1, SIGKILL);
-			exit(0);
-//			exit(signal_exit_status);
-//			return (printf("!tut\n"));
-		}
-//		exit(0);
-//		printf("tut\n");
+			exit(signal_exit_status);
 	}
-	printf("%d\n", get_shlvl(&n_env));
-	printf("!!!!!!!\n");
-	exit(0);
-	//		printf("tut\n");
-	return (0);
 }
