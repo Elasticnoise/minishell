@@ -64,23 +64,25 @@ int		ft_redirect(char **av, char **env, int in_file, int out_file, int i);
 void	do_exec(char **av, char **envp, int i);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
-int	ft_redirect_dev(t_token *token, char **env);
-void	do_exec_dev(t_token *token, char **envp);
+int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
+void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 
 /*BUILTINS*/
-int		do_builtins(t_token *token, char **env);
+void	do_builtins(t_token *token, char **env, t_env **n_env);
 int 	is_builtin(char *cmd);
-int 	ft_exit(t_token *token);
+int 	ft_exit(t_token *token, t_env **n_env);
 int 	ft_cd(char **env);
 void 	ft_env(t_main *main);
 int 	ft_unset(char **env);
 int 	ft_export(char **env);
 int 	ft_pwd(t_main *main);
 int 	ft_echo(t_main *main);
+ int	check_exit_status(t_env **env);
 
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
+int	lvl_down(t_env **start);
 //readline add_history
 //
 //rl_clear_history,
@@ -100,9 +102,11 @@ void	sig_handler2(int signum);
 //tgoto, tputs
 
 int parser(char *line, t_token **token, char *env[], t_env **n_env);
+int	executor(t_token **token, char **env, t_env **n_env);
 int quotes(char *line, int i);
 char	**ft_q_split(char *s, char c);
 int check_delimiter(char c);
+int	get_shlvl(t_env **n_env);
 
 /*Dollar_set*/
 void	dollar_cmd(t_token **token, t_env **env);

@@ -79,21 +79,21 @@ void	set_in_out_files(t_token *token)
 }
 
 /*TODO need to change char **envp to t_env *envp*/
-void	do_exec_dev(t_token *token, char **envp)
+void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 {
-//	if (is_builtin(token->cmd[0]))
-//		do_builtins(token, envp);
-//	else
-//	{
+	if (is_builtin(token->cmd[0]))
+		do_builtins(token, envp, n_env);
+	else
+	{
 		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
 		{
 			printf("Shkad: %s: command not found\n", token->cmd[0]);
 			exit(127);
 		}
-//	}
+	}
 }
 
-int	ft_redirect_dev(t_token *token, char **env)
+int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 {
 	int		pid;
 	pid_t	pipe_fd[2];
@@ -121,7 +121,7 @@ int	ft_redirect_dev(t_token *token, char **env)
 			dup2(pipe_fd[1], STDOUT);
 		else
 			dup2(token->fd.out_file, STDOUT);
-		do_exec_dev(token, env);
+		do_exec_dev(token, env, n_env);
 		waitpid(pid, NULL, 0);
 	}
 	return (0);
@@ -135,7 +135,7 @@ void	handle_heredoc(t_token **cmd)
 
 	if ((*cmd)->limiter)
 	{
-		fd = open("tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+		fd = open(".tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
 		while (1)
 		{
 			line = readline("> ");
@@ -152,43 +152,40 @@ void	handle_heredoc(t_token **cmd)
 	}
 }
 
-int	executor(t_token **token, char **env)
+int	executor(t_token **token, char **env, t_env **n_env)
 {
 	t_token	*cmd;
-	t_token *next;
 	pid_t	pid;
 
-	next = cmd;
-	next = next->next;
-	if (next == NULL)
-	{
-		printf("!!!!!!\n");
-		do_exec_dev(cmd, env);
-	}
-	pid = fork();
-	if (pid == 0)
+	cmd = *token;
+	if (cmd->next == NULL && is_builtin(cmd->cmd[0]))
+		do_builtins(cmd, env, n_env);
+	else
 	{
 		cmd = *token;
-		if (cmd)
+		pid = fork();
+		if (pid == 0)
 		{
-			handle_heredoc(&cmd);
-			if (cmd->limiter)
-				cmd->fd.in_file = open("tmp_file", O_RDONLY);
-			dup2(cmd->fd.in_file, INFILE);
-			while (cmd->next)
+			if (cmd)
 			{
-				printf("!!!!!!\n");
-				ft_redirect_dev(cmd, env);
-				cmd = cmd->next;
+				handle_heredoc(&cmd);
+				if (cmd->limiter)
+					cmd->fd.in_file = open("tmp_file", O_RDONLY);
+				dup2(cmd->fd.in_file, INFILE);
+				while (cmd->next)
+				{
+					ft_redirect_dev(cmd, env, n_env);
+					cmd = cmd->next;
+				}
+				if (cmd->outfile)
+					dup2(cmd->fd.out_file, OUTFILE);
+				waitpid(pid, NULL, 0);
+				do_exec_dev(cmd, env, n_env);
 			}
-			if (cmd->outfile)
-				dup2(cmd->fd.out_file, OUTFILE);
-			waitpid(pid, NULL, 0);
-			do_exec_dev(cmd, env);
 		}
+		else
+			waitpid(pid, NULL, 0);
 	}
-	else
-		waitpid(pid, NULL, 0);
 	return (1);
 }
 
@@ -353,17 +350,6 @@ void reset_the_terminal(void)
 	tcsetattr(0, 0, &termios_save );
 }
 
-void	check_exit_status(t_env **env)
-{
-	if (signal_exit_status != 0)
-	{
-		if (lvl_down(env) == 0)
-			exit(signal_exit_status);
-		else
-			signal_exit_status = 0;
-	}
-}
-
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
@@ -378,7 +364,7 @@ int	main(int argc, char **argv, char **env)
 	if (argc != 1)
 		return (1);
 
-	status = 1;
+	signal_exit_status = 0;
 
 
 //	struct termios termios_new;
@@ -403,19 +389,41 @@ int	main(int argc, char **argv, char **env)
 //	new_env = list_to_env(&n_env);
 	while(1)
 	{
-		signal(SIGQUIT, SIG_IGN);
-		signal(SIGINT, &sig_handler);
+//		signal(SIGQUIT, SIG_IGN);
+//		signal(SIGINT, &sig_handler);
 		line = readline(BEGIN(49, 34)"Shkad $ "CLOSE);
-		signal(SIGINT, &sig_handler2);
+//		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		new_env = list_to_env(&n_env);
-		parser(line, &token, env, &n_env);
+		if (line)
+			parser(line, &token, env, &n_env);
 //		new_env = list_to_env(&n_env);
-		executor(&token, new_env);
-		unlink("tmp_file");
+		executor(&token, new_env, &n_env);
+//		printf("sig_status:%d\n", signal_exit_status);
+//		printf("shell_lvl2 = %d\n", get_shlvl(&n_env));
+		unlink(".tmp_file");
 //		free(line);
 		free_list(&token);
+//		if (signal_exit_status != 0)
+//		{
+//			printf("asd\n");
+//			exit(0);
+//		}
+		if (check_exit_status(&n_env))
+		{
+			printf("tut\n");
+//			kill(-1, SIGKILL);
+			exit(0);
+//			exit(signal_exit_status);
+//			return (printf("!tut\n"));
+		}
+//		exit(0);
+//		printf("tut\n");
 	}
+	printf("%d\n", get_shlvl(&n_env));
+	printf("!!!!!!!\n");
+	exit(0);
+	//		printf("tut\n");
 	return (0);
 }

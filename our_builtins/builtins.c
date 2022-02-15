@@ -107,15 +107,14 @@ void	ft_exit_err_msg(char *str)
 	ft_putstr_fd(": numeric argument required\n", 2);
 }
 
-int 	ft_exit(t_token *token)
+int 	ft_exit(t_token *token, t_env **n_env)
 {
+	lvl_down(n_env);
 	ft_putstr_fd("exit\n", 1);
 	if (ft_check_exit_status(token->cmd[1]))
 		ft_exit_err_msg(token->cmd[1]);
-	else
-	{
-		if (token->cmd[1] && token->cmd[2])
-		{
+	else {
+		if (token->cmd[1] && token->cmd[2]) {
 			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 			return (1);
 		}
@@ -123,12 +122,10 @@ int 	ft_exit(t_token *token)
 		if (signal_exit_status == -1)
 			ft_exit_err_msg(token->cmd[1]);
 	}
-	printf("%d\n", signal_exit_status);
 	return (signal_exit_status);
-	exit(signal_exit_status);
 }
 
-int	do_builtins(t_token *token, char **env)
+void	do_builtins(t_token *token, char **env, t_env **n_env)
 {
 //	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
 //		signal_exit_status = ft_cd(token, env);
@@ -139,7 +136,10 @@ int	do_builtins(t_token *token, char **env)
 //	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
 //		signal_exit_status = ft_env(token, env);
 	if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
-		return (signal_exit_status = ft_exit(token));
+	{
+//		printf("stop!!!\n");
+		ft_exit(token, n_env);
+	}
 //	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
 //		signal_exit_status = ft_unset(token, env);
 //	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
@@ -208,9 +208,33 @@ int 	ft_cd(char **env)
 	return (0);
 }
 
-int check_exit_status(t_main *main)
+int	get_shlvl(t_env **n_env)
 {
-	return (0);
+	t_env	*tmp;
+	int		lvl;
+
+	tmp = *n_env;
+	while (tmp)
+	{
+		if (!ft_strncmp(tmp->name, "SHLVL", 6))
+		{
+			lvl = ft_atoi(tmp->data);
+			break;
+		}
+		tmp = tmp->next;
+	}
+	return (lvl);
+}
+
+int	check_exit_status(t_env **env)
+{
+	if (get_shlvl(env) == 1)
+		return (1);
+	else
+	{
+		signal_exit_status = 0;
+		return (0);
+	}
 }
 
 //int 	main(int argc, char **argv, char **envp)
