@@ -135,7 +135,7 @@ void	handle_heredoc(t_token **cmd)
 
 	if ((*cmd)->limiter)
 	{
-		fd = open("tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
+		fd = open(".tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
 		while (1)
 		{
 			line = readline("> ");
@@ -157,29 +157,35 @@ int	executor(t_token **token, char **env, t_env **n_env)
 	t_token	*cmd;
 	pid_t	pid;
 
-	pid = fork();
-	if (pid == 0)
+	cmd = *token;
+	if (cmd->next == NULL && is_builtin(cmd->cmd[0]))
+		do_builtins(cmd, env, n_env);
+	else
 	{
 		cmd = *token;
-		if (cmd)
+		pid = fork();
+		if (pid == 0)
 		{
-			handle_heredoc(&cmd);
-			if (cmd->limiter)
-				cmd->fd.in_file = open("tmp_file", O_RDONLY);
-			dup2(cmd->fd.in_file, INFILE);
-			while (cmd->next)
+			if (cmd)
 			{
-				ft_redirect_dev(cmd, env, n_env);
-				cmd = cmd->next;
+				handle_heredoc(&cmd);
+				if (cmd->limiter)
+					cmd->fd.in_file = open("tmp_file", O_RDONLY);
+				dup2(cmd->fd.in_file, INFILE);
+				while (cmd->next)
+				{
+					ft_redirect_dev(cmd, env, n_env);
+					cmd = cmd->next;
+				}
+				if (cmd->outfile)
+					dup2(cmd->fd.out_file, OUTFILE);
+				waitpid(pid, NULL, 0);
+				do_exec_dev(cmd, env, n_env);
 			}
-			if (cmd->outfile)
-				dup2(cmd->fd.out_file, OUTFILE);
-			waitpid(pid, NULL, 0);
-			do_exec_dev(cmd, env, n_env);
 		}
+		else
+			waitpid(pid, NULL, 0);
 	}
-	else
-		waitpid(pid, NULL, 0);
 	return (1);
 }
 
@@ -396,7 +402,7 @@ int	main(int argc, char **argv, char **env)
 		executor(&token, new_env, &n_env);
 //		printf("sig_status:%d\n", signal_exit_status);
 //		printf("shell_lvl2 = %d\n", get_shlvl(&n_env));
-		unlink("tmp_file");
+		unlink(".tmp_file");
 //		free(line);
 		free_list(&token);
 //		if (signal_exit_status != 0)
