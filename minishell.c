@@ -364,7 +364,7 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN);
 
 	n_env = NULL;
-	printf("sigterm: %d\n", SIGTERM);
+//	printf("sigterm: %d\n", SIGTERM);
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);

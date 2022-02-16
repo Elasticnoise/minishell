@@ -51,44 +51,16 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 //		signal_exit_status = ft_export(token, env);
 }
 
-//int 	ft_echo(t_token *token)
-//{
-//	int	i;
-//	int is_n;
-//
-//	i = 1;
-//	is_n = 0;
-//	if (token->cmd[2] && ft_strncmp(token->cmd[2], "-n", 3) == 0)
-//	{
-//		is_n = 1;
-//		i++;
-//	}
-//	while (token->cmd[i] != NULL)
-//	{
-//		ft_putstr_fd(token->cmd[i], 1);
-//		if (token->cmd[i + 1] != NULL)
-//			write(1, " ", 1);
-//		i++;
-//	}
-//	if (is_n)
-//		write(1, "\n", 1);
-//	return (0);
-//}
-
-int	ft_echo(t_token *token)
+int 	ft_echo(t_token *token)
 {
 	int	i;
-	int	n;
-//	int	size;
+	int is_n;
 
 	i = 1;
-	n = 0;
-//	size = 0;
-//	while (token->cmd[size])
-//		size++;
-	while (token->cmd[i] && ft_strncmp(token->cmd[2], "-n", 2))
+	is_n = 0;
+	while (token->cmd[i] && !ft_strcmp(token->cmd[i], "-n"))
 	{
-		n = 1;
+		is_n = 1;
 		i++;
 	}
 	while (token->cmd[i] != NULL)
@@ -98,10 +70,38 @@ int	ft_echo(t_token *token)
 			write(1, " ", 1);
 		i++;
 	}
-	if (n == 0)
+	if (!is_n)
 		write(1, "\n", 1);
 	return (0);
 }
+
+//int	ft_echo(t_token *token)
+//{
+//	int	i;
+//	int	n;
+////	int	size;
+//
+//	i = 1;
+//	n = 0;
+////	size = 0;
+////	while (token->cmd[size])
+////		size++;
+//	if (token->cmd[1] && !ft_strcmp(token->cmd[2], "-n"))
+//	{
+//		n = 1;
+//		i++;
+//	}
+//	while (token->cmd[i] != NULL)
+//	{
+//		ft_putstr_fd(token->cmd[i], 1);
+//		if (token->cmd[i + 1] != NULL)
+//			write(1, " ", 1);
+//		i++;
+//	}
+//	if (n == 0)
+//		write(1, "\n", 1);
+//	return (0);
+//}
 
 //int 	ft_pwd(t_main *main)
 //{
