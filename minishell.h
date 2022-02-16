@@ -69,14 +69,14 @@ void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 
 /*BUILTINS*/
 void	do_builtins(t_token *token, char **env, t_env **n_env);
-int 	is_builtin(char *cmd);
-int 	ft_exit(t_token *token, t_env **n_env);
-int 	ft_cd(char **env);
-int 	ft_env(t_token *token, char **n_env);
-int 	ft_unset(char **env);
-int 	ft_export(char **env);
- int 	ft_pwd(t_token *token);
-int 	ft_echo(t_token *token);
+int	is_builtin(char *cmd);
+int	ft_exit(t_token *token, t_env **n_env);
+int	ft_cd(char **env);
+int	ft_env(t_token *token, char **n_env);
+void	ft_unset(t_token *cmd, t_env *env);
+int	ft_export(char **env);
+int	ft_pwd(t_token *token);
+int	ft_echo(t_token *token);
 int	check_exit_status(t_env **env);
 
 /*SIGNALS*/
