@@ -19,8 +19,8 @@ int 	is_builtin(char *cmd)
 		return (1);
 //	if (ft_strncmp(cmd, "cd", 3) == 0)
 //		return (2);
-//	if (ft_strncmp(cmd, "pwd", 4) == 0)
-//		return (3);
+	if (ft_strncmp(cmd, "pwd", 4) == 0)
+		return (3);
 //	if (ft_strncmp(cmd, "export", 7) == 0)
 //		return (4);
 //	if (ft_strncmp(cmd, "unset", 6) == 0)
@@ -37,12 +37,12 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 {
 //	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
 //		signal_exit_status = ft_cd(token, env);
-//	else if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
-//		signal_exit_status = ft_pwd(token);
-	if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
+	if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
+		ft_pwd(token);
+	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
 		ft_echo(token);
-//	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
-//		signal_exit_status = ft_env(token, env);
+	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
+		ft_env(token);
 	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 		ft_exit(token, n_env);
 //	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
@@ -51,11 +51,20 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 //		signal_exit_status = ft_export(token, env);
 }
 
-//int 	ft_pwd(t_main *main)
-//{
-//	printf("%s\n", do_(env, "PWD"));
-//	return (0);
-//}
+int 	ft_pwd(t_token *token)
+{
+	char	*tmp_buf;
+	char	*pwd;
+
+	(void)token;
+	tmp_buf = NULL;
+	pwd = getcwd(tmp_buf, 0);
+	ft_putstr_fd(pwd, 1);
+	write(1, "\n", 1);
+	free(tmp_buf);
+	free(pwd);
+	return (0);
+}
 
 int 	ft_export(char **env)
 {
@@ -67,23 +76,36 @@ int 	ft_unset(char **env)
 	return (0);
 }
 
-//void 	ft_env(t_main *main)
-//{
-//	int i;
-//
-//	i = 0;
-//	if (main->argc != 1)
-//	{
-//		ft_putstr_fd("env: ‘", param->argv[1], "’: Permission denied\n", 2);
-//		return ;
-//	}
-//	while (main->envp[i])
-//	{
-//		ft_putstr_fd(param->envp[i], 1);
-//		write(1, "\n", 1);
-//		i++;
-//	}
-//}
+void	free_doublechar(char **new_env)
+{
+	int	i;
+
+	i = 0;
+	if (new_env)
+	{
+		while (new_env[i])
+			free(new_env[i++]);
+		free(new_env);
+	}
+}
+
+int 	ft_env(t_token *token, t_env *n_env)
+{
+	char	**new_env;
+	int		i;
+
+	(void)token;
+	new_env = list_to_env(&n_env);
+	i = 0;
+	while (new_env[i] != NULL)
+	{
+		ft_putstr_fd(new_env[i], 1);
+		write(1, "\n", 1);
+		i++;
+	}
+	free_doublechar(new_env);
+	return (0);
+}
 
 int 	ft_cd(char **env)
 {
@@ -107,11 +129,3 @@ int	get_shlvl(t_env **n_env)
 	}
 	return (lvl);
 }
-
-//int 	main(int argc, char **argv, char **envp)
-//{
-//	(void) argc;
-//	(void) argv;
-////	ft_pwd(envp);
-//	return (0);
-//}

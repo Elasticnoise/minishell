@@ -72,10 +72,10 @@ void	do_builtins(t_token *token, char **env, t_env **n_env);
 int 	is_builtin(char *cmd);
 int 	ft_exit(t_token *token, t_env **n_env);
 int 	ft_cd(char **env);
-void 	ft_env(t_main *main);
+ int 	ft_env(t_token *token, t_env *n_env)
 int 	ft_unset(char **env);
 int 	ft_export(char **env);
-int 	ft_pwd(t_main *main);
+ int 	ft_pwd(t_token *token);
 int 	ft_echo(t_token *token);
 int	check_exit_status(t_env **env);
 
@@ -113,3 +113,5 @@ void	dollar_cmd(t_token **token, t_env **env);
  void dollar_infile(t_token **token, t_env **env);
 void	set_dollar(char **str, int start, t_env **env);
 void	dollar_outfile(t_token **token, t_env **env);
+char	**list_to_env(t_env **start);
+void	free_doublechar(char **new_env);
