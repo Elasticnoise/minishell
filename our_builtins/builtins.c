@@ -25,8 +25,8 @@ int 	is_builtin(char *cmd)
 //		return (4);
 //	if (ft_strncmp(cmd, "unset", 6) == 0)
 //		return (5);
-//	if (ft_strncmp(cmd, "env", 4) == 0)
-//		return (6);
+	if (ft_strncmp(cmd, "env", 4) == 0)
+		return (6);
 	if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (7);
 //		exit(126);
@@ -42,7 +42,7 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
 		ft_echo(token);
 	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
-		ft_env(token);
+		ft_env(token, env);
 	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 		ft_exit(token, n_env);
 //	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
@@ -89,21 +89,21 @@ void	free_doublechar(char **new_env)
 	}
 }
 
-int 	ft_env(t_token *token, t_env *n_env)
+int 	ft_env(t_token *token, char **n_env)
 {
-	char	**new_env;
+	char	**env_line;
 	int		i;
 
 	(void)token;
-	new_env = list_to_env(&n_env);
+	env_line = n_env;
 	i = 0;
-	while (new_env[i] != NULL)
+	while (env_line[i] != NULL)
 	{
-		ft_putstr_fd(new_env[i], 1);
+		ft_putstr_fd(env_line[i], 1);
 		write(1, "\n", 1);
 		i++;
 	}
-	free_doublechar(new_env);
+	free_doublechar(env_line);
 	return (0);
 }
 
