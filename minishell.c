@@ -144,10 +144,10 @@ int	executor(t_token **token, char **env, t_env **n_env)
 	pid_t	pid;
 
 	cmd = *token;
-//	if (cmd->next == NULL && is_builtin(cmd->cmd[0]))
-//		do_builtins(cmd, env, n_env);
-//	else
-//	{
+	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
+		do_builtins(cmd, env, n_env);
+	else
+	{
 		cmd = *token;
 		pid = fork();
 		if (pid == 0)
@@ -175,7 +175,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 		else
 //			wait3(0, WNOHANG, NULL);
 			waitpid(pid, NULL, 0);
-//	}
+	}
 	return (1);
 }
 

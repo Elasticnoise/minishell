@@ -17,16 +17,16 @@ int 	is_builtin(char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "cd", 3) == 0)
-		return (2);
+//	if (ft_strncmp(cmd, "cd", 3) == 0)
+//		return (2);
 //	if (ft_strncmp(cmd, "pwd", 4) == 0)
 //		return (3);
-	if (ft_strncmp(cmd, "export", 7) == 0)
-		return (4);
-	if (ft_strncmp(cmd, "unset", 6) == 0)
-		return (5);
-	if (ft_strncmp(cmd, "env", 4) == 0)
-		return (6);
+//	if (ft_strncmp(cmd, "export", 7) == 0)
+//		return (4);
+//	if (ft_strncmp(cmd, "unset", 6) == 0)
+//		return (5);
+//	if (ft_strncmp(cmd, "env", 4) == 0)
+//		return (6);
 	if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (7);
 //		exit(126);
@@ -39,43 +39,69 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 //		signal_exit_status = ft_cd(token, env);
 //	else if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
 //		signal_exit_status = ft_pwd(token);
-//	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
-//		signal_exit_status = ft_echo(token);
+	if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
+		ft_echo(token);
 //	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
 //		signal_exit_status = ft_env(token, env);
-	if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
-	{
-//		printf("stop!!!\n");
+	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 		ft_exit(token, n_env);
-	}
 //	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
 //		signal_exit_status = ft_unset(token, env);
 //	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
 //		signal_exit_status = ft_export(token, env);
 }
 
-//int 	ft_echo(t_main *main)
+//int 	ft_echo(t_token *token)
 //{
 //	int	i;
 //	int is_n;
 //
 //	i = 1;
 //	is_n = 0;
-//	if (main->cmd[2] && ft_strncmp(main->cmd[2], "-n", 3) == 0)
+//	if (token->cmd[2] && ft_strncmp(token->cmd[2], "-n", 3) == 0)
 //	{
 //		is_n = 1;
 //		i++;
 //	}
-//	while (main->cmd[i] != NULL)
+//	while (token->cmd[i] != NULL)
 //	{
-//		ft_putstr_fd(main->cmd[i], 1);
+//		ft_putstr_fd(token->cmd[i], 1);
+//		if (token->cmd[i + 1] != NULL)
+//			write(1, " ", 1);
 //		i++;
 //	}
 //	if (is_n)
 //		write(1, "\n", 1);
-//
 //	return (0);
 //}
+
+int	ft_echo(t_token *token)
+{
+	int	i;
+	int	n;
+//	int	size;
+
+	i = 1;
+	n = 0;
+//	size = 0;
+//	while (token->cmd[size])
+//		size++;
+	while (token->cmd[i] && ft_strncmp(token->cmd[2], "-n", 2))
+	{
+		n = 1;
+		i++;
+	}
+	while (token->cmd[i] != NULL)
+	{
+		ft_putstr_fd(token->cmd[i], 1);
+		if (token->cmd[i + 1] != NULL)
+			write(1, " ", 1);
+		i++;
+	}
+	if (n == 0)
+		write(1, "\n", 1);
+	return (0);
+}
 
 //int 	ft_pwd(t_main *main)
 //{
