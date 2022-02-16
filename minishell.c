@@ -108,10 +108,9 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 //		close(pipe_fd[1]); ////
 //		dup2(token->fd.in_file, STDIN); ///
 		do_exec_dev(token, env, n_env);
-//		waitpid(pid, NULL, 0);
+		waitpid(pid, NULL, 0);
 	}
 	return (0);
-//	waitpid(pid, NULL, 0);
 }
 
 void	handle_heredoc(t_token **cmd)
@@ -167,12 +166,11 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
 				waitpid(pid, NULL, 0);
-				printf("3----!!!!!!!\n");
 				do_exec_dev(cmd, env, n_env);
 //				waitpid(pid, NULL, 0);
 			}
-			else
-				waitpid(pid, NULL, 0);
+//			else
+//				waitpid(pid, NULL, 0);
 		}
 		else
 //			wait3(0, WNOHANG, NULL);
@@ -377,7 +375,6 @@ int	main(int argc, char **argv, char **env)
 //		signal(SIGINT, &sig_handler);
 
 //		printf("KEKEKKEKE\n");
-
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
