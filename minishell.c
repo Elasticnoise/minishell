@@ -93,16 +93,13 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 	{
 		close(pipe_fd[1]);
 		if (!token->infile)
-		{
 			dup2(pipe_fd[0], STDIN);
-		}
 		else
 			dup2(token->fd.in_file, STDIN);
-//		printf("2-!!!!!\n");
+		close(pipe_fd[0]);
 	}
 	else
 	{
-//		printf("1-!!!!!\n");
 		close(pipe_fd[0]);
 		if (!token->outfile)
 			dup2(pipe_fd[1], STDOUT);
@@ -111,7 +108,7 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 //		close(pipe_fd[1]); ////
 //		dup2(token->fd.in_file, STDIN); ///
 		do_exec_dev(token, env, n_env);
-		waitpid(pid, NULL, 0);
+//		waitpid(pid, NULL, 0);
 	}
 	return (0);
 //	waitpid(pid, NULL, 0);
@@ -170,8 +167,11 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
 				waitpid(pid, NULL, 0);
+				printf("3----!!!!!!!\n");
 				do_exec_dev(cmd, env, n_env);
 			}
+			else
+				waitpid(pid, NULL, 0);
 		}
 		else
 			waitpid(pid, NULL, 0);
