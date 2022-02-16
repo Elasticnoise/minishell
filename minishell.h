@@ -9,11 +9,10 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
-# include "lexer.h"
 //# include <readline/readline.h>
 //# include <readline/history.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 
 # define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
 # define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным
@@ -113,3 +112,6 @@ void	dollar_cmd(t_token **token, t_env **env);
  void dollar_infile(t_token **token, t_env **env);
 void	set_dollar(char **str, int start, t_env **env);
 void	dollar_outfile(t_token **token, t_env **env);
+
+
+ void delete_quotes(char **string, t_env **env);

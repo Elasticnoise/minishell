@@ -15,49 +15,26 @@
 void free_list(t_token **head)
 {
 	t_token *tmp;
+	int		i;
 
 //	tmp = *head;
 	while (*head)
 	{
+		i = 0;
 		tmp = (*head)->next;
+		while ((*head)->cmd[i])
+		{
+			free((*head)->cmd[i]);
+			i++;
+		}
+		if ((*head)->cmd)
+			free((*head)->cmd);
 		free((*head)->str); //todo Split free
 		free(*head);
 		*head = tmp;
 	}
 }
 
-
-char	*set_var(char *line, int i, char **env)
-{
-	char	*begin;
-	char	*end;
-	char	*var;
-	char	*var_value;
-	int		j;
-
-	i++;
-	j = i;
-	begin = ft_substr(line, 0, i);
-	while (line[j] != ' ')
-		j++;
-	if (j != i)
-		var_value = "$";
-	else
-		var_value = ft_substr(env[i], ft_strlen(var) + 1,
-							  ft_strlen(env[i]) - (ft_strlen(var) + 1));
-	var = ft_substr(line, i, j - i);
-	end = ft_substr(line, j, ft_strlen(line) - j);
-	i = 0;
-	while (ft_strncmp(env[i], var, ft_strlen(var)) != 0)
-		i++;
-	begin = ft_strjoin(begin, var_value);
-	begin = ft_strjoin(begin, " ");
-	begin = ft_strjoin(begin, end);
-	free(end);
-	printf("'%s' -- cmd\n", var_value);
-//	free(var_value);
-	return (begin);
-}
 
 void	set_in_out_files(t_token *token)
 {
@@ -87,6 +64,12 @@ void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 //	{
 		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
 		{
+//			int i = 0;
+//			while (token->cmd[i])
+//			{
+//				printf("%s --- FROM EXECVE\n", token->cmd[i]);
+//				i++;
+//			}
 			printf("Shkad: %s: command not found\n", token->cmd[0]);
 			exit(127);
 		}
@@ -286,7 +269,6 @@ char **list_to_env(t_env **start)
 	i = 0;
 	while (i < j)
 	{
-//		printf("%d\n", i);
 		tmp = ft_strjoin(help->name, "=");
 		new_env[i] = ft_strjoin(tmp, help->data);
 		i++;
@@ -294,13 +276,6 @@ char **list_to_env(t_env **start)
 		help = help->next;
 	}
 	new_env[i] = NULL;
-//	i = 0;
-//	while (new_env[i])
-//	{
-//		printf("%s -- FROM NEW\n", new_env[i]);
-//		i++;
-//	}
-//	printf("END\n");
 	return (new_env);
 }
 
@@ -393,20 +368,22 @@ int	main(int argc, char **argv, char **env)
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);
-//	new_env = list_to_env(&n_env);
+	new_env = list_to_env(&n_env);
 	while(1)
 	{
 //		signal(SIGQUIT, SIG_IGN);
 //		signal(SIGINT, &sig_handler);
-		line = readline("Shkad $ ");
+		line = readline("\x1b[35mShkad $\x1b[0m ");
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
-		new_env = list_to_env(&n_env);
+//		new_env = list_to_env(&n_env);
 		if (line)
+		{
 			parser(line, &token, env, &n_env);
 //		new_env = list_to_env(&n_env);
-		executor(&token, new_env, &n_env);
+			executor(&token, new_env, &n_env);
+		}
 		unlink(".tmp_file");
 //		free(line);
 		free_list(&token);

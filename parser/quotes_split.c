@@ -78,8 +78,8 @@ static size_t	elem_size(char *s, char c)
 	len = 0;
 	while (s[len] != '\0' && (s[len] != c || new_quotes(s, len)))
 		len++;
-	if (s[len - 1] == '"' || s[len - 1] == '\'')
-		len--;
+//	if (s[len - 1] == '"' || s[len - 1] == '\'')
+//		len--; ////todo delete last '"'
 	return (len);
 }
 

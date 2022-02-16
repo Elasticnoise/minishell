@@ -15,8 +15,8 @@
 /* TODO 2) При исполнении $, нужно проверять текст выводимого значения и если нужно исполнять команды" */
 int 	is_builtin(char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", 5) == 0)
-		return (1);
+//	if (ft_strncmp(cmd, "echo", 5) == 0)
+//		return (1);
 	if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (2);
 //	if (ft_strncmp(cmd, "pwd", 4) == 0)
