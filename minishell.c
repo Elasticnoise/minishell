@@ -108,10 +108,9 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 //		close(pipe_fd[1]); ////
 //		dup2(token->fd.in_file, STDIN); ///
 		do_exec_dev(token, env, n_env);
-//		waitpid(pid, NULL, 0);
+		waitpid(pid, NULL, 0);
 	}
 	return (0);
-//	waitpid(pid, NULL, 0);
 }
 
 void	handle_heredoc(t_token **cmd)
@@ -145,10 +144,10 @@ int	executor(t_token **token, char **env, t_env **n_env)
 	pid_t	pid;
 
 	cmd = *token;
-//	if (cmd->next == NULL && is_builtin(cmd->cmd[0]))
-//		do_builtins(cmd, env, n_env);
-//	else
-//	{
+	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
+		do_builtins(cmd, env, n_env);
+	else
+	{
 		cmd = *token;
 		pid = fork();
 		if (pid == 0)
@@ -167,15 +166,16 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
 				waitpid(pid, NULL, 0);
-				printf("3----!!!!!!!\n");
 				do_exec_dev(cmd, env, n_env);
+//				waitpid(pid, NULL, 0);
 			}
-			else
-				waitpid(pid, NULL, 0);
+//			else
+//				waitpid(pid, NULL, 0);
 		}
 		else
+//			wait3(0, WNOHANG, NULL);
 			waitpid(pid, NULL, 0);
-//	}
+	}
 	return (1);
 }
 
@@ -364,7 +364,7 @@ int	main(int argc, char **argv, char **env)
 	signal(SIGQUIT, SIG_IGN);
 
 	n_env = NULL;
-	printf("sigterm: %d\n", SIGTERM);
+//	printf("sigterm: %d\n", SIGTERM);
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 //	new_env = list_to_env(&n_env);
@@ -373,6 +373,8 @@ int	main(int argc, char **argv, char **env)
 	{
 //		signal(SIGQUIT, SIG_IGN);
 //		signal(SIGINT, &sig_handler);
+
+//		printf("KEKEKKEKE\n");
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 //		signal(SIGINT, &sig_handler2);
 		if (line && *line)
@@ -383,7 +385,9 @@ int	main(int argc, char **argv, char **env)
 			parser(line, &token, env, &n_env);
 //		new_env = list_to_env(&n_env);
 			executor(&token, new_env, &n_env);
+
 		}
+
 		unlink(".tmp_file");
 //		free(line);
 		free_list(&token);
