@@ -70,8 +70,6 @@ void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 void	do_builtins(t_token *token, char **env, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
-int	ft_cd(char **env);
-void	ft_env(t_token *token, t_env **n_env);
 int	ft_cd(t_token *token, t_env *n_env);
 int	ft_env(t_token *token, char **n_env);
 void	ft_unset(t_token *cmd, t_env *env);
