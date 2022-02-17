@@ -9,6 +9,8 @@ char *get_path(char **envp, char *cmd)
 	char *row_path;
 
 	i = 0;
+	if (cmd[0] == '.' || cmd[0] == '/')
+		return (cmd);
 	while (ft_strnstr(envp[i], "PATH", 4) == 0)
 		i++;
 	paths = ft_split(envp[i] + 5, ':');
