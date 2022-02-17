@@ -9,7 +9,6 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
-# include "lexer.h"
 //# include <readline/readline.h>
 //# include <readline/history.h>
 # include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
@@ -64,7 +63,7 @@ int		ft_redirect(char **av, char **env, int in_file, int out_file, int i);
 void	do_exec(char **av, char **envp, int i);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
-int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
+//int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
 void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 
 /*BUILTINS*/
@@ -72,13 +71,13 @@ void	do_builtins(t_token *token, char **env, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
 int	ft_cd(char **env);
-int	ft_env(t_token *token, char **n_env);
+void	ft_env(t_token *token, t_env **n_env);
 void	ft_unset(t_token *cmd, t_env *env);
-int	ft_export(char **env);
+void	ft_export(t_token *token, t_env **env);
 int	ft_pwd(t_token *token);
 int	ft_echo(t_token *token);
 int	check_exit_status(t_env **env);
-
+int	check_var(char *key, t_token *token);
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
@@ -117,4 +116,5 @@ char	**list_to_env(t_env **start);
 void	free_doublechar(char **new_env);
 
 
+ void	set_one_node(char *str, t_env **n_env);
  void delete_quotes(char **string, t_env **env);

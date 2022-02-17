@@ -73,7 +73,6 @@ void	set_dollar(char **str, int start, t_env **env)
 		}
 		free(*str);
 		*str = res;
-		printf("'%s' -- res\n", res);
 //		free(*str);
 	}
 }

@@ -4,17 +4,6 @@
 
 #include "../minishell.h"
 
-//void set_dollar2(char **str, int start, t_env **env)
-//{
-//	char	*s;
-//	char	*new;
-//	t_env	*help;
-//	char	*res;
-//	int		i;
-//
-//	s = str;
-//
-//}
 void new_str(char **str, int len)
 {
 	int i;
