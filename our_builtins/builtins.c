@@ -15,8 +15,8 @@ int 	is_builtin(char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (1);
-//	if (ft_strncmp(cmd, "cd", 3) == 0)
-//		return (2);
+	if (ft_strncmp(cmd, "cd", 3) == 0)
+		return (2);
 	if (ft_strncmp(cmd, "pwd", 4) == 0)
 		return (3);
 //	if (ft_strncmp(cmd, "export", 7) == 0)
@@ -33,8 +33,8 @@ int 	is_builtin(char *cmd)
 
 void	do_builtins(t_token *token, char **env, t_env **n_env)
 {
-//	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
-//		signal_exit_status = ft_cd(token, env);
+	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
+		ft_cd(token, *n_env);
 	if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
 		ft_pwd(token);
 	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
@@ -100,9 +100,93 @@ int 	ft_env(t_token *token, char **n_env)
 	return (0);
 }
 
-int 	ft_cd(char **env)
+t_env	*find_key(t_env *n_env, char *key)
 {
+	t_env *result;
+
+	result = n_env;
+	while (result)
+	{
+		if (!ft_strcmp(result->name, key))
+			return (result);
+		result = result->next;
+	}
+	return (NULL);
+}
+
+int set_var(t_token *token, t_env *n_env, char *key, char *value)
+{
+	t_token *list;
+	t_env	*env;
+
+	list = token;
+	env = n_env;
+	while (list)
+	{
+		if (ft_strcmp(env->name, key) == 0)
+		{
+			free(env->data);
+			env->data = value;
+			return (1);
+		}
+		list = list->next;
+	}
 	return (0);
+}
+
+int	change_dir(char *path, t_token *token, t_env *n_env)
+{
+	char	*old_pwd;
+	char	*buf;
+	char	*pwd;
+
+	buf = NULL;
+	pwd = NULL;
+	old_pwd = NULL;
+	old_pwd = getcwd(buf, 0);
+	free(buf);
+	if (chdir(path) == 0)
+	{
+		buf = NULL;
+		pwd = getcwd(buf, 0);
+		free(buf);
+		set_var(token, n_env, "PWD", pwd);
+		set_var(token, n_env, "OLDPWD", old_pwd);
+		if (pwd)
+			free (pwd);
+		return (EXIT_SUCCESS);
+	}
+	else
+	{
+		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd(token->cmd[1], 2);
+		ft_putstr_fd(": ", 2);
+//		ft_putstr_fd(strerror(errno), 2);
+		write(1, "\n", 2);
+		return (EXIT_FAILURE);
+	}
+}
+
+int 	ft_cd(t_token *token, t_env *n_env)
+{
+	char	*path;
+	t_env	*home;
+
+	if (token->cmd[1] == NULL)
+	{
+		home = find_key(n_env, "HOME");
+		if (home == NULL)
+		{
+			ft_putstr_fd("SHKAD: cd: HOME not set\n", 2);
+			return (EXIT_FAILURE);
+		}
+		path = (find_key(n_env, "HOME")->data);
+	}
+	else if (ft_strcmp(token->cmd[1], "") == 0)
+		return (EXIT_SUCCESS);
+	else
+		path = token->cmd[1];
+	return (change_dir(path, token, n_env));
 }
 
 int	get_shlvl(t_env **n_env)

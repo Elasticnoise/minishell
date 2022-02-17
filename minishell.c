@@ -91,22 +91,21 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 	}
 	if (pid == 0)
 	{
-		close(pipe_fd[1]);
 		if (!token->infile)
 			dup2(pipe_fd[0], STDIN);
 		else
 			dup2(token->fd.in_file, STDIN);
 		close(pipe_fd[0]);
+		close(pipe_fd[1]);
 	}
 	else
 	{
-		close(pipe_fd[0]);
 		if (!token->outfile)
 			dup2(pipe_fd[1], STDOUT);
 		else
-			dup2(token->fd.out_file, STDOUT);
-//		close(pipe_fd[1]); ////
-//		dup2(token->fd.in_file, STDIN); ///
+			close(token->fd.out_file);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]); ////
 		do_exec_dev(token, env, n_env);
 		waitpid(pid, NULL, 0);
 	}
@@ -165,7 +164,6 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				}
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
-				waitpid(pid, NULL, 0);
 				do_exec_dev(cmd, env, n_env);
 //				waitpid(pid, NULL, 0);
 			}
@@ -173,7 +171,6 @@ int	executor(t_token **token, char **env, t_env **n_env)
 //				waitpid(pid, NULL, 0);
 		}
 		else
-//			wait3(0, WNOHANG, NULL);
 			waitpid(pid, NULL, 0);
 	}
 	return (1);

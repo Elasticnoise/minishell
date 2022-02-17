@@ -77,4 +77,3 @@ void	ft_unset(t_token *token, t_env *env)
 		i++;
 	}
 }
-
