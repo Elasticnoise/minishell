@@ -21,8 +21,8 @@ int 	is_builtin(char *cmd)
 		return (3);
 //	if (ft_strncmp(cmd, "export", 7) == 0)
 //		return (4);
-//	if (ft_strncmp(cmd, "unset", 6) == 0)
-//		return (5);
+	if (ft_strncmp(cmd, "unset", 6) == 0)
+		return (5);
 	if (ft_strncmp(cmd, "env", 4) == 0)
 		return (6);
 	if (ft_strncmp(cmd, "exit", 5) == 0)
@@ -43,8 +43,8 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 		ft_env(token, env);
 	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 		ft_exit(token, n_env);
-//	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
-//		ft_unset(token, *n_env);
+	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
+		ft_unset(token, *n_env);
 //	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
 //		signal_exit_status = ft_export(token, env);
 }
