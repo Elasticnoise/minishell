@@ -164,6 +164,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				}
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
+				waitpid(pid, NULL, 0);
 				do_exec_dev(cmd, env, n_env);
 //				waitpid(pid, NULL, 0);
 			}
@@ -205,31 +206,43 @@ void add_env(t_env	**start, t_env *new)
 		*start = new;
 }
 
+
+void	set_one_node(char *str, t_env **n_env)
+{
+	int start;
+	int j;
+	char *name;
+	char *data;
+
+	start = 0;
+	j = 0;
+	name = NULL;
+	while (str[j])
+	{
+		if (start == 0 && str[j] == '=')
+		{
+			name = ft_substr(str, 0, j);
+			start = j + 1;
+		}
+		j++;
+	}
+	if (name == NULL)
+	{
+		name = ft_substr(str, 0, j);
+		start = j + 1;
+	}
+	data = ft_substr(str, start, j);
+	add_env(&(*n_env), new_env(name, data));
+}
+
 void	set_env(char **env, t_env **n_env) ////todo malloc check
 {
 	int		i;
-	int 	j;
-	int		start;
-	char	*data;
-	char 	*name;
 
-	j = 0;
 	i = 0;
 	while (env[i])
 	{
-		start = 0;
-		j = 0;
-		while (env[i][j])
-		{
-			if (start == 0 && env[i][j] == '=')
-			{
-				name = ft_substr(env[i], 0, j);
-				start = j + 1;
-			}
-			j++;
-		}
-		data = ft_substr(env[i], start, j);
-		add_env(&(*n_env), new_env(name, data));
+		set_one_node(env[i], &(*n_env));
 		i++;
 	}
 }
@@ -350,43 +363,34 @@ int	main(int argc, char **argv, char **env)
 	int rc;
 	rc = tcgetattr(0, &termios_save );
 //	if (rc) {perror("tcgetattr"); exit(1); }
-
 	rc = atexit(reset_the_terminal);
 //	if (rc) {perror("atexit"); exit(1); }
-
 //	termios_new = termios_save;
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
-
-	signal(SIGQUIT, SIG_IGN);
-
+//	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
-//	printf("sigterm: %d\n", SIGTERM);
 	set_env(env, &n_env);
 	lvl_up(&n_env);
-//	new_env = list_to_env(&n_env);
-	new_env = list_to_env(&n_env);
 	while(1)
 	{
-//		signal(SIGQUIT, SIG_IGN);
-//		signal(SIGINT, &sig_handler);
-
-//		printf("KEKEKKEKE\n");
+		signal(SIGINT, &sig_handler);
+		new_env = list_to_env(&n_env);
 		line = readline("\x1b[35mShkad $\x1b[0m ");
-//		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
-//		new_env = list_to_env(&n_env);
 		if (line)
 		{
-			parser(line, &token, env, &n_env);
-//		new_env = list_to_env(&n_env);
-			executor(&token, new_env, &n_env);
-
+			if (ft_strcmp(line, ""))
+			{
+				parser(line, &token, env, &n_env);
+				executor(&token, new_env, &n_env);
+			}
 		}
-
+		else
+			exit(0);
+		free_doublechar(new_env);
 		unlink(".tmp_file");
-//		free(line);
 		free_list(&token);
 		if (check_exit_status(&n_env))
 			exit(signal_exit_status);

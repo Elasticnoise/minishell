@@ -9,7 +9,6 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
-# include "lexer.h"
 //# include <readline/readline.h>
 //# include <readline/history.h>
 # include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
@@ -71,14 +70,16 @@ void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 void	do_builtins(t_token *token, char **env, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
+int	ft_cd(char **env);
+void	ft_env(t_token *token, t_env **n_env);
 int	ft_cd(t_token *token, t_env *n_env);
 int	ft_env(t_token *token, char **n_env);
 void	ft_unset(t_token *cmd, t_env *env);
-int	ft_export(char **env);
+void	ft_export(t_token *token, t_env **env);
 int	ft_pwd(t_token *token);
 int	ft_echo(t_token *token);
 int	check_exit_status(t_env **env);
-
+int	check_var(char *key, t_token *token);
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
@@ -115,3 +116,7 @@ void	set_dollar(char **str, int start, t_env **env);
 void	dollar_outfile(t_token **token, t_env **env);
 char	**list_to_env(t_env **start);
 void	free_doublechar(char **new_env);
+
+
+ void	set_one_node(char *str, t_env **n_env);
+ void delete_quotes(char **string, t_env **env);

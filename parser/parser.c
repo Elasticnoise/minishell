@@ -164,6 +164,7 @@ t_token *new_token(char	*str, t_env **env)
 				to_free2 = ft_substr(str, help, i - help);
 				new_string = ft_strjoin(new_string, to_free2);
 			}
+//			printf("%p -- to_free2, %p - to_free", to_free2, to_free);
 //			if (to_free)
 //				free(to_free);
 //			free(to_free2); //todo add clean
@@ -218,6 +219,10 @@ t_token *new_token(char	*str, t_env **env)
 				token->infile = ft_substr(str, help, i - help);
 				dollar_infile(&token, env);
 				token->fd.in_file = open(token->infile, O_RDONLY); //TODO ADD IF
+				if (token->fd.in_file == -1)
+				{
+					printf("Cannot read from file\n");
+				}
 			}
 		}
 		else
@@ -228,7 +233,7 @@ t_token *new_token(char	*str, t_env **env)
 	free(new_string);
 //	printf("%s -- cmd str\n", new_string);
 
-	dollar_cmd(&token, env);
+//	dollar_cmd(&token, env);
 	////todo under is func to delete first """ or "'"
 //	i = 0;
 //	char *tmp;
@@ -276,22 +281,23 @@ void get_tokens(char *line, t_token **head, t_env **env)
 			i++;
 		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
 			i++;
-		add_token_back(&(*head), new_token(ft_substr(line, j, i - j), &(*env)) );
+		add_token_back(&(*head), new_token(ft_substr(line, j, i - j), &(*env)));
 		if (line[i] == '\0')
 			break ;
 		i++;
 	}
-
 //	help = *head;
 //	while (help)
 //	{
 //		i = 0;
 //		while (help->cmd && help->cmd[i])
 //		{
+//			delete_quotes(&(help->cmd[i]), env); //todo dont forget to move it
 //			if (i == 0)
 //				printf("CMD:    |%s|\n", help->cmd[i]);
 //			else
 //				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
+//
 //			i++;
 //		}
 //		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
@@ -340,8 +346,6 @@ int parser(char *line, t_token **token, char *env[], t_env **n_env)
 	if (delim_check(line))
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
-//	printf("%p -- line\n", line);
-//	printf("New line: |%s|\n", line);
 	get_tokens(line, &head, &(*n_env));
 	free(line);
 	*token = head; ////  Чтобы работало в мейне

@@ -55,6 +55,26 @@ void	set_dollar(char **str, int start, t_env **env)
 		free(*str);
 		*str = res;
 	}
+	else
+	{
+		free(new);
+		res = ft_calloc(ft_strlen(s) - (i - start) + 1, 1);
+		i = 0;
+		while (i < start)
+		{
+			res[i] = s[i];
+			i++;
+		}
+		while (s[end])
+		{
+			res[i] = s[end];
+			i++;
+			end++;
+		}
+		free(*str);
+		*str = res;
+//		free(*str);
+	}
 }
 
 void dollar_cmd(t_token **token, t_env **env)
@@ -93,7 +113,7 @@ void dollar_infile(t_token **token, t_env **env)
 	i = 0;
 	if (*token && (*token)->infile)
 	{
-		while ((*token)->infile[i])
+			while ((*token)->infile[i])
 		{
 			if ((*token)->infile[0] == '\'')
 				return ;

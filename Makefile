@@ -10,9 +10,12 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
 					our_builtins/ft_exit.c \
 					our_builtins/ft_echo.c \
 					our_builtins/ft_unset.c \
+					our_builtins/ft_export.c \
                     pipex_bonus_part/src/get_path.c \
                     src/signals.c \
                     ./src/dollar/dollar_set.c \
+                    ./parser/delete_quotes.c \
+
 
 CC = gcc
 

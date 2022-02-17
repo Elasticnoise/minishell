@@ -1,13 +1,5 @@
 #include "../minishell.h"
 
-void	ft_lstdelone(t_env *lst, void (*del)(void*))
-{
-	if (!lst || !del)
-		return ;
-	del(lst->data);
-	free(lst);
-}
-
 int	check_var(char *key, t_token *token)
 {
 	if (ft_isalpha(key[0]) || key[0] == '_')
@@ -21,42 +13,42 @@ int	check_var(char *key, t_token *token)
 	return (0);
 }
 
-void	del_node(void *content)
+void free_env_node(t_env *env)
 {
-	t_env	*token;
-
-	token = content;
-	free(token->data);
-	free(token->name);
-	free(content);
+	free(env->name);
+	if (env->data)
+		free(env->data);
+	free(env);
 }
 
 void	del_var(t_env **env, char *key)
 {
-	t_env	*lst;
-	t_env	*prev;
-	t_env	*var;
+	t_env *tmp;
+	t_env *prev;
 
-	lst = *env;
-	var = lst;
-	if (!ft_strcmp(var->name, key))
+	tmp = (*env)->next;
+	prev = *env;
+	if (!ft_strcmp(prev->name, key))
 	{
-//		printf("!!!!!\n");
-		*env = lst->next;
-		ft_lstdelone(lst, del_node);
-		return ;
+		free_env_node(prev);
+		*env = tmp;
 	}
-	while (lst->next)
+	else
 	{
-		prev = lst;
-		lst = lst->next;
-		var = lst;
-		if (!ft_strcmp(var->name, key))
+		while (tmp)
 		{
-			printf("!!!!!\n");
-			prev->next = lst->next;
-			ft_lstdelone(lst, del_node);
-			return ;
+			if (!ft_strcmp(tmp->name, key))
+			{
+				*env = prev;
+				prev->next = tmp->next;
+				free_env_node(tmp);
+				break ;
+			}
+			else
+			{
+				prev = tmp;
+				tmp = tmp->next;
+			}
 		}
 	}
 }
