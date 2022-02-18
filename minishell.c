@@ -91,35 +91,38 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env, int *help[],
 		ft_putstr_fd("Fork failed\n", 2);
 		return (1);
 	}
-//	printf("213\n");
 	if (pid == 0)
 	{
 //		close(pipe_fd[1]);
-//		close(pipe_fd[0]);
+		close(pipe_fd[0]);
 		if (!token->infile)
 			dup2(pipe_fd[0], STDIN);
 		else
 		{
-			close(pipe_fd[0]);
+//			printf("213\n");
 			dup2(token->fd.in_file, STDIN);
+//			close(pipe_fd[0]);
 		}
-		if (!token->outfile)
-			dup2(pipe_fd[1], STDOUT);
-		else
-		{
-			close(pipe_fd[1]);
-			dup2(token->fd.out_file, STDOUT);
-		}
+//		close(pipe_fd[0]);
+//		close(pipe_fd[1]);
 		do_exec_dev(token, env, n_env);
 	}
 	else
 	{
+		if (!token->outfile)
+			dup2(pipe_fd[1], STDOUT);
+		else
+		{
+//			close(pipe_fd[1]);
+			dup2(token->fd.out_file, STDOUT);
+		}
+		close(pipe_fd[1]);
 //		printf("kek");
 //		close(pipe_fd[0]);
 //		close(pipe_fd[1]);
 //		close(pipe_fd[1]); ////
 //		dup2(token->fd.in_file, STDIN); ///
-		waitpid(pid, NULL, 0);
+//		waitpid(pid, NULL, 0);
 	}
 	return (0);
 }
