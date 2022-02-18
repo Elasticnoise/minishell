@@ -107,7 +107,7 @@ t_env	*find_key(t_env *n_env, char *key)
 	return (NULL);
 }
 
-int set_var(t_token *token, t_env *n_env, char *key, char *value)
+int ft_set_var(t_token *token, t_env *n_env, char *key, char *value)
 {
 	t_token *list;
 	t_env	*env;
@@ -143,8 +143,8 @@ int	change_dir(char *path, t_token *token, t_env *n_env)
 		buf = NULL;
 		pwd = getcwd(buf, 0);
 		free(buf);
-		set_var(token, n_env, "PWD", pwd);
-		set_var(token, n_env, "OLDPWD", old_pwd);
+		ft_set_var(token, n_env, "PWD", pwd);
+		ft_set_var(token, n_env, "OLDPWD", old_pwd);
 		if (pwd)
 			free (pwd);
 		return (EXIT_SUCCESS);

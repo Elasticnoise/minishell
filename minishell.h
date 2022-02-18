@@ -71,7 +71,7 @@ void	do_builtins(t_token *token, char **env, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
 int	ft_cd(t_token *token, t_env *n_env);
-int	ft_env(t_token *token, char **n_env);
+void	ft_env(t_token *token, t_env **n_env);
 void	ft_unset(t_token *cmd, t_env *env);
 void	ft_export(t_token *token, t_env **env);
 int	ft_pwd(t_token *token);
