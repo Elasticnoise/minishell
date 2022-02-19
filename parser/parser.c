@@ -6,9 +6,8 @@
 
 int quotes(char *line, int i)
 {
-	char *help;
-	char *str;
-
+//	char *help;
+//	char *str;
 	while (line[i])
 	{
 		if (line[i] == '\'')
@@ -268,7 +267,7 @@ void	add_token_back(t_token **head, t_token *new)
 
 void get_tokens(char *line, t_token **head, t_env **env)
 {
-	t_token *help;
+//	t_token *help;
 	int		i;
 	int 	j;
 
@@ -339,6 +338,7 @@ int delim_check(char *line)
 int parser(char *line, t_token **token, char *env[], t_env **n_env)
 {
 	t_token *head;
+	(void)	env;
 
 	head = *token;
 	if (quotes(line, 0)) //todo quotes check

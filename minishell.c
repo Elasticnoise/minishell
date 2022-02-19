@@ -138,7 +138,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 
 	cmd = *token;
 	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_builtins(cmd, env, n_env);
+		do_builtins(cmd, n_env);
 	else
 	{
 		cmd = *token;
@@ -309,6 +309,7 @@ int	lvl_down(t_env **start)
 	int		lvl;
 
 	tmp = *start;
+	lvl = ft_atoi(tmp->data);
 	while (tmp)
 	{
 		if (!ft_strncmp(tmp->name, "SHLVL", 6))
@@ -339,8 +340,6 @@ void reset_the_terminal(void)
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-	int 	status;
-	t_main	main;
 	t_token *token;
 	char **new_env;
 	(void)	argv;

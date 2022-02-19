@@ -1,6 +1,6 @@
 LIBFT = ./libft/libft.a
 
-CFLAGS = -Wall -Werror -Wextra -I../../.brew/opt/readline/include  -I./
+CFLAGS = -ggdb3 -I../../.brew/opt/readline/include  -I./ #-Wall -Werror -Wextra
 NAME = minishell
 
 NAME_B = minishell_bonus
@@ -14,13 +14,12 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
                     pipex_bonus_part/src/get_path.c \
                     src/signals.c \
                     src/pipex.c \
+                    src/pipex_utils.c \
                     ./src/dollar/dollar_set.c \
                     ./parser/delete_quotes.c \
 
 
 CC = gcc
-
-LIB = ar -rcs $(NAME)
 
 OBJ = $(SRC:.c=.o)
 
@@ -28,14 +27,10 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 		$(MAKE) -C ./libft
-		$(CC) -lreadline -L ../../.brew/opt/readline/lib  $(CFLAGS) -o $(NAME) $(OBJ) ./libft/libft.a
-
-#$(NAME1): $(OBJ1)
-#		$(MAKE) -C ./libft
-#		$(CC) $(CFLAGS) -o $(NAME_B) $(OBJ1) ./libft/libft.a
+		$(CC) -lreadline -L ../../.brew/opt/readline/lib -o $(NAME) $(OBJ) ./libft/libft.a
 
 %.o: %.c
-		gcc -c $< -o $@
+		gcc $(CFLAGS) -c $< -o $@
 
 clean:
 		$(MAKE) clean -C ./libft

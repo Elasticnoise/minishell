@@ -31,7 +31,7 @@ int 	is_builtin(char *cmd)
 	return (0);
 }
 
-void	do_builtins(t_token *token, char **env, t_env **n_env)
+void	do_builtins(t_token *token, t_env **n_env)
 {
 	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
 		ft_cd(token, *n_env);
@@ -40,7 +40,7 @@ void	do_builtins(t_token *token, char **env, t_env **n_env)
 	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
 		ft_echo(token);
 	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
-		ft_env(token, n_env);
+		ft_env(n_env);
 	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 		ft_exit(token, n_env);
 	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
@@ -77,7 +77,7 @@ void	free_doublechar(char **new_env)
 	}
 }
 
-void	ft_env(t_token *token, t_env **n_env)
+void	ft_env(t_env **n_env)
 {
 	t_env *tmp;
 
@@ -188,6 +188,7 @@ int	get_shlvl(t_env **n_env)
 	int		lvl;
 
 	tmp = *n_env;
+	lvl = ft_atoi(tmp->data);
 	while (tmp)
 	{
 		if (!ft_strncmp(tmp->name, "SHLVL", 6))

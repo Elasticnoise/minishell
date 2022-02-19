@@ -66,13 +66,17 @@ void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
 int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
 void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
+int	get_cmd_count(t_token **token);
+void close_pipes(int *pipes, int count_node);
+ int *open_pipes(int cmd_i);
+ void wait_childs(int n);
 
 /*BUILTINS*/
-void	do_builtins(t_token *token, char **env, t_env **n_env);
+void	do_builtins(t_token *token, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
 int	ft_cd(t_token *token, t_env *n_env);
-void	ft_env(t_token *token, t_env **n_env);
+void	ft_env(t_env **n_env);
 void	ft_unset(t_token *cmd, t_env *env);
 void	ft_export(t_token *token, t_env **env);
 int	ft_pwd(t_token *token);
