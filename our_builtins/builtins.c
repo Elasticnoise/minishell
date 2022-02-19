@@ -31,22 +31,24 @@ int 	is_builtin(char *cmd)
 	return (0);
 }
 
-void	do_builtins(t_token *token, t_env **n_env)
+int	do_builtins(t_token *token, t_env **n_env)
 {
 	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
-		ft_cd(token, *n_env);
+		return (ft_cd(token, *n_env));
 	if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
-		ft_pwd(token);
+		return (ft_pwd(token));
 	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
-		ft_echo(token);
+		return (ft_echo(token));
 	else if (ft_strncmp(token->cmd[0], "env", 4) == 0)
-		ft_env(n_env);
+		return (ft_env(n_env));
 	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
-		ft_exit(token, n_env);
+		return (ft_exit(token, n_env));
 	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
-		ft_unset(token, *n_env);
+		return (ft_unset(token, *n_env));
 	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
-		ft_export(token, n_env);
+		return (ft_export(token, n_env));
+	else
+		return (EXIT_FAILURE);
 }
 
 int 	ft_pwd(t_token *token)
@@ -61,7 +63,7 @@ int 	ft_pwd(t_token *token)
 	write(1, "\n", 1);
 	free(tmp_buf);
 	free(pwd);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 void	free_doublechar(char **new_env)
@@ -77,20 +79,33 @@ void	free_doublechar(char **new_env)
 	}
 }
 
-void	ft_env(t_env **n_env)
+int	ft_env(t_env **n_env)
 {
 	t_env *tmp;
+	int is_path;
 
+	is_path = 0;
 	tmp = *n_env;
 	while (tmp)
 	{
-		if (ft_strcmp(tmp->data, ""))
-		{
-			printf("%s", tmp->name);
-			printf("=%s\n", tmp->data);
-		}
+		if (ft_strcmp(tmp->name, "PATH"))
+			is_path = 1;
 		tmp = tmp->next;
 	}
+	if (is_path)
+	{
+		tmp = *n_env;
+		while (tmp)
+		{
+			if (ft_strcmp(tmp->data, ""))
+			{
+				printf("%s", tmp->name);
+				printf("=%s\n", tmp->data);
+			}
+			tmp = tmp->next;
+		}
+	}
+	return (EXIT_SUCCESS);
 }
 
 t_env	*find_key(t_env *n_env, char *key)

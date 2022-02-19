@@ -96,7 +96,18 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	kind = 1;
 	i = 0;
 	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_builtins(cmd, n_env);
+	{
+		if (do_builtins(cmd, n_env) == EXIT_SUCCESS)
+		{
+			signal_exit_status = EXIT_SUCCESS;
+			return (EXIT_SUCCESS);
+		}
+		else
+		{
+			signal_exit_status = EXIT_FAILURE;
+			return (EXIT_FAILURE);
+		}
+	}
 	else
 	{
 		while (cmd != NULL)
@@ -104,6 +115,9 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 			pid = fork();
 			if (pid == 0)
 			{
+				handle_heredoc(&cmd);
+				if (cmd->limiter)
+					cmd->fd.in_file = open(".tmp_file", O_RDONLY);
 				if (cmd_i > 1)
 					pipe_switch(i, kind, pipes, cmd, cmd_i);
 				if (cmd->infile || cmd->outfile)
@@ -111,12 +125,14 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 				close_pipes(pipes, cmd_i);
 				close_in_out_file(cmd);
 				if (is_builtin(cmd->cmd[0]))
-					do_builtins(cmd, n_env);
-				do_exec_dev(cmd, env, n_env);
+				{
+					if (do_builtins(cmd, n_env) == EXIT_SUCCESS)
+						exit (EXIT_SUCCESS);
+					else
+						exit (EXIT_FAILURE);
+				}
+				do_exec_dev(cmd, env);
 			}
-//		handle_heredoc(&cmd);
-//		if (cmd->limiter)
-//		cmd->fd.in_file = open(".tmp_file", O_RDONLY);
 			kind = cmd_position(kind, cmd, cmd_i);
 			cmd = cmd->next;
 			i++;

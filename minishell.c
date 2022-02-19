@@ -55,10 +55,9 @@ void	set_in_out_files(t_token *token)
 	}
 }
 
-/*TODO need to change char **envp to t_env *envp*/
-void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
+void	do_exec_dev(t_token *token, char **envp)
 {
-	(void) n_env;
+	signal(SIGQUIT, SIG_DFL);
 	if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
 	{
 		ft_putstr_fd("Shkad: ", 2);
@@ -99,7 +98,7 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 			close(token->fd.out_file);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]); ////
-		do_exec_dev(token, env, n_env);
+		do_exec_dev(token, env);
 //		waitpid(pid, NULL, 0);
 		wait(&pid);
 	}
@@ -159,7 +158,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
 				waitpid(pid, NULL, 0);
-				do_exec_dev(cmd, env, n_env);
+				do_exec_dev(cmd, env);
 //				waitpid(pid, NULL, 0);
 			}
 //			else
@@ -361,7 +360,7 @@ int	main(int argc, char **argv, char **env)
 //	termios_new = termios_save;
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
-//	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
 	lvl_up(&n_env);
@@ -369,6 +368,7 @@ int	main(int argc, char **argv, char **env)
 	{
 		signal(SIGINT, &sig_handler);
 		new_env = list_to_env(&n_env);
+		signal_exit_status = 0;
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 		if (line && *line)
 			add_history(line);

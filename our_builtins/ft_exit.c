@@ -95,7 +95,7 @@ int 	ft_exit(t_token *token, t_env **n_env)
 	else {
 		if (token->cmd[1] && token->cmd[2]) {
 			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-			return (1);
+			return (EXIT_FAILURE);
 		}
 		signal_exit_status = ft_exit_status(token->cmd[1]);
 		if (signal_exit_status == -1)
