@@ -58,22 +58,14 @@ void	set_in_out_files(t_token *token)
 /*TODO need to change char **envp to t_env *envp*/
 void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 {
-//	if (is_builtin(token->cmd[0]))
-//		do_builtins(token, envp, n_env);
-//	else
-//	{
-		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
-		{
-//			int i = 0;
-//			while (token->cmd[i])
-//			{
-//				printf("%s --- FROM EXECVE\n", token->cmd[i]);
-//				i++;
-//			}
-			printf("Shkad: %s: command not found\n", token->cmd[0]);
-			exit(127);
-		}
-//	}
+	(void) n_env;
+	if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
+	{
+		ft_putstr_fd("Shkad: ", 2);
+		ft_putstr_fd(token->cmd[0], 2);
+		ft_putendl_fd(": command not found", 2);
+		exit(EXIT_FAILURE);
+	}
 }
 
 int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
@@ -91,12 +83,13 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 	}
 	if (pid == 0)
 	{
+		close(pipe_fd[1]);
 		if (!token->infile)
 			dup2(pipe_fd[0], STDIN);
 		else
 			dup2(token->fd.in_file, STDIN);
 		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+//		close(pipe_fd[1]);
 	}
 	else
 	{
@@ -107,7 +100,8 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 		close(pipe_fd[0]);
 		close(pipe_fd[1]); ////
 		do_exec_dev(token, env, n_env);
-		waitpid(pid, NULL, 0);
+//		waitpid(pid, NULL, 0);
+		wait(&pid);
 	}
 	return (0);
 }
@@ -384,7 +378,7 @@ int	main(int argc, char **argv, char **env)
 			if (ft_strcmp(line, ""))
 			{
 				parser(line, &token, env, &n_env);
-				executor(&token, new_env, &n_env);
+				do_pipex(&token, new_env, &n_env);
 			}
 		}
 		else

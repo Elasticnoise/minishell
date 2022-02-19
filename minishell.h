@@ -61,6 +61,7 @@ typedef struct s_main
 /*PIPE*/
 int		ft_redirect(char **av, char **env, int in_file, int out_file, int i);
 void	do_exec(char **av, char **envp, int i);
+int	do_pipex(t_token **token, char **env, t_env **n_env);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
 int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
@@ -82,6 +83,7 @@ int	check_var(char *key, t_token *token);
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
 int	lvl_down(t_env **start);
+void	handle_heredoc(t_token **cmd);
 //readline add_history
 //
 //rl_clear_history,
