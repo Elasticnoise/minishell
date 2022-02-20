@@ -148,6 +148,8 @@ int	executor(t_token **token, char **env, t_env **n_env)
 	{
 		cmd = *token;
 		pid = fork();
+//		int fd[2];
+//		pipe(fd);
 		if (pid == 0)
 		{
 			if (cmd)
