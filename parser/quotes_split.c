@@ -12,10 +12,10 @@
 
 #include "../minishell.h"
 
-int		new_quotes(char *str, int j)
+int	new_quotes(char *str, int j)
 {
-	int i;
-	char help;
+	int		i;
+	char	help;
 
 	i = 0;
 	while (str[i])
@@ -51,8 +51,7 @@ static size_t	segments(char const *s, char c)
 	len = 0;
 	while (s[j])
 	{
-		while ((s[j] != c || new_quotes((char *)s, j)) &&
-		s[j])
+		while ((s[j] != c || new_quotes((char *)s, j)) && s[j])
 		{
 			j++;
 			len++;
@@ -68,31 +67,17 @@ static size_t	segments(char const *s, char c)
 	return (i);
 }
 
-
 static size_t	elem_size(char *s, char c)
 {
 	size_t	len;
-	int 	flag;
+	int		flag;
 
 	flag = 1;
 	len = 0;
 	while (s[len] != '\0' && (s[len] != c || new_quotes(s, len)))
 		len++;
-//	if (s[len - 1] == '"' || s[len - 1] == '\'')
-//		len--; ////todo delete last '"'
 	return (len);
 }
-
-//static void	*leek_case_q(size_t num_segment, char **arr)
-//{
-//	size_t	i;
-//
-//	i = 0;
-//	while (i < num_segment)
-//		free(arr[i++]);
-//	free(arr);
-//	return (NULL);
-//}
 
 static char	**arr_fill(char *s, char c, size_t num_segment, char **arr)
 {
@@ -112,8 +97,6 @@ static char	**arr_fill(char *s, char c, size_t num_segment, char **arr)
 		j = 0;
 		while (j < len)
 			arr[i][j++] = *s++;
-//		if (*s == '\'' || *s == '"')
-//			*s++;
 		arr[i][j] = '\0';
 		i++;
 	}

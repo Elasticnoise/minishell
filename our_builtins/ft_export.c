@@ -9,10 +9,9 @@ void	set_var(t_env **env, char *key)
 	set_one_node(key, &(*env));
 }
 
-
 void	print_export(t_env **env)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	tmp = *env;
 	while (tmp)
@@ -32,7 +31,6 @@ int	ft_export(t_token *token, t_env **env)
 	char	*key;
 
 	key = NULL;
-//	signal_exit_status = 0;
 	i = 1;
 	if (!(token->cmd[i]))
 		print_export(env);

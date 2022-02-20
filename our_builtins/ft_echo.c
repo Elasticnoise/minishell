@@ -1,9 +1,9 @@
 #include "../minishell.h"
 
-int 	ft_echo(t_token *token)
+int	ft_echo(t_token *token)
 {
 	int	i;
-	int is_n;
+	int	is_n;
 
 	i = 1;
 	is_n = 0;
@@ -23,4 +23,3 @@ int 	ft_echo(t_token *token)
 		write(1, "\n", 1);
 	return (EXIT_SUCCESS);
 }
-

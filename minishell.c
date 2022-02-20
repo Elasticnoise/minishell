@@ -344,8 +344,8 @@ int	main(int argc, char **argv, char **env)
 		{
 			if (ft_strcmp(line, ""))
 			{
-				parser(line, &token, env, &n_env);
-				do_pipex(&token, new_env, &n_env);
+				if (!parser(line, &token, env, &n_env))
+					do_pipex(&token, new_env, &n_env);
 			}
 		}
 		else

@@ -14,16 +14,15 @@
 
 char	*get_right_env(char **envp, char *right_envp)
 {
-	int i;
-	char *result;
+	int		i;
+	char	*result;
 
 	i = 0;
-	while (ft_strnstr(envp[i], right_envp, ft_strlen(envp[i])) == 0)
+	while (ft_strnstr(envp[i], right_envp,
+			ft_strlen(envp[i])) == 0)
 		i++;
-	result = envp[i] + ft_strlen(right_envp ) + 1;
+	result = envp[i] + ft_strlen(right_envp) + 1;
 	if (result != NULL)
 		return (result);
 	return (NULL);
 }
-
-

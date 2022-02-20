@@ -86,14 +86,16 @@ int	check_exit_status(t_env **env)
 	}
 }
 
-int 	ft_exit(t_token *token, t_env **n_env)
+int	ft_exit(t_token *token, t_env **n_env)
 {
 	lvl_down(n_env);
 	ft_putstr_fd("exit\n", 1);
 	if (ft_check_exit_status(token->cmd[1]))
 		ft_exit_err_msg(token->cmd[1]);
-	else {
-		if (token->cmd[1] && token->cmd[2]) {
+	else
+	{
+		if (token->cmd[1] && token->cmd[2])
+		{
 			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 			return (EXIT_FAILURE);
 		}

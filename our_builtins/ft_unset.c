@@ -13,7 +13,7 @@ int	check_var(char *key, t_token *token)
 	return (0);
 }
 
-void free_env_node(t_env *env)
+void	free_env_node(t_env *env)
 {
 	free(env->name);
 	if (env->data)
@@ -21,11 +21,29 @@ void free_env_node(t_env *env)
 	free(env);
 }
 
-/* TODO ft_unset function del_var do segmentations*/
+static void	del_var_help(t_env *tmp, char *key, t_env *prev, t_env **env)
+{
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->name, key))
+		{
+			*env = prev;
+			prev->next = tmp->next;
+			free_env_node(tmp);
+			break ;
+		}
+		else
+		{
+			prev = tmp;
+			tmp = tmp->next;
+		}
+	}
+}
+
 void	del_var(t_env **env, char *key)
 {
-	t_env *tmp;
-	t_env *prev;
+	t_env	*tmp;
+	t_env	*prev;
 
 	tmp = (*env)->next;
 	prev = *env;
@@ -35,26 +53,10 @@ void	del_var(t_env **env, char *key)
 		*env = tmp;
 	}
 	else
-	{
-		while (tmp)
-		{
-			if (!ft_strcmp(tmp->name, key))
-			{
-				*env = prev;
-				prev->next = tmp->next;
-				free_env_node(tmp);
-				break ;
-			}
-			else
-			{
-				prev = tmp;
-				tmp = tmp->next;
-			}
-		}
-	}
+		del_var_help(tmp, key, prev, &(*env));
 }
 
-int	ft_unset(t_token *token, t_env *env)
+int	ft_unset(t_token *token, t_env **env)
 {
 	int		i;
 	char	*key;
@@ -66,7 +68,7 @@ int	ft_unset(t_token *token, t_env *env)
 	{
 		key = token->cmd[i];
 		if (check_var(key, token))
-			del_var(&env, key);
+			del_var(&(*env), key);
 		i++;
 	}
 	return (EXIT_SUCCESS);

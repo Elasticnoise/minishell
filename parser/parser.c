@@ -1,13 +1,8 @@
-//
-// Created by Gaynell Hanh on 2/2/22.
-//
 
 #include "../minishell.h"
 
-int quotes(char *line, int i)
+int	quotes(char *line, int i)
 {
-//	char *help;
-//	char *str;
 	while (line[i])
 	{
 		if (line[i] == '\'')
@@ -31,7 +26,7 @@ int quotes(char *line, int i)
 	return (0);
 }
 
-int check_delimiter(char c)
+int	check_delimiter(char c)
 {
 	if (c == ' ')
 		return (1);
@@ -45,11 +40,11 @@ int check_delimiter(char c)
 		return (0);
 }
 
-int		malloc_sp(char *line)
+int	malloc_sp(char *line)
 {
-	int i;
-	int counter;
-	int len;
+	int	i;
+	int	counter;
+	int	len;
 
 	counter = 0;
 	i = 0;
@@ -91,8 +86,8 @@ char	*destroy_space(char *line)
 	char	*new_line;
 	int		i;
 	int		help;
-	int 	j;
-	int 	redir_type;
+	int		j;
+	int		redir_type;
 
 	j = 0;
 	i = 0;
@@ -116,8 +111,8 @@ char	*destroy_space(char *line)
 				i++;
 			}
 			new_line[j++] = set_del(redir_type);
-			if (check_delimiter(line[help]) > 2 && line[help + 1] && line[help]
-			== line[help + 1])
+			if (check_delimiter(line[help]) > 2 && line[help + 1]
+				&& line[help] == line[help + 1])
 				new_line[j++] = set_del(redir_type);
 			i--;
 		}
@@ -162,11 +157,7 @@ t_token *new_token(char	*str, t_env **env)
 			{
 				to_free2 = ft_substr(str, help, i - help);
 				new_string = ft_strjoin(new_string, to_free2);
-			}
-//			printf("%p -- to_free2, %p - to_free", to_free2, to_free);
-//			if (to_free)
-//				free(to_free);
-//			free(to_free2); //todo add clean
+			} // todo free to free
 		}
 		else if (check_delimiter(str[i]) == 4)
 		{
@@ -182,7 +173,6 @@ t_token *new_token(char	*str, t_env **env)
 				close(token->fd.out_file);
 			}
 			token->outfile = ft_substr(str, help, i - help);
-//			dollar_outfile(&token, env);
 			delete_quotes(&(token->outfile), env);
 			if (str[help - 2] == '>')
 				token->fd.out_file = open(token->outfile, O_APPEND |
@@ -218,20 +208,15 @@ t_token *new_token(char	*str, t_env **env)
 			{
 				token->infile = ft_substr(str, help, i - help);
 				delete_quotes(&(token->infile), env);
-//				dollar_infile(&token, env);
-				token->fd.in_file = open(token->infile, O_RDONLY); //TODO ADD IF
+				token->fd.in_file = open(token->infile, O_RDONLY);
 				if (token->fd.in_file == -1)
-				{
 					printf("Cannot read from file\n");
-				}
 			}
 		}
 		else
 			i++;
 	}
-//	printf("%s -- cmd str\n", new_string);
 	token->cmd = ft_q_split(new_string, ' ');
-//	printf("%s -- cmd str\n", new_string);
 	free(new_string);
 	i = 0;
 	if (token->cmd)
@@ -247,7 +232,7 @@ t_token *new_token(char	*str, t_env **env)
 
 void	add_token_back(t_token **head, t_token *new)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	tmp = *head;
 	if (tmp)
@@ -261,10 +246,10 @@ void	add_token_back(t_token **head, t_token *new)
 		*head = new;
 }
 
-void get_tokens(char *line, t_token **head, t_env **env)
+void	get_tokens(char *line, t_token **head, t_env **env)
 {
-	int		i;
-	int 	j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (line[i] != '\0')
@@ -272,40 +257,20 @@ void get_tokens(char *line, t_token **head, t_env **env)
 		j = i;
 		while (line[i] != '\0' && !(!quotes(line, i) && line[i] == '|'))
 			i++;
-		if (line[i] && (line[i] == '"' ||  line[i] == '\''))
+		if (line[i] && (line[i] == '"' || line[i] == '\''))
 			i++;
-		add_token_back(&(*head), new_token(ft_substr(line, j, i - j), &(*env)));
+		add_token_back(&(*head),
+			new_token(ft_substr(line, j, i - j),
+				&(*env)));
 		if (line[i] == '\0')
 			break ;
 		i++;
 	}
-
-//	t_token *help;
-//	help = *head;
-//	while (help)
-//	{
-//		i = 0;
-//		while (help->cmd && help->cmd[i])
-//		{
-////			delete_quotes(&(help->cmd[i]), env); //todo dont forget to move it
-//			if (i == 0)
-//				printf("CMD:    |%s|\n", help->cmd[i]);
-//			else
-//				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
-//
-//			i++;
-//		}
-//		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
-//			   help->fd.out_file);
-//		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
-//			   help->fd.in_file);
-//		help = help->next;
-//	}
 }
 
-int delim_check(char *line)
+int	delim_check(char *line)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (line[i])
@@ -319,8 +284,8 @@ int delim_check(char *line)
 				i++;
 				while (line[i] && check_delimiter(line[i]) == 1)
 					i++;
-				if (line[i] && check_delimiter(line[i]) > 2 && line[i] ==
-				line[i - 1])
+				if (line[i] && check_delimiter(line[i]) > 2
+					&& line[i] == line[i - 1])
 					i++;
 				if (!line[i] || check_delimiter(line[i]) == 2)
 					return (1);
@@ -331,19 +296,19 @@ int delim_check(char *line)
 	return (0);
 }
 
-int parser(char *line, t_token **token, char *env[], t_env **n_env)
+int	parser(char *line, t_token **token, char *env[], t_env **n_env)
 {
-	t_token *head;
-	(void)	env;
+	t_token	*head;
 
+	(void) env;
 	head = *token;
-	if (quotes(line, 0)) //todo quotes check
+	if (quotes(line, 0))
 		return (printf("Quotes didnt close\n"));
 	if (delim_check(line))
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
 	get_tokens(line, &head, &(*n_env));
 	free(line);
-	*token = head; ////  Чтобы работало в мейне
-	return(0);
+	*token = head;
+	return (0);
 }

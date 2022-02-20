@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-int 	is_builtin(char *cmd)
+int	is_builtin(char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (1);
@@ -27,7 +27,6 @@ int 	is_builtin(char *cmd)
 		return (6);
 	if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (7);
-//		exit(126);
 	return (0);
 }
 
@@ -44,14 +43,14 @@ int	do_builtins(t_token *token, t_env **n_env)
 	else if (ft_strncmp(token->cmd[0], "exit", 5) == 0)
 		return (ft_exit(token, n_env));
 	else if (ft_strncmp(token->cmd[0], "unset", 6) == 0)
-		return (ft_unset(token, *n_env));
+		return (ft_unset(token, n_env));
 	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
 		return (ft_export(token, n_env));
 	else
 		return (EXIT_FAILURE);
 }
 
-int 	ft_pwd(t_token *token)
+int	ft_pwd(t_token *token)
 {
 	char	*tmp_buf;
 	char	*pwd;
@@ -81,14 +80,14 @@ void	free_doublechar(char **new_env)
 
 int	ft_env(t_env **n_env)
 {
-	t_env *tmp;
-	int is_path;
+	t_env	*tmp;
+	int		is_path;
 
 	is_path = 0;
 	tmp = *n_env;
 	while (tmp)
 	{
-		if (ft_strcmp(tmp->name, "PATH"))
+		if (!ft_strcmp(tmp->name, "PATH"))
 			is_path = 1;
 		tmp = tmp->next;
 	}
@@ -110,7 +109,7 @@ int	ft_env(t_env **n_env)
 
 t_env	*find_key(t_env *n_env, char *key)
 {
-	t_env *result;
+	t_env	*result;
 
 	result = n_env;
 	while (result)
@@ -122,9 +121,9 @@ t_env	*find_key(t_env *n_env, char *key)
 	return (NULL);
 }
 
-int ft_set_var(t_token *token, t_env *n_env, char *key, char *value)
+int	ft_set_var(t_token *token, t_env *n_env, char *key, char *value)
 {
-	t_token *list;
+	t_token	*list;
 	t_env	*env;
 
 	list = token;
@@ -169,13 +168,12 @@ int	change_dir(char *path, t_token *token, t_env *n_env)
 		ft_putstr_fd("minishell: cd: ", 2);
 		ft_putstr_fd(token->cmd[1], 2);
 		ft_putstr_fd(": ", 2);
-//		ft_putstr_fd(strerror(errno), 2);
 		write(1, "\n", 2);
 		return (EXIT_FAILURE);
 	}
 }
 
-int 	ft_cd(t_token *token, t_env *n_env)
+int	ft_cd(t_token *token, t_env *n_env)
 {
 	char	*path;
 	t_env	*home;
@@ -203,13 +201,13 @@ int	get_shlvl(t_env **n_env)
 	int		lvl;
 
 	tmp = *n_env;
-	lvl = ft_atoi(tmp->data);
+	lvl = 0;
 	while (tmp)
 	{
 		if (!ft_strncmp(tmp->name, "SHLVL", 6))
 		{
 			lvl = ft_atoi(tmp->data);
-			break;
+			break ;
 		}
 		tmp = tmp->next;
 	}
