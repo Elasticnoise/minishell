@@ -15,3 +15,16 @@ void	sig_handler2(int signum)
 	(void)signum;
 	ft_putendl_fd("", 1);
 }
+
+void	set_exit_status(int cmd_i)
+{
+	if (WIFEXITED(signal_exit_status))
+		signal_exit_status = WEXITSTATUS(signal_exit_status);
+	else if (WIFSIGNALED(signal_exit_status))
+	{
+		if (WTERMSIG(signal_exit_status) == SIGQUIT)
+			write(1, "Quit: 3\n", 8);
+		signal_exit_status = 128 + WTERMSIG(signal_exit_status);
+	}
+//	wait_childs(cmd_i);
+}

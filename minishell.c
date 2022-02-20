@@ -65,6 +65,7 @@ void	do_exec_dev(t_token *token, char **envp)
 		ft_putendl_fd(": command not found", 2);
 		exit(EXIT_FAILURE);
 	}
+	exit(127);
 }
 
 int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
@@ -116,7 +117,10 @@ void	handle_heredoc(t_token **cmd)
 		fd = open(".tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
 		while (1)
 		{
+			signal(SIGINT, SIG_DFL);
 			line = readline("> ");
+			if (line == NULL)
+				break ;
 			limiter = ft_strncmp(line, (*cmd)->limiter, ft_strlen((*cmd)->limiter) + 1);
 			if (limiter == 0)
 				break ;
@@ -128,6 +132,8 @@ void	handle_heredoc(t_token **cmd)
 		(*cmd)->fd.in_file = fd;
 		close(fd);
 	}
+	if (WTERMSIG(signal_exit_status) == SIGINT)
+		signal_exit_status = 1;
 }
 
 int	executor(t_token **token, char **env, t_env **n_env)
@@ -370,6 +376,7 @@ int	main(int argc, char **argv, char **env)
 		new_env = list_to_env(&n_env);
 		signal_exit_status = 0;
 		line = readline("\x1b[35mShkad $\x1b[0m ");
+		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		if (line)

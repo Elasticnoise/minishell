@@ -88,6 +88,7 @@ void	sig_handler(int signum);
 void	sig_handler2(int signum);
 int	lvl_down(t_env **start);
 void	handle_heredoc(t_token **cmd);
+void	set_exit_status(int cmd_i);
 //readline add_history
 //
 //rl_clear_history,
