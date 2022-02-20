@@ -11,8 +11,8 @@
 # include <stdio.h>
 //# include <readline/readline.h>
 //# include <readline/history.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 
 # define CLOSE "\001\033[0m\002"                 // Закрыть все свойства
 # define BLOD  "\001\033[1m\002"                 // Подчеркнуть, жирным
@@ -63,15 +63,15 @@ int		ft_redirect(char **av, char **env, int in_file, int out_file, int i);
 void	do_exec(char **av, char **envp, int i);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
-int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
+//int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
 void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 
 /*BUILTINS*/
 void	do_builtins(t_token *token, char **env, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
-int	ft_cd(t_token *token, t_env *n_env);
-int	ft_env(t_token *token, char **n_env);
+int	ft_cd(char **env);
+void	ft_env(t_token *token, t_env **n_env);
 void	ft_unset(t_token *cmd, t_env *env);
 void	ft_export(t_token *token, t_env **env);
 int	ft_pwd(t_token *token);
