@@ -83,16 +83,16 @@ static size_t	elem_size(char *s, char c)
 	return (len);
 }
 
-static void	*leek_case_q(size_t num_segment, char **arr)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < num_segment)
-		free(arr[i++]);
-	free(arr);
-	return (NULL);
-}
+//static void	*leek_case_q(size_t num_segment, char **arr)
+//{
+//	size_t	i;
+//
+//	i = 0;
+//	while (i < num_segment)
+//		free(arr[i++]);
+//	free(arr);
+//	return (NULL);
+//}
 
 static char	**arr_fill(char *s, char c, size_t num_segment, char **arr)
 {

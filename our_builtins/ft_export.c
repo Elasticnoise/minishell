@@ -26,7 +26,7 @@ void	print_export(t_env **env)
 	}
 }
 
-void	ft_export(t_token *token, t_env **env)
+int	ft_export(t_token *token, t_env **env)
 {
 	int		i;
 	char	*key;
@@ -43,4 +43,5 @@ void	ft_export(t_token *token, t_env **env)
 			set_var(env, key);
 		i++;
 	}
+	exit(EXIT_SUCCESS);
 }

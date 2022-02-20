@@ -13,7 +13,9 @@ void	set_dollar(char **str, int start, t_env **env)
 	t_env *help;
 	char *res;
 	int end;
+	int j;
 
+	j = 0;
 	help = *env;
 	s = *str;
 	while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
@@ -39,7 +41,6 @@ void	set_dollar(char **str, int start, t_env **env)
 			res[i] = s[i];
 			i++;
 		}
-		int j = 0;
 		while (j < ft_strlen(help->data))
 		{
 			res[i] = help->data[j];

@@ -21,6 +21,6 @@ int 	ft_echo(t_token *token)
 	}
 	if (!is_n)
 		write(1, "\n", 1);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 

@@ -55,25 +55,17 @@ void	set_in_out_files(t_token *token)
 	}
 }
 
-/*TODO need to change char **envp to t_env *envp*/
-void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
+void	do_exec_dev(t_token *token, char **envp)
 {
-//	if (is_builtin(token->cmd[0]))
-//		do_builtins(token, envp, n_env);
-//	else
-//	{
-		if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
-		{
-//			int i = 0;
-//			while (token->cmd[i])
-//			{
-//				printf("%s --- FROM EXECVE\n", token->cmd[i]);
-//				i++;
-//			}
-			printf("Shkad: %s: command not found\n", token->cmd[0]);
-			exit(127);
-		}
-//	}
+	signal(SIGQUIT, SIG_DFL);
+	if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
+	{
+		ft_putstr_fd("Shkad: ", 2);
+		ft_putstr_fd(token->cmd[0], 2);
+		ft_putendl_fd(": command not found", 2);
+		exit(EXIT_FAILURE);
+	}
+	exit(127);
 }
 
 int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
@@ -91,12 +83,13 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 	}
 	if (pid == 0)
 	{
+		close(pipe_fd[1]);
 		if (!token->infile)
 			dup2(pipe_fd[0], STDIN);
 		else
 			dup2(token->fd.in_file, STDIN);
 		close(pipe_fd[0]);
-		close(pipe_fd[1]);
+//		close(pipe_fd[1]);
 	}
 	else
 	{
@@ -106,8 +99,9 @@ int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
 			close(token->fd.out_file);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]); ////
-		do_exec_dev(token, env, n_env);
-		waitpid(pid, NULL, 0);
+		do_exec_dev(token, env);
+//		waitpid(pid, NULL, 0);
+		wait(&pid);
 	}
 	return (0);
 }
@@ -123,7 +117,10 @@ void	handle_heredoc(t_token **cmd)
 		fd = open(".tmp_file", O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
 		while (1)
 		{
+			signal(SIGINT, SIG_DFL);
 			line = readline("> ");
+			if (line == NULL)
+				break ;
 			limiter = ft_strncmp(line, (*cmd)->limiter, ft_strlen((*cmd)->limiter) + 1);
 			if (limiter == 0)
 				break ;
@@ -135,6 +132,8 @@ void	handle_heredoc(t_token **cmd)
 		(*cmd)->fd.in_file = fd;
 		close(fd);
 	}
+	if (WTERMSIG(signal_exit_status) == SIGINT)
+		signal_exit_status = 1;
 }
 
 int	executor(t_token **token, char **env, t_env **n_env)
@@ -144,11 +143,13 @@ int	executor(t_token **token, char **env, t_env **n_env)
 
 	cmd = *token;
 	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_builtins(cmd, env, n_env);
+		do_builtins(cmd, n_env);
 	else
 	{
 		cmd = *token;
 		pid = fork();
+//		int fd[2];
+//		pipe(fd);
 		if (pid == 0)
 		{
 			if (cmd)
@@ -165,7 +166,7 @@ int	executor(t_token **token, char **env, t_env **n_env)
 				if (cmd->outfile)
 					dup2(cmd->fd.out_file, OUTFILE);
 				waitpid(pid, NULL, 0);
-				do_exec_dev(cmd, env, n_env);
+				do_exec_dev(cmd, env);
 //				waitpid(pid, NULL, 0);
 			}
 //			else
@@ -315,6 +316,7 @@ int	lvl_down(t_env **start)
 	int		lvl;
 
 	tmp = *start;
+	lvl = ft_atoi(tmp->data);
 	while (tmp)
 	{
 		if (!ft_strncmp(tmp->name, "SHLVL", 6))
@@ -345,8 +347,6 @@ void reset_the_terminal(void)
 int	main(int argc, char **argv, char **env)
 {
 	char 	*line;
-	int 	status;
-	t_main	main;
 	t_token *token;
 	char **new_env;
 	(void)	argv;
@@ -368,7 +368,7 @@ int	main(int argc, char **argv, char **env)
 //	termios_new = termios_save;
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
-//	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
 	lvl_up(&n_env);
@@ -376,7 +376,9 @@ int	main(int argc, char **argv, char **env)
 	{
 		signal(SIGINT, &sig_handler);
 		new_env = list_to_env(&n_env);
+		signal_exit_status = 0;
 		line = readline("\x1b[35mShkad $\x1b[0m ");
+		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		if (line)
@@ -384,7 +386,7 @@ int	main(int argc, char **argv, char **env)
 			if (ft_strcmp(line, ""))
 			{
 				parser(line, &token, env, &n_env);
-				executor(&token, new_env, &n_env);
+				do_pipex(&token, new_env, &n_env);
 			}
 		}
 		else

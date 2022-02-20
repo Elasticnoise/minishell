@@ -61,19 +61,24 @@ typedef struct s_main
 /*PIPE*/
 int		ft_redirect(char **av, char **env, int in_file, int out_file, int i);
 void	do_exec(char **av, char **envp, int i);
+int	do_pipex(t_token **token, char **env, t_env **n_env);
 void	set_in_out_files(t_token *token);
 char	*get_path(char **envp, char *cmd);
-//int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
-void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
+int	ft_redirect_dev(t_token *token, char **env, t_env **n_env);
+void	do_exec_dev(t_token *token, char **envp);
+int	get_cmd_count(t_token **token);
+void close_pipes(int *pipes, int count_node);
+ int *open_pipes(int cmd_i);
+ void wait_childs(int n);
 
 /*BUILTINS*/
-void	do_builtins(t_token *token, char **env, t_env **n_env);
+int	do_builtins(t_token *token, t_env **n_env);
 int	is_builtin(char *cmd);
 int	ft_exit(t_token *token, t_env **n_env);
-int	ft_cd(char **env);
-void	ft_env(t_token *token, t_env **n_env);
-void	ft_unset(t_token *cmd, t_env *env);
-void	ft_export(t_token *token, t_env **env);
+int	ft_cd(t_token *token, t_env *n_env);
+int	ft_env(t_env **n_env);
+int	ft_unset(t_token *cmd, t_env *env);
+int	ft_export(t_token *token, t_env **env);
 int	ft_pwd(t_token *token);
 int	ft_echo(t_token *token);
 int	check_exit_status(t_env **env);
@@ -82,6 +87,8 @@ int	check_var(char *key, t_token *token);
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
 int	lvl_down(t_env **start);
+void	handle_heredoc(t_token **cmd);
+void	set_exit_status(int cmd_i);
 //readline add_history
 //
 //rl_clear_history,

@@ -6,9 +6,8 @@
 
 int quotes(char *line, int i)
 {
-	char *help;
-	char *str;
-
+//	char *help;
+//	char *str;
 	while (line[i])
 	{
 		if (line[i] == '\'')
@@ -183,7 +182,8 @@ t_token *new_token(char	*str, t_env **env)
 				close(token->fd.out_file);
 			}
 			token->outfile = ft_substr(str, help, i - help);
-			dollar_outfile(&token, env);
+//			dollar_outfile(&token, env);
+			delete_quotes(&(token->outfile), env);
 			if (str[help - 2] == '>')
 				token->fd.out_file = open(token->outfile, O_APPEND |
 														  O_WRONLY | O_CREAT,
@@ -217,7 +217,8 @@ t_token *new_token(char	*str, t_env **env)
 			else
 			{
 				token->infile = ft_substr(str, help, i - help);
-				dollar_infile(&token, env);
+				delete_quotes(&(token->infile), env);
+//				dollar_infile(&token, env);
 				token->fd.in_file = open(token->infile, O_RDONLY); //TODO ADD IF
 				if (token->fd.in_file == -1)
 				{
@@ -231,22 +232,12 @@ t_token *new_token(char	*str, t_env **env)
 //	printf("%s -- cmd str\n", new_string);
 	token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
-//	printf("%s -- cmd str\n", new_string);
-
-//	dollar_cmd(&token, env);
-	////todo under is func to delete first """ or "'"
-//	i = 0;
-//	char *tmp;
-//	while (token->cmd[i])
-//	{
-//		if (token->cmd[i][0] == '"' || token->cmd[i][0] == '\'')
-//		{
-//			tmp = token->cmd[i];
-//			token->cmd[i] = ft_substr(token->cmd[i], 1, ft_strlen(tmp) - 1);
-//			free(tmp);
-//		}
-//		i++;
-//	}
+	i = 0;
+	while (token->cmd[i])
+	{
+		delete_quotes(&(token->cmd[i]), env);
+		i++;
+	}
 	return (token);
 }
 
@@ -268,7 +259,7 @@ void	add_token_back(t_token **head, t_token *new)
 
 void get_tokens(char *line, t_token **head, t_env **env)
 {
-	t_token *help;
+//	t_token *help;
 	int		i;
 	int 	j;
 
@@ -339,6 +330,7 @@ int delim_check(char *line)
 int parser(char *line, t_token **token, char *env[], t_env **n_env)
 {
 	t_token *head;
+	(void)	env;
 
 	head = *token;
 	if (quotes(line, 0)) //todo quotes check
