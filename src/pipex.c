@@ -70,12 +70,12 @@ static void redirect(t_token *cmd) {
 		}
 		err = dup2(cmd->fd.in_file, STDIN);
 	}
-	if (err != 0)
+	if (err == -1)
 		perror("1redirect:");
 	err = 0;
 	if (cmd->outfile)
 		err = dup2(cmd->fd.out_file, STDOUT);
-	if (err != 0)
+	if (err == -1)
 	{
 		perror("2redirect:");
 	}
@@ -95,23 +95,26 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	pipes = open_pipes(cmd_i);
 	kind = 1;
 	i = 0;
-	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
+	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
 	{
 		if (do_builtins(cmd, n_env) == EXIT_SUCCESS)
 		{
 			signal_exit_status = EXIT_SUCCESS;
 			return (EXIT_SUCCESS);
-		}
-		else
+		} else
 		{
 			signal_exit_status = EXIT_FAILURE;
 			return (EXIT_FAILURE);
 		}
-	}
-	else
+	} else
 	{
 		while (cmd != NULL)
 		{
+			if (!cmd->cmd)
+			{
+				cmd = cmd->next;
+				continue ;
+			}
 			pid = fork();
 			if (pid == 0)
 			{
@@ -127,9 +130,9 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 				if (is_builtin(cmd->cmd[0]))
 				{
 					if (do_builtins(cmd, n_env) == EXIT_SUCCESS)
-						exit (EXIT_SUCCESS);
+						exit(EXIT_SUCCESS);
 					else
-						exit (EXIT_FAILURE);
+						exit(EXIT_FAILURE);
 				}
 				do_exec_dev(cmd, env);
 			}
@@ -140,7 +143,8 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	}
 	cmd = *token;
 	close_pipes(pipes, cmd_i);
-	close_in_out_file(cmd); /// ??? it doesn't close in each node | mb no need
+	close_in_out_file(
+			cmd); /// ??? it doesn't close in each node | mb no need
 	set_exit_status(cmd_i);
 	wait_childs(cmd_i);
 	return (EXIT_SUCCESS);

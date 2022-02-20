@@ -1,0 +1,12 @@
+Makefile
+README.md
+kek
+libft
+minishell
+minishell.c
+minishell.h
+minishell.o
+our_builtins
+parser
+pipex_bonus_part
+src

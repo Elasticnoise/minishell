@@ -231,12 +231,16 @@ t_token *new_token(char	*str, t_env **env)
 	}
 //	printf("%s -- cmd str\n", new_string);
 	token->cmd = ft_q_split(new_string, ' ');
+//	printf("%s -- cmd str\n", new_string);
 	free(new_string);
 	i = 0;
-	while (token->cmd[i])
+	if (token->cmd)
 	{
-		delete_quotes(&(token->cmd[i]), env);
-		i++;
+		while (token->cmd[i])
+		{
+			delete_quotes(&(token->cmd[i]), env);
+			i++;
+		}
 	}
 	return (token);
 }
@@ -259,12 +263,10 @@ void	add_token_back(t_token **head, t_token *new)
 
 void get_tokens(char *line, t_token **head, t_env **env)
 {
-//	t_token *help;
 	int		i;
 	int 	j;
 
 	i = 0;
-//	help = *head;
 	while (line[i] != '\0')
 	{
 		j = i;
@@ -277,13 +279,15 @@ void get_tokens(char *line, t_token **head, t_env **env)
 			break ;
 		i++;
 	}
+
+//	t_token *help;
 //	help = *head;
 //	while (help)
 //	{
 //		i = 0;
 //		while (help->cmd && help->cmd[i])
 //		{
-//			delete_quotes(&(help->cmd[i]), env); //todo dont forget to move it
+////			delete_quotes(&(help->cmd[i]), env); //todo dont forget to move it
 //			if (i == 0)
 //				printf("CMD:    |%s|\n", help->cmd[i]);
 //			else
@@ -318,7 +322,7 @@ int delim_check(char *line)
 				if (line[i] && check_delimiter(line[i]) > 2 && line[i] ==
 				line[i - 1])
 					i++;
-				if (!line[i] || check_delimiter(line[i]) > 1)
+				if (!line[i] || check_delimiter(line[i]) == 2)
 					return (1);
 			}
 			i++;

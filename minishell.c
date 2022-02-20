@@ -22,13 +22,15 @@ void free_list(t_token **head)
 	{
 		i = 0;
 		tmp = (*head)->next;
-		while ((*head)->cmd[i])
-		{
-			free((*head)->cmd[i]);
-			i++;
-		}
 		if ((*head)->cmd)
+		{
+			while ((*head)->cmd[i])
+			{
+				free((*head)->cmd[i]);
+				i++;
+			}
 			free((*head)->cmd);
+		}
 		free((*head)->str); //todo Split free
 		free(*head);
 		*head = tmp;
@@ -135,49 +137,6 @@ void	handle_heredoc(t_token **cmd)
 	if (WTERMSIG(signal_exit_status) == SIGINT)
 		signal_exit_status = 1;
 }
-
-int	executor(t_token **token, char **env, t_env **n_env)
-{
-	t_token	*cmd;
-	pid_t	pid;
-
-	cmd = *token;
-	if (cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_builtins(cmd, n_env);
-	else
-	{
-		cmd = *token;
-		pid = fork();
-//		int fd[2];
-//		pipe(fd);
-		if (pid == 0)
-		{
-			if (cmd)
-			{
-				handle_heredoc(&cmd);
-				if (cmd->limiter)
-					cmd->fd.in_file = open(".tmp_file", O_RDONLY);
-				dup2(cmd->fd.in_file, INFILE);
-				while (cmd->next)
-				{
-					ft_redirect_dev(cmd, env, n_env);
-					cmd = cmd->next;
-				}
-				if (cmd->outfile)
-					dup2(cmd->fd.out_file, OUTFILE);
-				waitpid(pid, NULL, 0);
-				do_exec_dev(cmd, env);
-//				waitpid(pid, NULL, 0);
-			}
-//			else
-//				waitpid(pid, NULL, 0);
-		}
-		else
-			waitpid(pid, NULL, 0);
-	}
-	return (1);
-}
-
 
 t_env	*new_env(char *name, char *data)
 {

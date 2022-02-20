@@ -43,5 +43,5 @@ int	ft_export(t_token *token, t_env **env)
 			set_var(env, key);
 		i++;
 	}
-	exit(EXIT_SUCCESS);
+	return (1);
 }
