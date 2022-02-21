@@ -287,7 +287,8 @@ int	delim_check(char *line)
 				if (line[i] && check_delimiter(line[i]) > 2
 					&& line[i] == line[i - 1])
 					i++;
-				if (!line[i] || check_delimiter(line[i]) == 2)
+				if (!line[i] || (check_delimiter(line[i]) != 0 &&
+										check_delimiter(line[i]) != 1))
 					return (1);
 			}
 			i++;

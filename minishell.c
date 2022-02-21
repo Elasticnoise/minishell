@@ -153,7 +153,7 @@ t_env	*new_env(char *name, char *data)
 
 void add_env(t_env	**start, t_env *new)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	tmp = *start;
 	if (tmp)
