@@ -18,8 +18,9 @@ void	sig_handler2(int signum)
 
 void	sig_handler3(int signum)
 {
-	(void) signum;
+//	(void) signum;
 
+	printf("!!!!!\n");
 	if (signum == SIGINT)
 		write(1, "^C\n", 3);
 	if (signum == SIGQUIT)

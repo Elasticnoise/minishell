@@ -366,12 +366,13 @@ int	main(int argc, char **argv, char **env)
 //	termios_new = termios_save;
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
-	signal(SIGQUIT, SIG_IGN);
+//	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 	while(1)
 	{
+		signal(SIGQUIT, SIG_IGN);
 //		signal(SIGQUIT, SIG_IGN);
 		new_env = list_to_env(&n_env);
 		signal_exit_status = 0;
@@ -382,6 +383,7 @@ int	main(int argc, char **argv, char **env)
 			add_history(line);
 		if (line)
 		{
+//			signal(SIGQUIT, SIG_DFL);
 			if (ft_strcmp(line, ""))
 			{
 				parser(line, &token, env, &n_env);
@@ -389,7 +391,10 @@ int	main(int argc, char **argv, char **env)
 			}
 		}
 		else
-			exit(0);
+		{
+			ft_putstr_fd("exit\n", 1);
+			exit(EXIT_SUCCESS);
+		}
 		free_doublechar(new_env);
 		unlink(".tmp_file");
 		free_list(&token);

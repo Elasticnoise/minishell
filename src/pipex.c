@@ -110,9 +110,12 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	}
 	else
 	{
+//		printf("tut cmd = %p\n", cmd);
 		while (cmd != NULL)
 		{
 			pid = fork();
+//			signal(SIGINT, sig_handler3);
+//			signal(SIGQUIT, sig_handler3);
 			if (pid == 0)
 			{
 				handle_heredoc(&cmd);
