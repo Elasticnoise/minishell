@@ -86,4 +86,5 @@ void	free_doublechar(char **new_env);
 void	set_one_node(char *str, t_env **n_env);
 void	delete_quotes(char **string, t_env **env);
 
+int	new_quotes(char *str, int j);
 #endif

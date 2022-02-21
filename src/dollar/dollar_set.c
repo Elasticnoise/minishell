@@ -27,7 +27,7 @@ void	set_dollar(char **str, int start, t_env **env)
 	j = 0;
 	help = *env;
 	s = *str;
-	if (!s[i + 1] || s[i + 1] == ' ')
+	if (!s[i + 1] || s[i + 1] == ' ' || s[i + 1] == '$')
 		return ;
 	if (s[i + 1] && s[i + 1] == '?')
 	{

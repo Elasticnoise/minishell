@@ -128,7 +128,7 @@ t_token *new_token(char	*str, t_env **env)
 	t_token *token;
 	int		i;
 	int		help;
-	char 	*new_string;
+	char	*new_string;
 	char	*to_free;
 	char	*to_free2;
 	i = 0;
@@ -148,7 +148,7 @@ t_token *new_token(char	*str, t_env **env)
 		{
 			help = i;
 			while (str[i] && ((!check_delimiter(str[i]) || check_delimiter
-			(str[i]) == 1)))
+			(str[i]) == 1) || new_quotes(str, i)))
 				i++;
 			to_free = new_string;
 			if (!new_string)
@@ -255,7 +255,7 @@ void	get_tokens(char *line, t_token **head, t_env **env)
 	while (line[i] != '\0')
 	{
 		j = i;
-		while (line[i] != '\0' && !(!quotes(line, i) && line[i] == '|'))
+		while (line[i] != '\0' && !(!new_quotes(line, i) && line[i] == '|'))
 			i++;
 		if (line[i] && (line[i] == '"' || line[i] == '\''))
 			i++;
@@ -265,27 +265,6 @@ void	get_tokens(char *line, t_token **head, t_env **env)
 		if (line[i] == '\0')
 			break ;
 		i++;
-	}
-	t_token *help;
-	help = *head;
-	while (help)
-	{
-		i = 0;
-		while (help->cmd && help->cmd[i])
-		{
-			delete_quotes(&(help->cmd[i]), env); //todo dont forget to move it
-			if (i == 0)
-				printf("CMD:    |%s|\n", help->cmd[i]);
-			else
-				printf("ARG №%d: |%s|\n", i, help->cmd[i]);
-
-			i++;
-		}
-		printf("%s (outfile Name) and %d (outfile fd)\n", help->outfile,
-			   help->fd.out_file);
-		printf("%s (infile Name) and %d (infile fd)\n", help->infile,
-			   help->fd.in_file);
-		help = help->next;
 	}
 }
 
@@ -329,6 +308,11 @@ int	parser(char *line, t_token **token, char *env[], t_env **n_env)
 	if (delim_check(line))
 		return (printf("Pipes/redirect didn't close\n"));
 	line = destroy_space(line);
+	if (!ft_strcmp(line, " "))
+	{
+		free(line);
+		return (1);
+	}
 	get_tokens(line, &head, &(*n_env));
 	free(line);
 	*token = head;
