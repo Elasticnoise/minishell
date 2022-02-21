@@ -132,8 +132,8 @@ void	handle_heredoc(t_token **cmd)
 		(*cmd)->fd.in_file = fd;
 		close(fd);
 	}
-	if (WTERMSIG(signal_exit_status) == SIGINT)
-		signal_exit_status = 1;
+//	if (WTERMSIG(signal_exit_status) == SIGINT)
+//		signal_exit_status = 1;
 }
 
 int	executor(t_token **token, char **env, t_env **n_env)
@@ -372,9 +372,10 @@ int	main(int argc, char **argv, char **env)
 	lvl_up(&n_env);
 	while(1)
 	{
-		signal(SIGINT, &sig_handler);
+//		signal(SIGQUIT, SIG_IGN);
 		new_env = list_to_env(&n_env);
 		signal_exit_status = 0;
+		signal(SIGINT, &sig_handler);
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)

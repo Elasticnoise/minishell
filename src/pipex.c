@@ -140,7 +140,7 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	}
 	cmd = *token;
 	close_pipes(pipes, cmd_i);
-	close_in_out_file(cmd); /// ??? it doesn't close in each node | mb no need
+	close_in_out_file(cmd);
 	set_exit_status(cmd_i);
 	wait_childs(cmd_i);
 	return (EXIT_SUCCESS);

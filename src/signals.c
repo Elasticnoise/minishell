@@ -16,6 +16,16 @@ void	sig_handler2(int signum)
 	ft_putendl_fd("", 1);
 }
 
+void	sig_handler3(int signum)
+{
+	(void) signum;
+
+	if (signum == SIGINT)
+		write(1, "^C\n", 3);
+	if (signum == SIGQUIT)
+		write(1, "^\\Quit: 3\n", 10);
+}
+
 void	set_exit_status(int cmd_i)
 {
 	if (WIFEXITED(signal_exit_status))
@@ -26,5 +36,4 @@ void	set_exit_status(int cmd_i)
 			write(1, "Quit: 3\n", 8);
 		signal_exit_status = 128 + WTERMSIG(signal_exit_status);
 	}
-//	wait_childs(cmd_i);
 }
