@@ -134,8 +134,8 @@ void	handle_heredoc(t_token **cmd)
 		(*cmd)->fd.in_file = fd;
 		close(fd);
 	}
-	if (WTERMSIG(signal_exit_status) == SIGINT)
-		signal_exit_status = 1;
+//	if (WTERMSIG(signal_exit_status) == SIGINT)
+//		signal_exit_status = 1;
 }
 
 t_env	*new_env(char *name, char *data)
@@ -327,21 +327,24 @@ int	main(int argc, char **argv, char **env)
 //	termios_new = termios_save;
 	termios_save.c_lflag &= ~ECHOCTL;
 	rc = tcsetattr(0, 0, &termios_save );
-	signal(SIGQUIT, SIG_IGN);
+//	signal(SIGQUIT, SIG_IGN);
 	n_env = NULL;
 	set_env(env, &n_env);
 	lvl_up(&n_env);
 	while(1)
 	{
-		signal(SIGINT, &sig_handler);
+		signal(SIGQUIT, SIG_IGN);
+//		signal(SIGQUIT, SIG_IGN);
 		new_env = list_to_env(&n_env);
 		signal_exit_status = 0;
+		signal(SIGINT, &sig_handler);
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		if (line)
 		{
+//			signal(SIGQUIT, SIG_DFL);
 			if (ft_strcmp(line, ""))
 			{
 				if (!parser(line, &token, env, &n_env))
@@ -349,7 +352,10 @@ int	main(int argc, char **argv, char **env)
 			}
 		}
 		else
-			exit(0);
+		{
+			ft_putstr_fd("exit\n", 1);
+			exit(EXIT_SUCCESS);
+		}
 		free_doublechar(new_env);
 		unlink(".tmp_file");
 		free_list(&token);

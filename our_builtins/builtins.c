@@ -132,7 +132,8 @@ int	ft_set_var(t_token *token, t_env *n_env, char *key, char *value)
 	{
 		if (ft_strcmp(env->name, key) == 0)
 		{
-			free(env->data);
+			if (env->data)
+				free(env->data);
 			env->data = value;
 			return (1);
 		}

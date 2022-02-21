@@ -68,6 +68,7 @@ int		check_var(char *key, t_token *token);
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
+void	sig_handler3(int signum);
 int		lvl_down(t_env **start);
 void	handle_heredoc(t_token **cmd);
 void	set_exit_status(int cmd_i);
