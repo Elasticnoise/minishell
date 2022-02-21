@@ -114,6 +114,12 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 		while (cmd != NULL)
 		{
 			pid = fork();
+			if (pid && !cmd->limiter)
+			{
+//				signal(SIGINT, SIG_IGN);
+				signal(SIGINT, sig_handler3);
+				signal(SIGQUIT, sig_handler3);
+			}
 //			signal(SIGINT, sig_handler3);
 //			signal(SIGQUIT, sig_handler3);
 			if (pid == 0)

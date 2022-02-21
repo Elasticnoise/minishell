@@ -18,13 +18,18 @@ void	sig_handler2(int signum)
 
 void	sig_handler3(int signum)
 {
-//	(void) signum;
+	(void) signum;
 
-	printf("!!!!!\n");
 	if (signum == SIGINT)
+	{
 		write(1, "^C\n", 3);
+		signal_exit_status = 130;
+	}
 	if (signum == SIGQUIT)
+	{
 		write(1, "^\\Quit: 3\n", 10);
+		signal_exit_status = 131;
+	}
 }
 
 void	set_exit_status(int cmd_i)
