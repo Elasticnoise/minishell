@@ -27,6 +27,8 @@ void	set_dollar(char **str, int start, t_env **env)
 	j = 0;
 	help = *env;
 	s = *str;
+	if (!s[i + 1] || s[i + 1] == ' ')
+		return ;
 	if (s[i + 1] && s[i + 1] == '?')
 	{
 		new = ft_itoa(signal_exit_status);
@@ -50,8 +52,10 @@ void	set_dollar(char **str, int start, t_env **env)
 	}
 	else
 	{
-		while (s[i] && !check_delimiter(s[i]) && s[i] != '\'' && s[i] != '"')
+		i++;
+		while (s[i] && ft_isalnum(s[i]))
 			i++;
+		printf("%d -- i\n", i);
 		end = i;
 		new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
 		while (help)
