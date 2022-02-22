@@ -34,6 +34,10 @@ static void	double_qoutes(char **string, t_env **env, int *len, int *i)
 	(*len) -= 2;
 	while ((*string)[++(*i)] != '"')
 	{
+		if ((*string)[(*i)] == '$' && (((*string)[(*i) - 1]
+		&& (*string)[(*i) - 1] == '$') || ((*string)[(*i) + 1] && (*string)[(*i)
+		+ 1] == '$')))
+			continue ;
 		if ((*string)[(*i)] == '$')
 		{
 			set_dollar(&(*string), *i, env);
@@ -65,7 +69,6 @@ void	delete_quotes(char **string, t_env **env)
 			one_qoutes(&(*string), env, &len, &i);
 		else if ((*string)[i] == '$')
 		{
-//			printf("kek");
 			set_dollar(&(*string), i, env);
 			len--;
 		}

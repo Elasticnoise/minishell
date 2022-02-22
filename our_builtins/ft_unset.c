@@ -27,7 +27,6 @@ static void	del_var_help(t_env *tmp, char *key, t_env *prev, t_env **env)
 	{
 		if (!ft_strcmp(tmp->name, key))
 		{
-			*env = prev;
 			prev->next = tmp->next;
 			free_env_node(tmp);
 			break ;
