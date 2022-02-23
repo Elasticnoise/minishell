@@ -209,14 +209,13 @@ t_token *new_token(char	*str, t_env **env)
 				token->infile = ft_substr(str, help, i - help);
 				delete_quotes(&(token->infile), env);
 				token->fd.in_file = open(token->infile, O_RDONLY);
-				if (token->fd.in_file == -1)
-					printf("Shkad: %s: No such file or directory\n", token->infile);
 			}
 		}
 		else
 			i++;
 	}
-	token->cmd = ft_q_split(new_string, ' ');
+	if (token->fd.in_file != -1)
+		token->cmd = ft_q_split(new_string, ' ');
 	free(new_string);
 	i = 0;
 	if (token->cmd)

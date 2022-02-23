@@ -16,11 +16,14 @@ void free_list(t_token **head)
 {
 	t_token	*tmp;
 	int		i;
-
 	while (*head)
 	{
 		i = 0;
 		tmp = (*head)->next;
+		if ((*head)->infile)
+			free((*head)->infile);
+		if ((*head)->outfile)
+			free((*head)->outfile);
 		if ((*head)->cmd)
 		{
 			while ((*head)->cmd[i])
@@ -30,12 +33,11 @@ void free_list(t_token **head)
 			}
 			free((*head)->cmd);
 		}
-		free((*head)->str); //todo Split free
+		free((*head)->str);
 		free(*head);
 		*head = tmp;
 	}
 }
-
 
 void	set_in_out_files(t_token *token)
 {
@@ -150,7 +152,7 @@ t_env	*new_env(char *name, char *data)
 	return (n_env);
 }
 
-void add_env(t_env	**start, t_env *new)
+void	add_env(t_env	**start, t_env *new)
 {
 	t_env	*tmp;
 
@@ -164,7 +166,6 @@ void add_env(t_env	**start, t_env *new)
 	else
 		*start = new;
 }
-
 
 void	set_one_node(char *str, t_env **n_env)
 {
@@ -194,7 +195,7 @@ void	set_one_node(char *str, t_env **n_env)
 	add_env(&(*n_env), new_env(name, data));
 }
 
-void	set_env(char **env, t_env **n_env) ////todo malloc check
+void	set_env(char **env, t_env **n_env)
 {
 	int		i;
 
@@ -206,13 +207,13 @@ void	set_env(char **env, t_env **n_env) ////todo malloc check
 	}
 }
 
-char **list_to_env(t_env **start)
+char	**list_to_env(t_env **start)
 {
-	t_env *help;
-	char **new_env;
-	char *tmp;
-	int i;
-	int j;
+	t_env	*help;
+	char	**new_env;
+	char	*tmp;
+	int		i;
+	int		j;
 
 	j = 0;
 	help = *start;
@@ -236,7 +237,7 @@ char **list_to_env(t_env **start)
 	return (new_env);
 }
 
-void lvl_up(t_env **start)
+void	lvl_up(t_env **start)
 {
 	t_env	*tmp;
 	int		lvl;
@@ -250,7 +251,7 @@ void lvl_up(t_env **start)
 			lvl++;
 			free(tmp->data);
 			tmp->data = ft_itoa(lvl);
-			break;
+			break ;
 		}
 		tmp = tmp->next;
 	}
@@ -271,60 +272,40 @@ int	lvl_down(t_env **start)
 			lvl--;
 			free(tmp->data);
 			tmp->data = ft_itoa(lvl);
-			break;
+			break ;
 		}
 		tmp = tmp->next;
 	}
 	return (lvl);
 }
 
-
-#include <termios.h>
-#include <unistd.h>
-#include <signal.h>
-
-struct termios termios_save;
-
-void reset_the_terminal(void)
+void	reset_the_terminal(void)
 {
-	tcsetattr(0, 0, &termios_save );
+	tcsetattr(0, 0, &termios_save);
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	char 	*line;
-	t_token *token;
-	char **new_env;
-	(void)	argv;
-	(void)	argc;
-	(void)	(env);
+	char	*line;
+	t_token	*token;
+	char	**new_env;
 	t_env	*n_env;
+
 	if (argc != 1)
 		return (1);
-
 	signal_exit_status = 0;
-
-
-//	struct termios termios_new;
-	int rc;
-	rc = tcgetattr(0, &termios_save );
-//	if (rc) {perror("tcgetattr"); exit(1); }
-	rc = atexit(reset_the_terminal);
-//	if (rc) {perror("atexit"); exit(1); }
-//	termios_new = termios_save;
+	tcgetattr(0, &termios_save);
+	atexit(reset_the_terminal);
 	termios_save.c_lflag &= ~ECHOCTL;
-	rc = tcsetattr(0, 0, &termios_save );
-//	signal(SIGQUIT, SIG_IGN);
+	tcsetattr(0, 0, &termios_save );
 	n_env = NULL;
 	set_env(env, &n_env);
 	lvl_up(&n_env);
-	while(1)
+	while (1)
 	{
 		signal(SIGQUIT, SIG_IGN);
 		new_env = list_to_env(&n_env);
-//		signal_exit_status = 0;
 		signal(SIGINT, &sig_handler);
-//		printf("sigMain = %d\n", signal_exit_status);
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)

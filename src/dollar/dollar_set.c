@@ -1,115 +1,167 @@
 #include "../../minishell.h"
 
-//static void set_dollar_help(int calloc_v, char **str, int start, t_env *help)
-//{
-//	char	*res;
-//	int		i;
-//	int		j;
-//
-//	res = ft_calloc(calloc_v);
-//	i = 0;
-//	if (!res)
-//		exit(1);
-//
-//}
+static void	question_case(int i, char *s, char **str, int j)
+{
+	char	*new;
+	char	*res;
+	int		start;
+	int		end;
+
+	start = i - 2;
+	end = i;
+	new = ft_itoa(signal_exit_status);
+	res = ft_calloc(ft_strlen(s), 1);
+	if (!new || !res)
+		exit(EXIT_FAILURE);
+	i = 0;
+	while (i < start)
+	{
+		res[i] = s[i];
+		i++;
+	}
+	while (j < ft_strlen(new))
+		res[i++] = new[j++];
+	while (s[end])
+		res[i++] = s[end++];
+	free(new);
+	free(*str);
+	*str = res;
+}
+
+t_env	*find_help(t_env **env, char *new)
+{
+	t_env	*help;
+
+	help = *env;
+	while (help)
+	{
+		if (!ft_strcmp(help->name, new))
+		{
+			free(new);
+			break ;
+		}
+		help = help->next;
+	}
+	return (help);
+}
+
+void	if_help(char **str, int i, t_env *help, int start)
+{
+	char	*res;
+	int		end;
+	int		j;
+
+	j = 0;
+	end = i;
+	res = ft_calloc(ft_strlen((*str)) - (i - start)
+		+ ft_strlen(help->data) + 1, 1);
+	i = 0;
+	while (i < start)
+	{
+		res[i] = (*str)[i];
+		i++;
+	}
+	while (j < ft_strlen(help->data))
+		res[i++] = help->data[j++];
+	while ((*str)[end])
+		res[i++] = (*str)[end++];
+	free(*str);
+	*str = res;
+}
+
+void	if_not_help(char **str, int start, int i, int end)
+{
+	char	*res;
+
+	res = ft_calloc(ft_strlen((*str)) - (i - start) + 1, 1);
+	end = i;
+	i = 0;
+	while (i < start)
+	{
+		res[i] = (*str)[i];
+		i++;
+	}
+	while ((*str)[end])
+	{
+		res[i] = (*str)[end];
+		i++;
+		end++;
+	}
+	free(*str);
+	*str = res;
+
+}
+
+void	not_question(int start, char **str, t_env **env)
+{
+	int		i;
+	char	*new;
+	t_env	*help;
+
+	i = start + 1;
+	while ((*str)[i] && (ft_isalnum((*str)[i]) || (*str)[i] == '_'))
+		i++;
+	new = ft_substr((*str), start + 1, i - start - 1);
+	if (!new)
+		exit(1);
+	help = find_help(env, new);
+	if (help)
+		return (if_help(str, i, help, start));
+	else
+	{
+		free(new);
+//		printf("123");
+		return (if_not_help(str, start, i, i));
+	}
+}
 
 void	set_dollar(char **str, int start, t_env **env)
 {
-
-	int i = start;
-	char *s;
-	char *new;
-	t_env *help;
-	char *res;
-	int end;
-	int j;
+	char	*s;
+	int		j;
 
 	j = 0;
-	help = *env;
 	s = *str;
-	if (!s[i + 1] || s[i + 1] == ' ' || s[i + 1] == '$')
+	if (!s[start + 1] || s[start + 1] == ' ' || s[start + 1] == '$')
 		return ;
-	if (s[i + 1] && s[i + 1] == '?')
-	{
-		new = ft_itoa(signal_exit_status);
-		i += 2;
-		res = ft_calloc(ft_strlen(s),1);
-		end = i;
-		i = 0;
-		while (i < start)
-		{
-			res[i] = s[i];
-			i++;
-		}
-		while (j < ft_strlen(new))
-			res[i++] = new[j++];
-		while (s[end])
-			res[i++] = s[end++];
-		free(new);
-		free(*str);
-		*str = res;
-		return ;
-	}
+	if (s[start + 1] && s[start + 1] == '?')
+		return (question_case(start + 2, s, str, j));
 	else
 	{
-		i++;
-		while (s[i] && (ft_isalnum(s[i]) || s[i] == '_'))
-			i++;
-		end = i;
-		new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
-		while (help)
-		{
-			if (!ft_strcmp(help->name, new))
-			{
-				free(new);
-				break ;
-			}
-			help = help->next;
-		}
-		if (help)
-		{
-			res = ft_calloc(ft_strlen(s) - (i - start) + ft_strlen(help->data) + 1,
-							1);
-			i = 0;
-			while (i < start)
-			{
-				res[i] = s[i];
-				i++;
-			}
-			while (j < ft_strlen(help->data))
-			{
-				res[i] = help->data[j];
-				i++;
-				j++;
-			}
-			while (s[end])
-			{
-				res[i] = s[end];
-				i++;
-				end++;
-			}
-			free(*str);
-			*str = res;
-		}
-		else
-		{
-			free(new);
-			res = ft_calloc(ft_strlen(s) - (i - start) + 1, 1);
-			i = 0;
-			while (i < start)
-			{
-				res[i] = s[i];
-				i++;
-			}
-			while (s[end])
-			{
-				res[i] = s[end];
-				i++;
-				end++;
-			}
-			free(*str);
-			*str = res;
-		}
+		not_question(start, str, env);
+//		i++;
+//		while (s[i] && (ft_isalnum(s[i]) || s[i] == '_'))
+//			i++;
+//		end = i;
+//		new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
+//		while (help)
+//		{
+//			if (!ft_strcmp(help->name, new))
+//			{
+//				free(new);
+//				break ;
+//			}
+//			help = help->next;
+//		}
+//		else
+//		{
+//			free(new);
+//			res = ft_calloc(ft_strlen(s) - (i - start) + 1, 1);
+//			i = 0;
+//			while (i < start)
+//			{
+//				res[i] = s[i];
+//				i++;
+//			}
+//			while (s[end])
+//			{
+//				res[i] = s[end];
+//				i++;
+//				end++;
+//			}
+//			free(*str);
+//			*str = res;
+//		}
 	}
 }
 
