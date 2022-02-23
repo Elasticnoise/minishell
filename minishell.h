@@ -6,8 +6,8 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 
 # define STDIN	0
 # define STDOUT	1

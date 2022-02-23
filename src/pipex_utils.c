@@ -58,7 +58,7 @@ void wait_childs(int n)
 		{
 			signal_exit_status = 127;
 			printf("exit status = %d\n", WIFEXITED(status));
-			fflush(NULL);
+//			fflush(NULL);
 		}
 		i++;
 	}

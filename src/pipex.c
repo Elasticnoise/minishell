@@ -83,12 +83,12 @@ static void redirect(t_token *cmd) {
 
 int do_pipex(t_token **token, char **env, t_env **n_env)
 {
-	int i;
-	int cmd_i;
-	int *pipes;
-	t_token *cmd;
-	int kind;
-	pid_t pid;
+	int	i;
+	int	cmd_i;
+	int	*pipes;
+	t_token	*cmd;
+	int	kind;
+	pid_t	pid;
 	int	exit_stat;
 
 	cmd = *token;
@@ -96,17 +96,20 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	pipes = open_pipes(cmd_i);
 	kind = 1;
 	i = 0;
+
 	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
 	{
 		exit_stat = do_builtins(cmd, n_env);
 		if (exit_stat == EXIT_SUCCESS)
 		{
 			signal_exit_status = EXIT_SUCCESS;
+			free(pipes);
 			return (EXIT_SUCCESS);
 		}
 		else
 		{
 			signal_exit_status = exit_stat;
+			free(pipes);
 			return (EXIT_FAILURE);
 		}
 	}
@@ -155,5 +158,6 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	close_in_out_file(cmd);
 	set_exit_status(cmd_i);
 	wait_childs(cmd_i);
+	free(pipes);
 	return (EXIT_SUCCESS);
 }
