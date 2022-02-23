@@ -96,7 +96,6 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	pipes = open_pipes(cmd_i);
 	kind = 1;
 	i = 0;
-
 	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
 	{
 		exit_stat = do_builtins(cmd, n_env);
