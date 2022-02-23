@@ -18,7 +18,7 @@ void	sig_handler(int signum)
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
-	signal_exit_status = 1;
+	g_exit_status = 1;
 }
 
 void	sig_handler2(int signum)
@@ -33,19 +33,19 @@ void	sig_handler3(int signum)
 	if (signum == SIGINT)
 	{
 		write(1, "^C\n", 3);
-		signal_exit_status = 130;
+		g_exit_status = 130;
 	}
 	if (signum == SIGQUIT)
 	{
 		write(1, "^\\Quit: 3\n", 10);
-		signal_exit_status = 131;
+		g_exit_status = 131;
 	}
 }
 
 void	set_exit_status(int cmd_i)
 {
-	if (WIFEXITED(signal_exit_status))
-		signal_exit_status = WEXITSTATUS(signal_exit_status);
-	else if (WIFSIGNALED(signal_exit_status))
-		signal_exit_status = 128 + WTERMSIG(signal_exit_status);
+	if (WIFEXITED(g_exit_status))
+		g_exit_status = WEXITSTATUS(g_exit_status);
+	else if (WIFSIGNALED(g_exit_status))
+		g_exit_status = 128 + WTERMSIG(g_exit_status);
 }

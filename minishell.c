@@ -68,7 +68,7 @@ void	do_exec_dev(t_token *token, char **envp)
 		ft_putstr_fd("Shkad: ", 2);
 		ft_putstr_fd(token->cmd[0], 2);
 		ft_putendl_fd(": command not found", 2);
-		signal_exit_status = 127;
+		g_exit_status = 127;
 	}
 	exit(127);
 }
@@ -100,8 +100,8 @@ void	handle_heredoc(t_token **cmd)
 		(*cmd)->fd.in_file = fd;
 		close(fd);
 	}
-//	if (WTERMSIG(signal_exit_status) == SIGINT)
-//		signal_exit_status = 1;
+//	if (WTERMSIG(g_exit_status) == SIGINT)
+//		g_exit_status = 1;
 }
 
 t_env	*new_env(char *name, char *data)
@@ -263,7 +263,7 @@ int	main(int argc, char **argv, char **env)
 
 	if (argc != 1)
 		return (1);
-	signal_exit_status = 0;
+	g_exit_status = 0;
 	tcgetattr(0, &termios_save);
 	atexit(reset_the_terminal);
 	termios_save.c_lflag &= ~ECHOCTL;
@@ -298,6 +298,6 @@ int	main(int argc, char **argv, char **env)
 		unlink(".tmp_file");
 		free_list(&token);
 		if (check_exit_status(&n_env))
-			exit(signal_exit_status);
+			exit(g_exit_status);
 	}
 }

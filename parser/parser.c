@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lechalme <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/23 21:36:02 by lechalme          #+#    #+#             */
+/*   Updated: 2022/02/23 21:36:07 by lechalme         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../minishell.h"
 
 int	quotes(char *line, int i)
@@ -94,10 +104,10 @@ char	*destroy_space(char *line)
 	new_line = malloc(sizeof(char *) * malloc_sp(line));
 	while (line[i])
 	{
-		if (quotes(line, i))
+		if (quotes(line, i) || !check_delimiter(line[i]))
 			new_line[j++] = line[i];
-		else if (!check_delimiter(line[i]))
-			new_line[j++] = line[i];
+//		else if (!check_delimiter(line[i]))
+//			new_line[j++] = line[i];
 		else
 		{
 			redir_type = 0;
@@ -123,14 +133,15 @@ char	*destroy_space(char *line)
 	return (new_line);
 }
 
-t_token *new_token(char	*str, t_env **env)
+t_token	*new_token(char	*str, t_env **env)
 {
-	t_token *token;
+	t_token	*token;
 	int		i;
 	int		help;
 	char	*new_string;
 	char	*to_free;
 	char	*to_free2;
+
 	i = 0;
 	token = malloc(sizeof(t_token));
 	if (!token)
@@ -143,12 +154,12 @@ t_token *new_token(char	*str, t_env **env)
 	new_string = NULL;
 	while (str[i])
 	{
-		if (!check_delimiter(str[i]) || check_delimiter(str[i]) == 1 ||
-		quotes(str, i))
+		if (!check_delimiter(str[i]) || check_delimiter(str[i]) == 1
+			|| quotes(str, i))
 		{
 			help = i;
 			while (str[i] && ((!check_delimiter(str[i]) || check_delimiter
-			(str[i]) == 1) || new_quotes(str, i)))
+						(str[i]) == 1) || new_quotes(str, i)))
 				i++;
 			to_free = new_string;
 			if (!new_string)
@@ -165,7 +176,7 @@ t_token *new_token(char	*str, t_env **env)
 			if (str[i] == '>')
 				i++;
 			help = i;
-			while(str[i] && !check_delimiter(str[i]))
+			while (str[i] && !check_delimiter(str[i]))
 				i++;
 			if (token->outfile)
 			{
@@ -175,15 +186,11 @@ t_token *new_token(char	*str, t_env **env)
 			token->outfile = ft_substr(str, help, i - help);
 			delete_quotes(&(token->outfile), env);
 			if (str[help - 2] == '>')
-				token->fd.out_file = open(token->outfile, O_APPEND |
-														  O_WRONLY | O_CREAT,
-										  S_IRUSR |
-										  S_IWUSR | S_IRGRP | S_IROTH);
+				token->fd.out_file = open(token->outfile, O_APPEND | O_WRONLY
+						| O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 			else
-				token->fd.out_file = open(token->outfile,
-										  O_TRUNC | O_WRONLY | O_CREAT,
-										  S_IRUSR |
-										  S_IWUSR | S_IRGRP | S_IROTH);
+				token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY
+						| O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		}
 		else if (check_delimiter(str[i]) == 3)
 		{
@@ -191,7 +198,7 @@ t_token *new_token(char	*str, t_env **env)
 			if (str[i] == '<')
 				i++;
 			help = i;
-			while(str[i] && !check_delimiter(str[i]))
+			while (str[i] && !check_delimiter(str[i]))
 				i++;
 			if (token->infile)
 			{
@@ -286,8 +293,8 @@ int	delim_check(char *line)
 				if (line[i] && check_delimiter(line[i]) > 2
 					&& line[i] == line[i - 1])
 					i++;
-				if (!line[i] || (check_delimiter(line[i]) != 0 &&
-										check_delimiter(line[i]) != 1))
+				if (!line[i] || (check_delimiter(line[i]) != 0
+						&& check_delimiter(line[i]) != 1))
 					return (1);
 			}
 			i++;

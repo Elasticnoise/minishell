@@ -1,8 +1,19 @@
-# include "../minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lechalme <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/23 21:59:32 by lechalme          #+#    #+#             */
+/*   Updated: 2022/02/23 21:59:36 by lechalme         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+#include "../minishell.h"
 
-static void close_in_out_file(t_token *cmd)
+static void	close_in_out_file(t_token *cmd)
 {
-	int err;
+	int	err;
 
 	err = 0;
 	if (cmd->outfile)
@@ -13,10 +24,10 @@ static void close_in_out_file(t_token *cmd)
 		perror("close_in_out_file:");
 }
 
-static inline int cmd_position(int kind, t_token *cmd, int cmd_i)
+static inline int	cmd_position(int kind, t_token *cmd, int cmd_i)
 {
-	int middle;
-	int end;
+	int	middle;
+	int	end;
 
 	middle = 2;
 	end = 3;
@@ -27,37 +38,31 @@ static inline int cmd_position(int kind, t_token *cmd, int cmd_i)
 	return (kind);
 }
 
-static inline void pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cmd_i)
+static inline void	pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cmd_i)
 {
-	int start;
-	int middle;
-	int end;
-
-	start = 1;
-	middle = 2;
-	end = 3;
 	if (cmd_i == 2)
 	{
-		if (kind == start && cmd->next != NULL)
+		if (kind == START && cmd->next != NULL)
 			dup2(pipes[1], STDOUT);
-		else if (kind == end)
+		else if (kind == END)
 			dup2(pipes[0], STDIN);
 	}
 	else
 	{
-		if (kind == start && cmd->next != NULL)
+		if (kind == START && cmd->next != NULL)
 			dup2(pipes[2 * i + 1], STDOUT);
-		else if (kind == middle)
+		else if (kind == MIDDLE)
 		{
 			dup2(pipes[2 * i - 2], STDIN);
 			dup2(pipes[2 * i + 1], STDOUT);
 		}
-		else if (kind == end)
+		else if (kind == END)
 			dup2(pipes[2 * i - 2], STDIN);
 	}
 }
 
-static void	redirect(t_token *cmd) {
+static void	redirect(t_token *cmd)
+{
 	int	err;
 
 	err = 0;
@@ -81,15 +86,44 @@ static void	redirect(t_token *cmd) {
 	}
 }
 
-int do_pipex(t_token **token, char **env, t_env **n_env)
+void	do_child(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
 {
-	int	i;
-	int	cmd_i;
-	int	*pipes;
+	handle_heredoc(&cmd);
+	if (cmd->limiter)
+		cmd->fd.in_file = open(".tmp_file", O_RDONLY);
+	if (cmd_i > 1)
+		pipe_switch(i, kind, pipes, cmd, cmd_i);
+	if (cmd->infile || cmd->outfile)
+		redirect(cmd);
+	close_pipes(pipes, cmd_i);
+	close_in_out_file(cmd);
+}
+
+int	do_one_builtins(int exit_stat, int *pipes)
+{
+	if (exit_stat == EXIT_SUCCESS)
+	{
+		g_exit_status = EXIT_SUCCESS;
+		free(pipes);
+		return (EXIT_SUCCESS);
+	}
+	else
+	{
+		g_exit_status = exit_stat;
+		free(pipes);
+		return (EXIT_FAILURE);
+	}
+}
+
+int	do_pipex(t_token **token, char **env, t_env **n_env)
+{
+	int		i;
+	int		cmd_i;
+	int		*pipes;
 	t_token	*cmd;
-	int	kind;
+	int		kind;
 	pid_t	pid;
-	int	exit_stat;
+	int		exit_stat;
 
 	cmd = *token;
 	cmd_i = get_cmd_count(token);
@@ -99,18 +133,7 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
 	{
 		exit_stat = do_builtins(cmd, n_env);
-		if (exit_stat == EXIT_SUCCESS)
-		{
-			signal_exit_status = EXIT_SUCCESS;
-			free(pipes);
-			return (EXIT_SUCCESS);
-		}
-		else
-		{
-			signal_exit_status = exit_stat;
-			free(pipes);
-			return (EXIT_FAILURE);
-		}
+		do_one_builtins(exit_stat, pipes);
 	}
 	else
 	{
@@ -129,22 +152,9 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 			}
 			if (pid == 0)
 			{
-				handle_heredoc(&cmd);
-				if (cmd->limiter)
-					cmd->fd.in_file = open(".tmp_file", O_RDONLY);
-				if (cmd_i > 1)
-					pipe_switch(i, kind, pipes, cmd, cmd_i);
-				if (cmd->infile || cmd->outfile)
-					redirect(cmd);
-				close_pipes(pipes, cmd_i);
-				close_in_out_file(cmd);
+				do_child(cmd, cmd_i, pipes, i, kind);
 				if (is_builtin(cmd->cmd[0]))
-				{
-					if (do_builtins(cmd, n_env) == EXIT_SUCCESS)
-						exit (EXIT_SUCCESS);
-					else
-						exit (EXIT_FAILURE);
-				}
+					exit (do_builtins(cmd, n_env));
 				do_exec_dev(cmd, env);
 			}
 			kind = cmd_position(kind, cmd, cmd_i);

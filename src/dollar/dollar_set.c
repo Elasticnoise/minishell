@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dollar_set.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lechalme <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/23 21:57:00 by lechalme          #+#    #+#             */
+/*   Updated: 2022/02/23 21:57:01 by lechalme         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 static void	question_case(int i, char *s, char **str, int j)
@@ -9,7 +20,7 @@ static void	question_case(int i, char *s, char **str, int j)
 
 	start = i - 2;
 	end = i;
-	new = ft_itoa(signal_exit_status);
+	new = ft_itoa(g_exit_status);
 	res = ft_calloc(ft_strlen(s), 1);
 	if (!new || !res)
 		exit(EXIT_FAILURE);
@@ -54,7 +65,7 @@ void	if_help(char **str, int i, t_env *help, int start)
 	j = 0;
 	end = i;
 	res = ft_calloc(ft_strlen((*str)) - (i - start)
-		+ ft_strlen(help->data) + 1, 1);
+			+ ft_strlen(help->data) + 1, 1);
 	i = 0;
 	while (i < start)
 	{
@@ -89,7 +100,6 @@ void	if_not_help(char **str, int start, int i, int end)
 	}
 	free(*str);
 	*str = res;
-
 }
 
 void	not_question(int start, char **str, t_env **env)
@@ -110,7 +120,6 @@ void	not_question(int start, char **str, t_env **env)
 	else
 	{
 		free(new);
-//		printf("123");
 		return (if_not_help(str, start, i, i));
 	}
 }
@@ -164,4 +173,3 @@ void	set_dollar(char **str, int start, t_env **env)
 //		}
 	}
 }
-

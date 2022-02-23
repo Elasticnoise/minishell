@@ -80,7 +80,7 @@ int	ft_exit_status(char *str)
 
 void	ft_exit_err_msg(char *str)
 {
-	signal_exit_status = 255;
+	g_exit_status = 255;
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(str, 2);
 	ft_putstr_fd(": numeric argument required\n", 2);

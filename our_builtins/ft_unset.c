@@ -15,7 +15,7 @@ int	check_var(char *key, t_token *token)
 {
 	if (ft_isalpha(key[0]) || key[0] == '_')
 		return (1);
-	signal_exit_status = EXIT_FAILURE;
+	g_exit_status = EXIT_FAILURE;
 	ft_putstr_fd("Shkad: ", 2);
 	ft_putstr_fd(token->cmd[0], 2);
 	ft_putstr_fd(": \'", 2);
@@ -72,7 +72,7 @@ int	ft_unset(t_token *token, t_env **env)
 	char	*key;
 
 	key = NULL;
-	signal_exit_status = 0;
+	g_exit_status = 0;
 	i = 1;
 	while (token->cmd[i])
 	{

@@ -24,8 +24,10 @@
 # include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
-
-int	signal_exit_status;
+# define START	1
+# define MIDDLE	2
+# define END	3
+int	g_exit_status;
 
 struct termios termios_save;
 
@@ -54,10 +56,10 @@ typedef struct s_env
 	struct s_env	*next;
 }t_env;
 
-typedef struct s_main
+typedef struct	s_main
 {
 	t_token	*head;
-}t_main;
+}				t_main;
 
 /*PIPE*/
 int		do_pipex(t_token **token, char **env, t_env **n_env);

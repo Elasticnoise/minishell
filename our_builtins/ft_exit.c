@@ -80,7 +80,7 @@
 //
 //void	ft_exit_err_msg(char *str)
 //{
-//	signal_exit_status = 255;
+//	g_exit_status = 255;
 //	ft_putstr_fd("minishell: exit: ", 2);
 //	ft_putstr_fd(str, 2);
 //	ft_putstr_fd(": numeric argument required\n", 2);
@@ -107,9 +107,9 @@ int	ft_exit(t_token *token, t_env **n_env)
 			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 			return (EXIT_FAILURE);
 		}
-		signal_exit_status = ft_exit_status(token->cmd[1]);
-		if (signal_exit_status == -1)
+		g_exit_status = ft_exit_status(token->cmd[1]);
+		if (g_exit_status == -1)
 			ft_exit_err_msg(token->cmd[1]);
 	}
-	return (signal_exit_status);
+	return (g_exit_status);
 }

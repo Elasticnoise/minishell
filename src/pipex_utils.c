@@ -65,7 +65,7 @@ void	wait_childs(int n)
 	{
 		wait(&status);
 		if (WIFEXITED(status) && status != 0)
-			signal_exit_status = 127;
+			g_exit_status = 127;
 		i++;
 	}
 }
