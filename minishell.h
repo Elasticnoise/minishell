@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lechalme <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/23 18:13:18 by lechalme          #+#    #+#             */
+/*   Updated: 2022/02/23 18:13:20 by lechalme         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -6,19 +17,17 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
-
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 
 int	signal_exit_status;
 
-struct termios	termios_save;
+struct termios termios_save;
 
 typedef struct s_fd
 {
@@ -63,14 +72,18 @@ void	wait_childs(int n);
 int		do_builtins(t_token *token, t_env **n_env);
 int		is_builtin(char *cmd);
 int		ft_exit(t_token *token, t_env **n_env);
+int		ft_check_exit_status(char *str);
+int		ft_exit_status(char *str);
+void	ft_exit_err_msg(char *str);
+int		check_exit_status(t_env **env);
 int		ft_cd(t_token *token, t_env *n_env);
 int		ft_env(t_env **n_env);
 int		ft_unset(t_token *cmd, t_env **env);
 int		ft_export(t_token *token, t_env **env);
 int		ft_pwd(t_token *token);
 int		ft_echo(t_token *token);
-int		check_exit_status(t_env **env);
 int		check_var(char *key, t_token *token);
+int		ft_set_var(t_token *token, t_env *n_env, char *key, char *value);
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
@@ -92,6 +105,5 @@ void	free_doublechar(char **new_env);
 
 void	set_one_node(char *str, t_env **n_env);
 void	delete_quotes(char **string, t_env **env);
-
-int	new_quotes(char *str, int j);
+int		new_quotes(char *str, int j);
 #endif

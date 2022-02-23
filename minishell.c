@@ -12,10 +12,11 @@
 
 #include "minishell.h"
 
-void free_list(t_token **head)
+void	free_list(t_token **head)
 {
 	t_token	*tmp;
 	int		i;
+
 	while (*head)
 	{
 		i = 0;
@@ -46,8 +47,9 @@ void	set_in_out_files(t_token *token)
 	else
 		token->fd.in_file = 0;
 	if (token->outfile)
-		token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | O_CREAT, S_IRUSR | \
-			S_IWUSR | S_IRGRP | S_IROTH);
+		token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | \
+													O_CREAT, S_IRUSR | \
+											S_IWUSR | S_IRGRP | S_IROTH);
 	else
 		token->fd.out_file = 1;
 	if (token->fd.in_file < 0)
@@ -71,49 +73,11 @@ void	do_exec_dev(t_token *token, char **envp)
 	exit(127);
 }
 
-int	ft_redirect_dev(t_token *token, char **env, t_env **n_env)
-{
-	int		pid;
-	pid_t	pipe_fd[2];
-
-	if (pipe(pipe_fd) == -1)
-		return (1);
-	pid = fork();
-	if (pid == -1)
-	{
-		ft_putstr_fd("Fork failed\n", 2);
-		return (1);
-	}
-	if (pid == 0)
-	{
-		close(pipe_fd[1]);
-		if (!token->infile)
-			dup2(pipe_fd[0], STDIN);
-		else
-			dup2(token->fd.in_file, STDIN);
-		close(pipe_fd[0]);
-//		close(pipe_fd[1]);
-	}
-	else
-	{
-		if (!token->outfile)
-			dup2(pipe_fd[1], STDOUT);
-		else
-			close(token->fd.out_file);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]); ////
-		do_exec_dev(token, env);
-//		waitpid(pid, NULL, 0);
-		wait(&pid);
-	}
-	return (0);
-}
-
 void	handle_heredoc(t_token **cmd)
 {
-	int 	limiter;
+	int		limiter;
 	int		fd;
-	char 	*line;
+	char	*line;
 
 	if ((*cmd)->limiter)
 	{
@@ -124,7 +88,8 @@ void	handle_heredoc(t_token **cmd)
 			line = readline("> ");
 			if (line == NULL)
 				break ;
-			limiter = ft_strncmp(line, (*cmd)->limiter, ft_strlen((*cmd)->limiter) + 1);
+			limiter = ft_strncmp(line, (*cmd)->limiter, \
+				ft_strlen((*cmd)->limiter) + 1);
 			if (limiter == 0)
 				break ;
 			write(fd, line, ft_strlen(line));
@@ -224,6 +189,11 @@ char	**list_to_env(t_env **start)
 	}
 	help = *start;
 	new_env = malloc(sizeof(char *) * j + 1); //todo malloc check
+	if (!new_env)
+	{
+		ft_putstr_fd("new_env malloc doesn't allocated\n", 2);
+		exit(1);
+	}
 	i = 0;
 	while (i < j)
 	{
