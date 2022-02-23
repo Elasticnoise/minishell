@@ -80,10 +80,7 @@ int	check_exit_status(t_env **env)
 	if (get_shlvl(env) == 1)
 		return (1);
 	else
-	{
-		signal_exit_status = 0;
 		return (0);
-	}
 }
 
 int	ft_exit(t_token *token, t_env **n_env)

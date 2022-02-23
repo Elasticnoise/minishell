@@ -27,7 +27,6 @@ static void	del_var_help(t_env *tmp, char *key, t_env *prev, t_env **env)
 	{
 		if (!ft_strcmp(tmp->name, key))
 		{
-			*env = prev;
 			prev->next = tmp->next;
 			free_env_node(tmp);
 			break ;
@@ -53,7 +52,7 @@ void	del_var(t_env **env, char *key)
 		*env = tmp;
 	}
 	else
-		del_var_help(tmp, key, prev, &(*env));
+		del_var_help(tmp, key, prev, env);
 }
 
 int	ft_unset(t_token *token, t_env **env)
@@ -68,7 +67,7 @@ int	ft_unset(t_token *token, t_env **env)
 	{
 		key = token->cmd[i];
 		if (check_var(key, token))
-			del_var(&(*env), key);
+			del_var(env, key);
 		i++;
 	}
 	return (EXIT_SUCCESS);

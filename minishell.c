@@ -65,7 +65,7 @@ void	do_exec_dev(t_token *token, char **envp)
 		ft_putstr_fd("Shkad: ", 2);
 		ft_putstr_fd(token->cmd[0], 2);
 		ft_putendl_fd(": command not found", 2);
-		exit(EXIT_FAILURE);
+		signal_exit_status = 127;
 	}
 	exit(127);
 }
@@ -334,17 +334,16 @@ int	main(int argc, char **argv, char **env)
 	while(1)
 	{
 		signal(SIGQUIT, SIG_IGN);
-//		signal(SIGQUIT, SIG_IGN);
 		new_env = list_to_env(&n_env);
-		signal_exit_status = 0;
+//		signal_exit_status = 0;
 		signal(SIGINT, &sig_handler);
+//		printf("sigMain = %d\n", signal_exit_status);
 		line = readline("\x1b[35mShkad $\x1b[0m ");
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
 		if (line)
 		{
-//			signal(SIGQUIT, SIG_DFL);
 			if (ft_strcmp(line, ""))
 			{
 				if (!parser(line, &token, env, &n_env))
@@ -354,6 +353,7 @@ int	main(int argc, char **argv, char **env)
 		else
 		{
 			ft_putstr_fd("exit\n", 1);
+			free_list(&token);
 			exit(EXIT_SUCCESS);
 		}
 		free_doublechar(new_env);

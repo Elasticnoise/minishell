@@ -89,6 +89,7 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	t_token *cmd;
 	int kind;
 	pid_t pid;
+	int	exit_stat;
 
 	cmd = *token;
 	cmd_i = get_cmd_count(token);
@@ -97,14 +98,15 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	i = 0;
 	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
 	{
-		if (do_builtins(cmd, n_env) == EXIT_SUCCESS)
+		exit_stat = do_builtins(cmd, n_env);
+		if (exit_stat == EXIT_SUCCESS)
 		{
 			signal_exit_status = EXIT_SUCCESS;
 			return (EXIT_SUCCESS);
 		}
 		else
 		{
-			signal_exit_status = EXIT_FAILURE;
+			signal_exit_status = exit_stat;
 			return (EXIT_FAILURE);
 		}
 	}
@@ -120,12 +122,9 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 			pid = fork();
 			if (pid && !cmd->limiter)
 			{
-//				signal(SIGINT, SIG_IGN);
 				signal(SIGINT, sig_handler3);
 				signal(SIGQUIT, sig_handler3);
 			}
-//			signal(SIGINT, sig_handler3);
-//			signal(SIGQUIT, sig_handler3);
 			if (pid == 0)
 			{
 				handle_heredoc(&cmd);

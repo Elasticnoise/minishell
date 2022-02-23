@@ -210,7 +210,7 @@ t_token *new_token(char	*str, t_env **env)
 				delete_quotes(&(token->infile), env);
 				token->fd.in_file = open(token->infile, O_RDONLY);
 				if (token->fd.in_file == -1)
-					printf("Cannot read from file\n");
+					printf("Shkad: %s: No such file or directory\n", token->infile);
 			}
 		}
 		else
