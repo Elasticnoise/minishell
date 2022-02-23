@@ -57,8 +57,8 @@ static inline void pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cm
 	}
 }
 
-static void redirect(t_token *cmd) {
-	int err;
+static void	redirect(t_token *cmd) {
+	int	err;
 
 	err = 0;
 	if (cmd->infile)
@@ -158,6 +158,7 @@ int do_pipex(t_token **token, char **env, t_env **n_env)
 	close_in_out_file(cmd);
 	set_exit_status(cmd_i);
 	wait_childs(cmd_i);
-	free(pipes);
+	if (pipes)
+		free(pipes);
 	return (EXIT_SUCCESS);
 }
