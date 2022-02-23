@@ -14,10 +14,9 @@
 
 void free_list(t_token **head)
 {
-	t_token *tmp;
+	t_token	*tmp;
 	int		i;
 
-//	tmp = *head;
 	while (*head)
 	{
 		i = 0;
@@ -169,10 +168,10 @@ void add_env(t_env	**start, t_env *new)
 
 void	set_one_node(char *str, t_env **n_env)
 {
-	int start;
-	int j;
-	char *name;
-	char *data;
+	int		start;
+	int		j;
+	char	*name;
+	char	*data;
 
 	start = 0;
 	j = 0;
@@ -204,18 +203,6 @@ void	set_env(char **env, t_env **n_env) ////todo malloc check
 	{
 		set_one_node(env[i], &(*n_env));
 		i++;
-	}
-}
-
-void print_env(t_env **start)
-{
-	t_env *help;
-
-	help = *start;
-	while (help)
-	{
-		printf("%s=%s\n", help->name, help->data);
-		help=help->next;
 	}
 }
 
