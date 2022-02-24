@@ -39,26 +39,6 @@ void	free_list(t_token **head)
 	}
 }
 
-void	set_in_out_files(t_token *token)
-{
-	if (token->infile)
-		token->fd.in_file = open(token->infile, O_RDONLY);
-	else
-		token->fd.in_file = 0;
-	if (token->outfile)
-		token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY | \
-													O_CREAT, S_IRUSR | \
-											S_IWUSR | S_IRGRP | S_IROTH);
-	else
-		token->fd.out_file = 1;
-	if (token->fd.in_file < 0)
-	{
-		ft_putstr_fd("cat: ", 2);
-		ft_putstr_fd(token->infile, 2);
-		ft_putstr_fd(": No such file or directory\n", 2);
-	}
-}
-
 void	do_exec_dev(t_token *token, char **envp)
 {
 	signal(SIGQUIT, SIG_DFL);
@@ -245,25 +225,16 @@ int	lvl_down(t_env **start)
 	return (lvl);
 }
 
-void	reset_the_terminal(void)
-{
-	tcsetattr(0, 0, &termios_save);
-}
-
 int	main(int argc, char **argv, char **env)
 {
-	char	*line;
-	t_token	*token;
-	char	**new_env;
-	t_env	*n_env;
+	char			*line;
+	t_token			*token;
+	char			**new_env;
+	t_env			*n_env;
 
 	if (argc != 1)
 		return (1);
 	g_exit_status = 0;
-	tcgetattr(0, &termios_save);
-	atexit(reset_the_terminal);
-	termios_save.c_lflag &= ~ECHOCTL;
-	tcsetattr(0, 0, &termios_save );
 	n_env = NULL;
 	set_env(env, &n_env);
 	lvl_up(&n_env);

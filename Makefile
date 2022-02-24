@@ -22,7 +22,8 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
                     ./src/dollar/dollar_set.c \
                     ./parser/delete_quotes.c \
                     ./src/dollar/find_env_node.c \
-                    ./parser/new_token.c
+                    ./parser/new_token.c \
+                    ./parser/parser_utils.c \
 
 
 CC = gcc

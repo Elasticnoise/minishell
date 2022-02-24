@@ -27,9 +27,8 @@
 # define START	1
 # define MIDDLE	2
 # define END	3
-int	g_exit_status;
 
-struct termios termios_save;
+int	g_exit_status;
 
 typedef struct s_fd
 {
@@ -110,4 +109,8 @@ void	delete_quotes(char **string, t_env **env);
 int		new_quotes(char *str, int j);
 t_env	*find_help(t_env **env, char *new);
 t_token	*new_token(char	*str, t_env **env);
+int		check_delimiter(char c);
+int		malloc_sp(char *line);
+char	set_del(int max);
+char	*destroy_space(char *line);
 #endif
