@@ -20,8 +20,8 @@
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 # define START	1
@@ -36,6 +36,13 @@ typedef struct s_fd
 	int	out_file;
 }				t_fd;
 
+typedef struct s_init
+{
+	int	cmd_i;
+	int	kind;
+	int	i;
+}				t_init;
+
 typedef struct s_token
 {
 	char			**cmd;
@@ -43,7 +50,6 @@ typedef struct s_token
 	char			*outfile;
 	char			*limiter;
 	struct s_token	*next;
-	int				cmd_i;
 	t_fd			fd;
 }		t_token;
 
@@ -57,16 +63,17 @@ typedef struct s_env
 /*PIPE*/
 int		do_pipex(t_token **token, char **env, t_env **n_env);
 char	*get_path(char **envp, char *cmd);
-void	do_exec_dev(t_token *token, char **envp);
+void	do_exec_dev(t_token *token, char **envp, t_env **n_env);
 int		get_cmd_count(t_token **token);
 void	close_pipes(int *pipes, int count_node);
 int		*open_pipes(int cmd_i);
 void	wait_childs(int n);
-void	set_mutiple_cmd(t_token *cmd, int cmd_i, int *pipes, int i, int kind);
-void	pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cmd_i);
+void	set_mutiple_cmd(t_token *cmd, t_init *init, int *pipes);
+void	pipe_switch(int *pipes, t_token *cmd, t_init *init);
 void	redirect(t_token *cmd);
 void	close_in_out_file(t_token *cmd);
 void	final_process_work(t_token **token, int *pipes, int cmd_i);
+void	init_values(t_init *init, t_token **token);
 
 /*BUILTINS*/
 int		do_builtins(t_token *token, t_env **n_env);
@@ -109,7 +116,6 @@ void	delete_quotes(char **string, t_env **env);
 int		new_quotes(char *str, int j);
 t_env	*find_help(t_env **env, char *new);
 t_token	*new_token(char	*str, t_env **env);
-int		check_delimiter(char c);
 int		malloc_sp(char *line);
 char	set_del(int max);
 char	*destroy_space(char *line);

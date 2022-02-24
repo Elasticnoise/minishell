@@ -41,8 +41,10 @@ void	free_list(t_token **head)
 	}
 }
 
-void	do_exec_dev(t_token *token, char **envp)
+void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 {
+	if (is_builtin(token->cmd[0]))
+		exit (do_builtins(token, n_env));
 	signal(SIGQUIT, SIG_DFL);
 	if ((execve(get_path(envp, token->cmd[0]), token->cmd, envp) == -1))
 	{

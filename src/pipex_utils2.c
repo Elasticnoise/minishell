@@ -11,16 +11,16 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void	set_mutiple_cmd(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
+void	set_mutiple_cmd(t_token *cmd, t_init *init, int *pipes)
 {
 	handle_heredoc(&cmd);
 	if (cmd->limiter)
 		cmd->fd.in_file = open(".tmp_file", O_RDONLY);
-	if (cmd_i > 1)
-		pipe_switch(i, kind, pipes, cmd, cmd_i);
+	if (init->cmd_i > 1)
+		pipe_switch(pipes, cmd, init);
 	if (cmd->infile || cmd->outfile)
 		redirect(cmd);
-	close_pipes(pipes, cmd_i);
+	close_pipes(pipes, init->cmd_i);
 	close_in_out_file(cmd);
 }
 
@@ -37,26 +37,26 @@ void	final_process_work(t_token **token, int *pipes, int cmd_i)
 		free(pipes);
 }
 
-void	pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cmd_i)
+void	pipe_switch(int *pipes, t_token *cmd, t_init *init)
 {
-	if (cmd_i == 2)
+	if (init->cmd_i == 2)
 	{
-		if (kind == START && cmd->next != NULL)
+		if (init->kind == START && cmd->next != NULL)
 			dup2(pipes[1], STDOUT);
-		else if (kind == END)
+		else if (init->kind == END)
 			dup2(pipes[0], STDIN);
 	}
 	else
 	{
-		if (kind == START && cmd->next != NULL)
-			dup2(pipes[2 * i + 1], STDOUT);
-		else if (kind == MIDDLE)
+		if (init->kind == START && cmd->next != NULL)
+			dup2(pipes[2 * init->i + 1], STDOUT);
+		else if (init->kind == MIDDLE)
 		{
-			dup2(pipes[2 * i - 2], STDIN);
-			dup2(pipes[2 * i + 1], STDOUT);
+			dup2(pipes[2 * init->i - 2], STDIN);
+			dup2(pipes[2 * init->i + 1], STDOUT);
 		}
-		else if (kind == END)
-			dup2(pipes[2 * i - 2], STDIN);
+		else if (init->kind == END)
+			dup2(pipes[2 * init->i - 2], STDIN);
 	}
 }
 
@@ -71,4 +71,11 @@ void	close_in_out_file(t_token *cmd)
 		err = close(cmd->fd.in_file);
 	if (err != 0)
 		perror("close_in_out_file:");
+}
+
+void	init_values(t_init *init, t_token **token)
+{
+	init->cmd_i = get_cmd_count(token);
+	init->kind = 1;
+	init->i = 0;
 }

@@ -66,16 +66,12 @@ int	do_one_builtins(int exit_stat)
 
 void	loop(t_token **token, char **env, t_env **n_env, int *pipes)
 {
-	int		i;
-	int		kind;
-	int		cmd_i;
 	pid_t	pid;
 	t_token	*cmd;
+	t_init	init;
 
-	i = 0;
-	kind = 1;
 	cmd = *token;
-	cmd_i = get_cmd_count(token);
+	init_values(&init, token);
 	while (cmd != NULL)
 	{
 		if (!cmd->cmd)
@@ -88,14 +84,12 @@ void	loop(t_token **token, char **env, t_env **n_env, int *pipes)
 			catch_heredog_sig();
 		if (pid == 0)
 		{
-			set_mutiple_cmd(cmd, cmd_i, pipes, i, kind);
-			if (is_builtin(cmd->cmd[0]))
-				exit (do_builtins(cmd, n_env));
-			do_exec_dev(cmd, env);
+			set_mutiple_cmd(cmd, &init, pipes);
+			do_exec_dev(cmd, env, n_env);
 		}
-		kind = cmd_position(kind, cmd, cmd_i);
+		init.kind = cmd_position(init.kind, cmd, init.cmd_i);
 		cmd = cmd->next;
-		i++;
+		init.i++;
 	}
 }
 

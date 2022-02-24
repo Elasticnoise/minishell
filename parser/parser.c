@@ -55,7 +55,6 @@ void	get_tokens(char *line, t_token **head, t_env **env)
 {
 	int		i;
 	int		j;
-	t_token	*help;
 
 	i = 0;
 	while (line[i] != '\0')
@@ -70,13 +69,6 @@ void	get_tokens(char *line, t_token **head, t_env **env)
 		if (line[i] == '\0')
 			break ;
 		i++;
-	}
-	j = i;
-	help = *head;
-	while (help)
-	{
-		help->cmd_i = j;
-		help = help->next;
 	}
 }
 
