@@ -49,3 +49,9 @@ void	set_exit_status(int cmd_i)
 	else if (WIFSIGNALED(g_exit_status))
 		g_exit_status = 128 + WTERMSIG(g_exit_status);
 }
+
+void	catch_heredog_sig(void)
+{
+	signal(SIGINT, sig_handler3);
+	signal(SIGQUIT, sig_handler3);
+}

@@ -69,6 +69,11 @@ int		get_cmd_count(t_token **token);
 void	close_pipes(int *pipes, int count_node);
 int		*open_pipes(int cmd_i);
 void	wait_childs(int n);
+void	set_mutiple_cmd(t_token *cmd, int cmd_i, int *pipes, int i, int kind);
+void	pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cmd_i);
+void	redirect(t_token *cmd);
+void	close_in_out_file(t_token *cmd);
+void	final_process_work(t_token **token, int *pipes, int cmd_i);
 
 /*BUILTINS*/
 int		do_builtins(t_token *token, t_env **n_env);
@@ -93,6 +98,7 @@ void	sig_handler3(int signum);
 int		lvl_down(t_env **start);
 void	handle_heredoc(t_token **cmd);
 void	set_exit_status(int cmd_i);
+void	catch_heredog_sig(void);
 
 int		parser(char *line, t_token **token, char *env[], t_env **n_env);
 int		quotes(char *line, int i);

@@ -11,19 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static void	close_in_out_file(t_token *cmd)
-{
-	int	err;
-
-	err = 0;
-	if (cmd->outfile)
-		err = close(cmd->fd.out_file);
-	if (cmd->infile)
-		err = close(cmd->fd.in_file);
-	if (err != 0)
-		perror("close_in_out_file:");
-}
-
 static inline int	cmd_position(int kind, t_token *cmd, int cmd_i)
 {
 	int	middle;
@@ -38,30 +25,7 @@ static inline int	cmd_position(int kind, t_token *cmd, int cmd_i)
 	return (kind);
 }
 
-static inline void	pipe_switch(int i, int kind, int *pipes, t_token *cmd, int cmd_i)
-{
-	if (cmd_i == 2)
-	{
-		if (kind == START && cmd->next != NULL)
-			dup2(pipes[1], STDOUT);
-		else if (kind == END)
-			dup2(pipes[0], STDIN);
-	}
-	else
-	{
-		if (kind == START && cmd->next != NULL)
-			dup2(pipes[2 * i + 1], STDOUT);
-		else if (kind == MIDDLE)
-		{
-			dup2(pipes[2 * i - 2], STDIN);
-			dup2(pipes[2 * i + 1], STDOUT);
-		}
-		else if (kind == END)
-			dup2(pipes[2 * i - 2], STDIN);
-	}
-}
-
-static void	redirect(t_token *cmd)
+void	redirect(t_token *cmd)
 {
 	int	err;
 
@@ -86,63 +50,21 @@ static void	redirect(t_token *cmd)
 	}
 }
 
-void	set_mutiple_cmd(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
-{
-	handle_heredoc(&cmd);
-	if (cmd->limiter)
-		cmd->fd.in_file = open(".tmp_file", O_RDONLY);
-	if (cmd_i > 1)
-		pipe_switch(i, kind, pipes, cmd, cmd_i);
-	if (cmd->infile || cmd->outfile)
-		redirect(cmd);
-	close_pipes(pipes, cmd_i);
-	close_in_out_file(cmd);
-}
-
-//void	do_child(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
-//{
-//	set_mutiple_cmd(cmd, cmd_i, pipes, i, kind);
-//	if (is_builtin(cmd->cmd[0]))
-//		exit (do_builtins(cmd, n_env));
-//	do_exec_dev(cmd, env);
-//}
-
 int	do_one_builtins(int exit_stat)
 {
 	if (exit_stat == EXIT_SUCCESS)
 	{
 		g_exit_status = EXIT_SUCCESS;
-//		free(pipes);
 		return (EXIT_SUCCESS);
 	}
 	else
 	{
 		g_exit_status = exit_stat;
-//		free(pipes);
 		return (EXIT_FAILURE);
 	}
 }
 
-void catch_heredog_sig(void)
-{
-	signal(SIGINT, sig_handler3);
-	signal(SIGQUIT, sig_handler3);
-}
-
-void final_process_work(t_token **token, int *pipes, int cmd_i)
-{
-	t_token	*cmd;
-
-	cmd = *token;
-	close_pipes(pipes, cmd_i);
-	close_in_out_file(cmd);
-	set_exit_status(cmd_i);
-	wait_childs(cmd_i);
-	if (pipes)
-		free(pipes);
-}
-
-void loop(t_token **token, char **env, t_env **n_env, int *pipes)
+void	loop(t_token **token, char **env, t_env **n_env, int *pipes)
 {
 	int		i;
 	int		kind;

@@ -16,6 +16,7 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
 					our_builtins/ft_cd.c \
                     src/signals.c \
                     src/get_path.c \
+                    src/pipex_utils2.c \
                     src/pipex.c \
                     src/pipex_utils.c \
                     ./src/dollar/dollar_set.c \
