@@ -34,7 +34,6 @@ void	free_list(t_token **head)
 			}
 			free((*head)->cmd);
 		}
-		free((*head)->str);
 		free(*head);
 		*head = tmp;
 	}

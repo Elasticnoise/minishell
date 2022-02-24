@@ -20,8 +20,8 @@
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 # define START	1
@@ -40,12 +40,11 @@ typedef struct s_fd
 typedef struct s_token
 {
 	char			**cmd;
-	char			*str;
 	char			*infile;
 	char			*outfile;
 	char			*limiter;
 	struct s_token	*next;
-	struct s_token	*prev;
+	int				cmd_i;
 	t_fd			fd;
 }		t_token;
 
@@ -55,11 +54,6 @@ typedef struct s_env
 	char			*data;
 	struct s_env	*next;
 }t_env;
-
-typedef struct	s_main
-{
-	t_token	*head;
-}				t_main;
 
 /*PIPE*/
 int		do_pipex(t_token **token, char **env, t_env **n_env);
@@ -114,4 +108,6 @@ void	free_doublechar(char **new_env);
 void	set_one_node(char *str, t_env **n_env);
 void	delete_quotes(char **string, t_env **env);
 int		new_quotes(char *str, int j);
+t_env	*find_help(t_env **env, char *new);
+t_token	*new_token(char	*str, t_env **env);
 #endif

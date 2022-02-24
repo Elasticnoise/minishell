@@ -39,23 +39,6 @@ static void	question_case(int i, char *s, char **str, int j)
 	*str = res;
 }
 
-t_env	*find_help(t_env **env, char *new)
-{
-	t_env	*help;
-
-	help = *env;
-	while (help)
-	{
-		if (!ft_strcmp(help->name, new))
-		{
-			free(new);
-			break ;
-		}
-		help = help->next;
-	}
-	return (help);
-}
-
 void	if_help(char **str, int i, t_env *help, int start)
 {
 	char	*res;
@@ -80,21 +63,22 @@ void	if_help(char **str, int i, t_env *help, int start)
 	*str = res;
 }
 
-void	if_not_help(char **str, int start, int i, int end)
+void	if_not_help(char **str, int start, int i, char	*s)
 {
 	char	*res;
+	int		end;
 
-	res = ft_calloc(ft_strlen((*str)) - (i - start) + 1, 1);
+	res = ft_calloc(ft_strlen(s) - (i - start) + 1, 1);
 	end = i;
 	i = 0;
 	while (i < start)
 	{
-		res[i] = (*str)[i];
+		res[i] = s[i];
 		i++;
 	}
-	while ((*str)[end])
+	while (s[end])
 	{
-		res[i] = (*str)[end];
+		res[i] = s[end];
 		i++;
 		end++;
 	}
@@ -102,7 +86,7 @@ void	if_not_help(char **str, int start, int i, int end)
 	*str = res;
 }
 
-void	not_question(int start, char **str, t_env **env)
+void	not_question(int start, char **str, t_env **env, char *s)
 {
 	int		i;
 	char	*new;
@@ -120,7 +104,7 @@ void	not_question(int start, char **str, t_env **env)
 	else
 	{
 		free(new);
-		return (if_not_help(str, start, i, i));
+		return (if_not_help(str, start, i, s));
 	}
 }
 
@@ -136,40 +120,5 @@ void	set_dollar(char **str, int start, t_env **env)
 	if (s[start + 1] && s[start + 1] == '?')
 		return (question_case(start + 2, s, str, j));
 	else
-	{
-		not_question(start, str, env);
-//		i++;
-//		while (s[i] && (ft_isalnum(s[i]) || s[i] == '_'))
-//			i++;
-//		end = i;
-//		new = ft_substr(s, start + 1, i - start - 1); //todo malloc check
-//		while (help)
-//		{
-//			if (!ft_strcmp(help->name, new))
-//			{
-//				free(new);
-//				break ;
-//			}
-//			help = help->next;
-//		}
-//		else
-//		{
-//			free(new);
-//			res = ft_calloc(ft_strlen(s) - (i - start) + 1, 1);
-//			i = 0;
-//			while (i < start)
-//			{
-//				res[i] = s[i];
-//				i++;
-//			}
-//			while (s[end])
-//			{
-//				res[i] = s[end];
-//				i++;
-//				end++;
-//			}
-//			free(*str);
-//			*str = res;
-//		}
-	}
+		return (not_question(start, str, env, s));
 }

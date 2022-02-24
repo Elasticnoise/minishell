@@ -106,8 +106,6 @@ char	*destroy_space(char *line)
 	{
 		if (quotes(line, i) || !check_delimiter(line[i]))
 			new_line[j++] = line[i];
-//		else if (!check_delimiter(line[i]))
-//			new_line[j++] = line[i];
 		else
 		{
 			redir_type = 0;
@@ -133,109 +131,6 @@ char	*destroy_space(char *line)
 	return (new_line);
 }
 
-t_token	*new_token(char	*str, t_env **env)
-{
-	t_token	*token;
-	int		i;
-	int		help;
-	char	*new_string;
-	char	*to_free;
-	char	*to_free2;
-
-	i = 0;
-	token = malloc(sizeof(t_token));
-	if (!token)
-		return (NULL);
-	ft_memset((void *)token, 0, sizeof(t_token));
-	token->str = str;
-	token->next = NULL;
-	token->prev = NULL;
-	to_free2 = NULL;
-	new_string = NULL;
-	while (str[i])
-	{
-		if (!check_delimiter(str[i]) || check_delimiter(str[i]) == 1
-			|| quotes(str, i))
-		{
-			help = i;
-			while (str[i] && ((!check_delimiter(str[i]) || check_delimiter
-						(str[i]) == 1) || new_quotes(str, i)))
-				i++;
-			to_free = new_string;
-			if (!new_string)
-				new_string = ft_substr(str, help, i - help);
-			else
-			{
-				to_free2 = ft_substr(str, help, i - help);
-				new_string = ft_strjoin(new_string, to_free2);
-			} // todo free to free
-		}
-		else if (check_delimiter(str[i]) == 4)
-		{
-			i++;
-			if (str[i] == '>')
-				i++;
-			help = i;
-			while (str[i] && !check_delimiter(str[i]))
-				i++;
-			if (token->outfile)
-			{
-				free(token->outfile);
-				close(token->fd.out_file);
-			}
-			token->outfile = ft_substr(str, help, i - help);
-			delete_quotes(&(token->outfile), env);
-			if (str[help - 2] == '>')
-				token->fd.out_file = open(token->outfile, O_APPEND | O_WRONLY
-						| O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-			else
-				token->fd.out_file = open(token->outfile, O_TRUNC | O_WRONLY
-						| O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-		}
-		else if (check_delimiter(str[i]) == 3)
-		{
-			i++;
-			if (str[i] == '<')
-				i++;
-			help = i;
-			while (str[i] && !check_delimiter(str[i]))
-				i++;
-			if (token->infile)
-			{
-				free(token->infile);
-				close(token->fd.in_file);
-			}
-			if (str[help - 2] == '<')
-			{
-				if (token->limiter)
-					free(token->limiter);
-				token->limiter = ft_substr(str, help, i - help);
-			}
-			else
-			{
-				token->infile = ft_substr(str, help, i - help);
-				delete_quotes(&(token->infile), env);
-				token->fd.in_file = open(token->infile, O_RDONLY);
-			}
-		}
-		else
-			i++;
-	}
-	if (token->fd.in_file != -1)
-		token->cmd = ft_q_split(new_string, ' ');
-	free(new_string);
-	i = 0;
-	if (token->cmd)
-	{
-		while (token->cmd[i])
-		{
-			delete_quotes(&(token->cmd[i]), env);
-			i++;
-		}
-	}
-	return (token);
-}
-
 void	add_token_back(t_token **head, t_token *new)
 {
 	t_token	*tmp;
@@ -246,7 +141,6 @@ void	add_token_back(t_token **head, t_token *new)
 		while (tmp->next)
 			tmp = tmp->next;
 		tmp->next = new;
-		new->prev = tmp;
 	}
 	else
 		*head = new;
@@ -254,8 +148,9 @@ void	add_token_back(t_token **head, t_token *new)
 
 void	get_tokens(char *line, t_token **head, t_env **env)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
+	t_token	*help;
 
 	i = 0;
 	while (line[i] != '\0')
@@ -271,6 +166,12 @@ void	get_tokens(char *line, t_token **head, t_env **env)
 		if (line[i] == '\0')
 			break ;
 		i++;
+	}
+	j = i;
+	while (help)
+	{
+		help->cmd_i = j;
+		help = help->next;
 	}
 }
 

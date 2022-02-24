@@ -1,0 +1,11 @@
+Makefile
+README.md
+libft
+lol
+minishell
+minishell.c
+minishell.h
+minishell.o
+our_builtins
+parser
+src

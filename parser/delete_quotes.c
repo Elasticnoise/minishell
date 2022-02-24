@@ -42,16 +42,20 @@ void	new_str(char **str, int len)
 
 static void	double_qoutes(char **string, t_env **env, int *len, int *i)
 {
+	int	help;
+
 	(*len) -= 2;
+	help = (*i);
 	while ((*string)[++(*i)] != '"')
 	{
 		if ((*string)[(*i)] == '$' && (((*string)[(*i) - 1]
 		&& (*string)[(*i) - 1] == '$') || ((*string)[(*i) + 1] && (*string)[(*i)
-		+ 1] == '$')) && ((*string)[(*i) + 1] && (*string)[(*i) + 1] != '?'))
+		+ 1] == '$')))
 			continue ;
 		if ((*string)[(*i)] == '$')
 		{
 			set_dollar(&(*string), *i, env);
+			(*i) = help;
 			(*len)--;
 		}
 	}
