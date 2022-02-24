@@ -25,6 +25,8 @@ void	free_list(t_token **head)
 			free((*head)->infile);
 		if ((*head)->outfile)
 			free((*head)->outfile);
+		if ((*head)->limiter)
+			free((*head)->limiter);
 		if ((*head)->cmd)
 		{
 			while ((*head)->cmd[i])
