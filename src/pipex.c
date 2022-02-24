@@ -86,7 +86,7 @@ static void	redirect(t_token *cmd)
 	}
 }
 
-void	do_child(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
+void	set_mutiple_cmd(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
 {
 	handle_heredoc(&cmd);
 	if (cmd->limiter)
@@ -99,69 +99,40 @@ void	do_child(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
 	close_in_out_file(cmd);
 }
 
-int	do_one_builtins(int exit_stat, int *pipes)
+//void	do_child(t_token *cmd, int cmd_i, int *pipes, int i, int kind)
+//{
+//	set_mutiple_cmd(cmd, cmd_i, pipes, i, kind);
+//	if (is_builtin(cmd->cmd[0]))
+//		exit (do_builtins(cmd, n_env));
+//	do_exec_dev(cmd, env);
+//}
+
+int	do_one_builtins(int exit_stat)
 {
 	if (exit_stat == EXIT_SUCCESS)
 	{
 		g_exit_status = EXIT_SUCCESS;
-		free(pipes);
+//		free(pipes);
 		return (EXIT_SUCCESS);
 	}
 	else
 	{
 		g_exit_status = exit_stat;
-		free(pipes);
+//		free(pipes);
 		return (EXIT_FAILURE);
 	}
 }
 
-int	do_pipex(t_token **token, char **env, t_env **n_env)
+void catch_heredog_sig(void)
 {
-	int		i;
-	int		cmd_i;
-	int		*pipes;
-	t_token	*cmd;
-	int		kind;
-	pid_t	pid;
-	int		exit_stat;
+	signal(SIGINT, sig_handler3);
+	signal(SIGQUIT, sig_handler3);
+}
 
-	cmd = *token;
-	cmd_i = get_cmd_count(token);
-	pipes = open_pipes(cmd_i);
-	kind = 1;
-	i = 0;
-	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-	{
-		exit_stat = do_builtins(cmd, n_env);
-		do_one_builtins(exit_stat, pipes);
-	}
-	else
-	{
-		while (cmd != NULL)
-		{
-			if (!cmd->cmd)
-			{
-				cmd = cmd->next;
-				continue ;
-			}
-			pid = fork();
-			if (pid && !cmd->limiter)
-			{
-				signal(SIGINT, sig_handler3);
-				signal(SIGQUIT, sig_handler3);
-			}
-			if (pid == 0)
-			{
-				do_child(cmd, cmd_i, pipes, i, kind);
-				if (is_builtin(cmd->cmd[0]))
-					exit (do_builtins(cmd, n_env));
-				do_exec_dev(cmd, env);
-			}
-			kind = cmd_position(kind, cmd, cmd_i);
-			cmd = cmd->next;
-			i++;
-		}
-	}
+void final_process_work(t_token **token, int *pipes, int cmd_i)
+{
+	t_token	*cmd;
+
 	cmd = *token;
 	close_pipes(pipes, cmd_i);
 	close_in_out_file(cmd);
@@ -169,5 +140,56 @@ int	do_pipex(t_token **token, char **env, t_env **n_env)
 	wait_childs(cmd_i);
 	if (pipes)
 		free(pipes);
+}
+
+void loop(t_token **token, char **env, t_env **n_env, int *pipes)
+{
+	int		i;
+	int		kind;
+	int		cmd_i;
+	pid_t	pid;
+	t_token	*cmd;
+
+	i = 0;
+	kind = 1;
+	cmd = *token;
+	cmd_i = get_cmd_count(token);
+	while (cmd != NULL)
+	{
+		if (!cmd->cmd)
+		{
+			cmd = cmd->next;
+			continue ;
+		}
+		pid = fork();
+		if (pid && !cmd->limiter)
+			catch_heredog_sig();
+		if (pid == 0)
+		{
+			set_mutiple_cmd(cmd, cmd_i, pipes, i, kind);
+			if (is_builtin(cmd->cmd[0]))
+				exit (do_builtins(cmd, n_env));
+			do_exec_dev(cmd, env);
+		}
+		kind = cmd_position(kind, cmd, cmd_i);
+		cmd = cmd->next;
+		i++;
+	}
+}
+
+int	do_pipex(t_token **token, char **env, t_env **n_env)
+{
+	int		cmd_i;
+	int		*pipes;
+	t_token	*cmd;
+
+	cmd = *token;
+	cmd_i = get_cmd_count(token);
+	pipes = open_pipes(cmd_i);
+	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
+		do_one_builtins(do_builtins(cmd, n_env));
+	else
+		loop(token, env, n_env, pipes);
+	final_process_work(token, pipes, cmd_i);
 	return (EXIT_SUCCESS);
 }

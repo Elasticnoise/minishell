@@ -88,8 +88,7 @@ void	handle_heredoc(t_token **cmd)
 			line = readline("> ");
 			if (line == NULL)
 				break ;
-			limiter = ft_strncmp(line, (*cmd)->limiter, \
-				ft_strlen((*cmd)->limiter) + 1);
+			limiter = ft_strcmp(line, (*cmd)->limiter);
 			if (limiter == 0)
 				break ;
 			write(fd, line, ft_strlen(line));
@@ -100,8 +99,6 @@ void	handle_heredoc(t_token **cmd)
 		(*cmd)->fd.in_file = fd;
 		close(fd);
 	}
-//	if (WTERMSIG(g_exit_status) == SIGINT)
-//		g_exit_status = 1;
 }
 
 t_env	*new_env(char *name, char *data)
