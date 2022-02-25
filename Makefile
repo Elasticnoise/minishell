@@ -1,6 +1,6 @@
 LIBFT = ./libft/libft.a
 
-CFLAGS = -ggdb3 -I../../.brew/opt/readline/include  -I./ #-Wall -Werror -Wextra
+CFLAGS = -ggdb3 -I../../.brew/opt/readline/include  -I./ -Wall -Werror -Wextra
 NAME = minishell
 
 NAME_B = minishell_bonus
@@ -16,6 +16,7 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
 					our_builtins/ft_export.c \
 					our_builtins/ft_cd.c \
                     src/signals.c \
+                    src/clean.c \
                     src/get_path.c \
                     src/pipex_utils2.c \
                     src/pipex.c \

@@ -12,35 +12,6 @@
 
 #include "minishell.h"
 
-void	free_list(t_token **head)
-{
-	t_token	*tmp;
-	int		i;
-
-	while (*head)
-	{
-		i = 0;
-		tmp = (*head)->next;
-		if ((*head)->infile)
-			free((*head)->infile);
-		if ((*head)->outfile)
-			free((*head)->outfile);
-		if ((*head)->limiter)
-			free((*head)->limiter);
-		if ((*head)->cmd)
-		{
-			while ((*head)->cmd[i])
-			{
-				free((*head)->cmd[i]);
-				i++;
-			}
-			free((*head)->cmd);
-		}
-		free(*head);
-		*head = tmp;
-	}
-}
-
 void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 {
 	if (is_builtin(token->cmd[0]))
@@ -56,19 +27,43 @@ void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 	exit(127);
 }
 
+void	go_exit(t_token **token)
+{
+	ft_putstr_fd("exit\n", 1);
+	free_list(token);
+	exit(EXIT_SUCCESS);
+}
+
+void	play_command(char *line, t_token **token, t_env **n_env, char **new_env)
+{
+	if (!parser(line, token, n_env))
+		do_pipex(token, new_env, n_env);
+}
+
+void	ft_shell(t_token **token, t_env **n_env, char *line, char **new_env)
+{
+	if (line)
+	{
+		if (ft_strcmp(line, ""))
+			play_command(line, token, n_env, new_env);
+		else
+			free(line);
+	}
+	else
+		go_exit(token);
+}
+
 int	main(int argc, char **argv, char **env)
 {
-	char			*line;
-	t_token			*token;
-	char			**new_env;
-	t_env			*n_env;
+	char	*line;
+	t_token	*token;
+	char	**new_env;
+	t_env	*n_env;
 
-	if (argc != 1)
-		return (1);
 	g_exit_status = 0;
 	n_env = NULL;
 	set_env(env, &n_env);
-	lvl_up(&n_env);
+	lvl_up(&n_env, argv, argc);
 	while (1)
 	{
 		signal(SIGQUIT, SIG_IGN);
@@ -78,24 +73,7 @@ int	main(int argc, char **argv, char **env)
 		signal(SIGINT, &sig_handler2);
 		if (line && *line)
 			add_history(line);
-		if (line)
-		{
-			if (ft_strcmp(line, ""))
-			{
-				if (!parser(line, &token, &n_env))
-					do_pipex(&token, new_env, &n_env);
-			}
-		}
-		else
-		{
-			ft_putstr_fd("exit\n", 1);
-			free_list(&token);
-			exit(EXIT_SUCCESS);
-		}
-		free_doublechar(new_env);
-		unlink(".tmp_file");
-		free_list(&token);
-		if (check_exit_status(&n_env))
-			exit(g_exit_status);
+		ft_shell(&token, &n_env, line, new_env);
+		ft_clean(&token, new_env, &n_env);
 	}
 }

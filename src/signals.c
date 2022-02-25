@@ -42,7 +42,7 @@ void	sig_handler3(int signum)
 	}
 }
 
-void	set_exit_status(int cmd_i)
+void	set_exit_status(void)
 {
 	if (WIFEXITED(g_exit_status))
 		g_exit_status = WEXITSTATUS(g_exit_status);

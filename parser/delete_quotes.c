@@ -61,7 +61,7 @@ static void	double_qoutes(char **string, t_env **env, int *len, int *i)
 	}
 }
 
-static void	one_qoutes(char **string, t_env **env, int *len, int *i)
+static void	one_qoutes(char **string, int *len, int *i)
 {
 	(*len) -= 2;
 	(*i)++;
@@ -81,7 +81,7 @@ void	delete_quotes(char **string, t_env **env)
 		if ((*string)[i] == '"')
 			double_qoutes(&(*string), env, &len, &i);
 		else if ((*string)[i] == '\'')
-			one_qoutes(&(*string), env, &len, &i);
+			one_qoutes(&(*string), &len, &i);
 		else if ((*string)[i] == '$')
 		{
 			set_dollar(&(*string), i, env);

@@ -20,8 +20,8 @@
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 # define START	1
@@ -29,6 +29,8 @@
 # define END	3
 
 int	g_exit_status;
+
+//struct termios termios_save;
 
 typedef struct s_fd
 {
@@ -74,6 +76,8 @@ void	redirect(t_token *cmd);
 void	close_in_out_file(t_token *cmd);
 void	final_process_work(t_token **token, int *pipes, int cmd_i);
 void	init_values(t_init *init, t_token **token);
+void	ft_clean(t_token **token, char	**new_env, t_env **n_env);
+void	free_list(t_token **head);
 
 /*BUILTINS*/
 int		do_builtins(t_token *token, t_env **n_env);
@@ -97,8 +101,8 @@ void	sig_handler(int signum);
 void	sig_handler2(int signum);
 void	sig_handler3(int signum);
 int		lvl_down(t_env **start);
-void	lvl_up(t_env **start);
-void	set_exit_status(int cmd_i);
+void	lvl_up(t_env **start, char **argv, int argc);
+void	set_exit_status(void);
 void	catch_heredog_sig(void);
 
 void	add_env(t_env	**start, t_env *new);

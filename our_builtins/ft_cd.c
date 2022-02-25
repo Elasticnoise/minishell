@@ -26,7 +26,7 @@ t_env	*find_key(t_env **n_env, char *key)
 	return (NULL);
 }
 
-static void	help(t_env **n_env, t_token *token, char *pwd, char *old_pwd)
+static void	help(t_env **n_env, char *pwd, char *old_pwd)
 {
 	char	*help;
 
@@ -54,15 +54,16 @@ int	change_dir(char *path, t_token *token, t_env **n_env)
 		buf = NULL;
 		pwd = getcwd(buf, 0);
 		free(buf);
+		help(n_env, pwd, old_pwd);
 		free (pwd);
 		free (old_pwd);
 		return (EXIT_SUCCESS);
 	}
 	else
 	{
-		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd("Shkad: cd: ", 2);
 		ft_putstr_fd(token->cmd[1], 2);
-		ft_putstr_fd(": \n", 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
 		return (EXIT_FAILURE);
 	}
 }

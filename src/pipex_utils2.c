@@ -31,7 +31,7 @@ void	final_process_work(t_token **token, int *pipes, int cmd_i)
 	cmd = *token;
 	close_pipes(pipes, cmd_i);
 	close_in_out_file(cmd);
-	set_exit_status(cmd_i);
+	set_exit_status();
 	wait_childs(cmd_i);
 	if (pipes)
 		free(pipes);

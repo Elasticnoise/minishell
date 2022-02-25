@@ -32,7 +32,7 @@ void	free_env_node(t_env *env)
 	free(env);
 }
 
-static void	del_var_help(t_env *tmp, char *key, t_env *prev, t_env **env)
+static void	del_var_help(t_env *tmp, char *key, t_env *prev)
 {
 	while (tmp)
 	{
@@ -63,7 +63,7 @@ void	del_var(t_env **env, char *key)
 		*env = tmp;
 	}
 	else
-		del_var_help(tmp, key, prev, env);
+		del_var_help(tmp, key, prev);
 }
 
 int	ft_unset(t_token *token, t_env **env)

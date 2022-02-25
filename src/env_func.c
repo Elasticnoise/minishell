@@ -9,7 +9,6 @@
 /*   Updated: 2022/02/25 14:48:31 by ghanh            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "../minishell.h"
 
 void	set_env(char **env, t_env **n_env)
@@ -72,11 +71,13 @@ char	**list_to_env(t_env **start)
 	return (new_env);
 }
 
-void	lvl_up(t_env **start)
+void	lvl_up(t_env **start, char **argv, int argc)
 {
 	t_env	*tmp;
 	int		lvl;
 
+	(void) argv;
+	(void) argc;
 	tmp = *start;
 	while (tmp)
 	{
