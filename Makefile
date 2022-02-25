@@ -11,6 +11,7 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
 					our_builtins/ft_exit.c \
 					our_builtins/ft_exit_utils.c \
 					our_builtins/ft_echo.c \
+					our_builtins/here_doc.c \
 					our_builtins/ft_unset.c \
 					our_builtins/ft_export.c \
 					our_builtins/ft_cd.c \
