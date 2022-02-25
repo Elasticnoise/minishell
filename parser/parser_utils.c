@@ -98,6 +98,8 @@ char	*destroy_space(char *line)
 	j = 0;
 	i = 0;
 	new_line = malloc(sizeof(char *) * malloc_sp(line));
+	if (!new_line)
+		exit(1);
 	while (line[i])
 	{
 		if (quotes(line, i) || !check_delimiter(line[i]))

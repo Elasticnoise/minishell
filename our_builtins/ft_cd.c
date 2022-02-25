@@ -12,11 +12,11 @@
 
 #include "../minishell.h"
 
-t_env	*find_key(t_env *n_env, char *key)
+t_env	*find_key(t_env **n_env, char *key)
 {
 	t_env	*result;
 
-	result = n_env;
+	result = *n_env;
 	while (result)
 	{
 		if (!ft_strcmp(result->name, key))
@@ -26,7 +26,21 @@ t_env	*find_key(t_env *n_env, char *key)
 	return (NULL);
 }
 
-int	change_dir(char *path, t_token *token, t_env *n_env)
+static void	help(t_env **n_env, t_token *token, char *pwd, char *old_pwd)
+{
+	char	*help;
+
+	del_var(n_env, "PWD");
+	del_var(n_env, "OLDPWD");
+	help = ft_strjoin("PWD=", pwd);
+	set_var(n_env, help);
+	free(help);
+	help = ft_strjoin("OLDPWD=", old_pwd);
+	set_var(n_env, help);
+	free(help);
+}
+
+int	change_dir(char *path, t_token *token, t_env **n_env)
 {
 	char	*old_pwd;
 	char	*buf;
@@ -40,8 +54,6 @@ int	change_dir(char *path, t_token *token, t_env *n_env)
 		buf = NULL;
 		pwd = getcwd(buf, 0);
 		free(buf);
-		ft_set_var(token, n_env, "PWD", pwd);
-		ft_set_var(token, n_env, "OLDPWD", old_pwd);
 		free (pwd);
 		free (old_pwd);
 		return (EXIT_SUCCESS);
@@ -55,7 +67,7 @@ int	change_dir(char *path, t_token *token, t_env *n_env)
 	}
 }
 
-int	ft_cd(t_token *token, t_env *n_env)
+int	ft_cd(t_token *token, t_env **n_env)
 {
 	char	*path;
 	t_env	*home;

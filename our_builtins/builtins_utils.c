@@ -40,13 +40,13 @@ void	free_doublechar(char **new_env)
 	}
 }
 
-int	ft_set_var(t_token *token, t_env *n_env, char *key, char *value)
+int	ft_set_var(t_token *token, t_env **n_env, char *key, char *value)
 {
 	t_token	*list;
 	t_env	*env;
 
 	list = token;
-	env = n_env;
+	env = *n_env;
 	while (list)
 	{
 		if (ft_strcmp(env->name, key) == 0)

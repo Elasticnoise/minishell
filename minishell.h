@@ -20,8 +20,8 @@
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 # define START	1
@@ -83,34 +83,37 @@ int		ft_check_exit_status(char *str);
 int		ft_exit_status(char *str);
 void	ft_exit_err_msg(char *str);
 int		check_exit_status(t_env **env);
-int		ft_cd(t_token *token, t_env *n_env);
+int		ft_cd(t_token *token, t_env **n_env);
 int		ft_env(t_env **n_env);
 int		ft_unset(t_token *cmd, t_env **env);
 int		ft_export(t_token *token, t_env **env);
 int		ft_pwd(t_token *token);
 int		ft_echo(t_token *token);
 int		check_var(char *key, t_token *token);
-int		ft_set_var(t_token *token, t_env *n_env, char *key, char *value);
+int		ft_set_var(t_token *token, t_env **n_env, char *key, char *value);
 void	handle_heredoc(t_token **cmd);
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
 void	sig_handler3(int signum);
 int		lvl_down(t_env **start);
+void	lvl_up(t_env **start);
 void	set_exit_status(int cmd_i);
 void	catch_heredog_sig(void);
 
-int		parser(char *line, t_token **token, char *env[], t_env **n_env);
+void	add_env(t_env	**start, t_env *new);
+int		parser(char *line, t_token **token, t_env **n_env);
 int		quotes(char *line, int i);
 char	**ft_q_split(char *s, char c);
 int		check_delimiter(char c);
 int		get_shlvl(t_env **n_env);
 
 /*Dollar_set*/
+void	set_env(char **env, t_env **n_env);
 void	set_dollar(char **str, int start, t_env **env);
 char	**list_to_env(t_env **start);
 void	free_doublechar(char **new_env);
-
+t_env	*new_env(char *name, char *data);
 void	set_one_node(char *str, t_env **n_env);
 void	delete_quotes(char **string, t_env **env);
 int		new_quotes(char *str, int j);
@@ -119,4 +122,7 @@ t_token	*new_token(char	*str, t_env **env);
 int		malloc_sp(char *line);
 char	set_del(int max);
 char	*destroy_space(char *line);
+void	del_var(t_env **env, char *key);
+void	set_var(t_env **env, char *key);
+int		find_len(char *str);
 #endif

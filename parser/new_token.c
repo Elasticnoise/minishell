@@ -122,7 +122,7 @@ t_token	*new_token(char	*str, t_env **env)
 	i = 0;
 	token = malloc(sizeof(t_token));
 	if (!token)
-		return (NULL);
+		exit(1);
 	ft_memset((void *)token, 0, sizeof(t_token));
 	token->next = NULL;
 	new_string = NULL;

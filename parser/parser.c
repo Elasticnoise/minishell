@@ -101,11 +101,10 @@ int	delim_check(char *line)
 	return (0);
 }
 
-int	parser(char *line, t_token **token, char *env[], t_env **n_env)
+int	parser(char *line, t_token **token, t_env **n_env)
 {
 	t_token	*head;
 
-	(void) env;
 	head = *token;
 	if (quotes(line, 0))
 		return (printf("Quotes didnt close\n"));

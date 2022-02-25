@@ -32,10 +32,21 @@ void	print_export(t_env **env)
 	}
 }
 
+int	find_len(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] && str[i] != '=')
+		i++;
+	return (i);
+}
+
 int	ft_export(t_token *token, t_env **env)
 {
 	int		i;
 	char	*key;
+	char	*help;
 
 	key = NULL;
 	i = 1;
@@ -45,7 +56,14 @@ int	ft_export(t_token *token, t_env **env)
 	{
 		key = token->cmd[i];
 		if (check_var(key, token))
+		{
+			help = ft_substr(key, 0, find_len(key));
+			if (!help)
+				exit(1);
+			del_var(env, help);
+			free(help);
 			set_var(env, key);
+		}
 		i++;
 	}
 	return (1);

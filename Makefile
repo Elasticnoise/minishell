@@ -25,6 +25,8 @@ SRC = minishell.c ./parser/parser.c ./parser/quotes_split.c\
                     ./src/dollar/find_env_node.c \
                     ./parser/new_token.c \
                     ./parser/parser_utils.c \
+                    ./src/env_func.c \
+                    ./src/env_func_2.c \
 
 
 CC = gcc

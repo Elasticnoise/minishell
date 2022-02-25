@@ -33,7 +33,7 @@ int	is_builtin(char *cmd)
 int	do_builtins(t_token *token, t_env **n_env)
 {
 	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
-		return (ft_cd(token, *n_env));
+		return (ft_cd(token, n_env));
 	if (ft_strncmp(token->cmd[0], "pwd", 4) == 0)
 		return (ft_pwd(token));
 	else if (ft_strncmp(token->cmd[0], "echo", 5) == 0)
