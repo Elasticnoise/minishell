@@ -13,24 +13,26 @@
 
 int	is_builtin(char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", 5) == 0)
+	if (ft_strcmp(cmd, "echo") == 0)
 		return (1);
-	if (ft_strncmp(cmd, "cd", 3) == 0)
+	if (ft_strcmp(cmd, "cd") == 0)
 		return (2);
-	if (ft_strncmp(cmd, "pwd", 4) == 0)
+	if (ft_strcmp(cmd, "pwd") == 0)
 		return (3);
-	if (ft_strncmp(cmd, "export", 7) == 0)
+	if (ft_strcmp(cmd, "export") == 0)
 		return (4);
-	if (ft_strncmp(cmd, "unset", 6) == 0)
+	if (ft_strcmp(cmd, "unset") == 0)
 		return (5);
-	if (ft_strncmp(cmd, "env", 4) == 0)
+	if (ft_strcmp(cmd, "env") == 0)
 		return (6);
-	if (ft_strncmp(cmd, "exit", 5) == 0)
+	if (ft_strcmp(cmd, "exit") == 0)
 		return (7);
+	if (ft_strcmp(cmd, "shkad") == 0)
+		return (8);
 	return (0);
 }
 
-int	do_builtins(t_token *token, t_env **n_env)
+int	do_builtins(t_token *token, t_env **n_env, char **env)
 {
 	if (ft_strncmp(token->cmd[0], "cd", 3) == 0)
 		return (ft_cd(token, n_env));
@@ -46,8 +48,23 @@ int	do_builtins(t_token *token, t_env **n_env)
 		return (ft_unset(token, n_env));
 	else if (ft_strncmp(token->cmd[0], "export", 7) == 0)
 		return (ft_export(token, n_env));
+	else if (ft_strcmp(token->cmd[0], "shkad") == 0)
+		return (ft_shkad(token, env));
 	else
 		return (EXIT_FAILURE);
+}
+
+int ft_shkad(t_token *token, char **envp)
+{
+	signal(SIGQUIT, SIG_DFL);
+	if ((execve("/Users/lechalme/CLionProjects/minishell/minishell", token->cmd, envp) == -1))
+	{
+		ft_putstr_fd("Shkad: ", 2);
+		ft_putstr_fd(token->cmd[0], 2);
+		ft_putendl_fd(": command not found", 2);
+		g_exit_status = 127;
+	}
+	exit(127);
 }
 
 int	ft_pwd(t_token *token)

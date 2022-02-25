@@ -103,7 +103,7 @@ int	do_pipex(t_token **token, char **env, t_env **n_env)
 	cmd_i = get_cmd_count(token);
 	pipes = open_pipes(cmd_i);
 	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_one_builtins(do_builtins(cmd, n_env));
+		do_one_builtins(do_builtins(cmd, n_env, env));
 	else
 		loop(token, env, n_env, pipes);
 	final_process_work(token, pipes, cmd_i);

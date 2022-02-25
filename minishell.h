@@ -80,7 +80,7 @@ void	ft_clean(t_token **token, char	**new_env, t_env **n_env);
 void	free_list(t_token **head);
 
 /*BUILTINS*/
-int		do_builtins(t_token *token, t_env **n_env);
+int	do_builtins(t_token *token, t_env **n_env, char **env);
 int		is_builtin(char *cmd);
 int		ft_exit(t_token *token, t_env **n_env);
 int		ft_check_exit_status(char *str);
@@ -96,6 +96,7 @@ int		ft_echo(t_token *token);
 int		check_var(char *key, t_token *token);
 int		ft_set_var(t_token *token, t_env **n_env, char *key, char *value);
 void	handle_heredoc(t_token **cmd);
+int		ft_shkad(t_token *token, char **envp);
 /*SIGNALS*/
 void	sig_handler(int signum);
 void	sig_handler2(int signum);
