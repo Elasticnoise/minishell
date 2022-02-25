@@ -20,8 +20,8 @@
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
-# include "/Users/lechalme/.brew/Cellar/readline/8.1.2/include/readline/history.h"
+# include "readline/readline.h"
+# include "readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 # define START	1
