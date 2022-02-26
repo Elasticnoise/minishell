@@ -37,19 +37,29 @@ OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		$(MAKE) -C ./libft
-		$(CC) -lreadline -L ../../.brew/opt/readline/lib -o $(NAME) $(OBJ) ./libft/libft.a
+		@stty ctlecho
+		@$(MAKE) -C ./libft
+		@$(CC) -lreadline -L ../../.brew/opt/readline/lib -o $(NAME) $(OBJ) ./libft/libft.a
+		@echo "\x1b[7m\x1b[47m\x1b[31m\
+\x1b[7m\x1b[47m\x1b[31m╭━━━┳╮\x1b[30m╱\x1b[31m╭╮\x1b[30m╱╱╱╱╱╱\x1b[31m╭╮\x1b[35m╭━━━╮\x1b[30m╱╱╱╱╱╱╱╱╱╱\x1b[35m╭╮\x1b[31m╭━━━┳╮\x1b[30m╱\x1b[31m╭┳━━━┳╮\x1b[30m╱╱\x1b[31m╭╮\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[31m┃╭━╮┃┃\x1b[30m╱\x1b[31m┃┃\x1b[30m╱╱╱╱╱╱\x1b[31m┃┃\x1b[35m┃╭━╮┃\x1b[30m╱╱╱╱╱╱╱╱╱╱\x1b[35m┃┃\x1b[31m┃╭━╮┃┃\x1b[30m╱\x1b[31m┃┃╭━━┫┃\x1b[30m╱╱\x1b[31m┃┃\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[31m┃╰━━┫╰━┫┃╭┳━━┳━╯┃\x1b[35m┃╰━━┳━━┳╮╭┳━━┳━╯┃\x1b[31m┃╰━━┫╰━╯┃╰━━┫┃\x1b[30m╱╱\x1b[31m┃┃\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[31m╰━━╮┃╭╮┃╰╯┫╭╮┃╭╮┃\x1b[35m╰━━╮┃╭╮┃┃┃┃╭╮┃╭╮┃\x1b[31m╰━━╮┃╭━╮┃╭━━┫┃\x1b[30m╱\x1b[31m╭┫┃\x1b[30m╱\x1b[31m╭╮\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[31m┃╰━╯┃┃┃┃╭╮┫╭╮┃╰╯┃\x1b[35m┃╰━╯┃╰╯┃╰╯┃╭╮┃╰╯┃\x1b[31m┃╰━╯┃┃\x1b[30m╱\x1b[31m┃┃╰━━┫╰━╯┃╰━╯┃\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[31m╰━━━┻╯╰┻╯╰┻╯╰┻━━╯\x1b[35m╰━━━┻━╮┣━━┻╯╰┻━━╯\x1b[31m╰━━━┻╯\x1b[30m╱\x1b[31m╰┻━━━┻━━━┻━━━╯\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[30m╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱\x1b[35m┃┃\x1b[0m\n\
+\x1b[7m\x1b[47m\x1b[30m╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱\x1b[35m╰╯\x1b[30m\\\\\x1b[35m is ready\x1b[0m"
 
 %.o: %.c
-		gcc $(CFLAGS) -c $< -o $@
+		@gcc $(CFLAGS) -c $< -o $@
 
 clean:
-		$(MAKE) clean -C ./libft
-		rm -rf $(OBJ)
+		@$(MAKE) clean -C ./libft
+		@rm -rf $(OBJ)
 
 fclean: clean
-		$(MAKE) fclean -C ./libft
-		rm -rf $(NAME)
+		@$(MAKE) fclean -C ./libft
+		@rm -rf $(NAME)
 re: fclean all
 
 .PHONY:	all clean fclean re

@@ -47,17 +47,16 @@ void	set_one_node(char *str, t_env **n_env)
 	char	*name;
 	char	*data;
 
-	j = 0;
+	j = -1;
 	start = 0;
 	name = NULL;
-	while (str[j])
+	while (str[++j])
 	{
 		if (start == 0 && str[j] == '=')
 		{
 			name = ft_substr(str, 0, j);
 			start = j + 1;
 		}
-		j++;
 	}
 	if (name == NULL)
 	{

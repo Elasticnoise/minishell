@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void	set_env(char **env, t_env **n_env)
+void	set_env(char **env, t_env **n_env, int *help)
 {
 	int		i;
 	int		flag;
@@ -29,6 +29,7 @@ void	set_env(char **env, t_env **n_env)
 	if (!flag)
 		set_one_node("SHLVL=0", &(*n_env));
 	set_one_node("OLDPWD=", &(*n_env));
+	*help = get_shlvl(n_env);
 }
 
 static void	list_help(int j, char ***new_env, t_env *help)
@@ -91,9 +92,6 @@ void	lvl_up(t_env **start, char **argv, int argc)
 		}
 		tmp = tmp->next;
 	}
-//	if (!tmp)
-//		add_env(&*(start), new_env(ft_strdup("SHLVL"), ft_strdup("1")));
-//		set_one_node("SHLVL=1", start);
 }
 
 int	lvl_down(t_env **start)

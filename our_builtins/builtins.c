@@ -54,10 +54,25 @@ int	do_builtins(t_token *token, t_env **n_env, char **env)
 		return (EXIT_FAILURE);
 }
 
-int ft_shkad(t_token *token, char **envp)
+int	ft_shkad(t_token *token, char **envp)
 {
+	char	*help;
+	int		i;
+
+	i = 0;
+	help = NULL;
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i], "_=", 2))
+		{
+			help = envp[i] + 2;
+			break ;
+		}
+		i++;
+	}
 	signal(SIGQUIT, SIG_DFL);
-	if ((execve("/Users/lechalme/CLionProjects/minishell/minishell", token->cmd, envp) == -1))
+	if ((execve(help, token->cmd,
+				envp) == -1))
 	{
 		ft_putstr_fd("Shkad: ", 2);
 		ft_putstr_fd(token->cmd[0], 2);

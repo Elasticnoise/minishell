@@ -86,9 +86,9 @@ void	ft_exit_err_msg(char *str)
 	ft_putstr_fd(": numeric argument required\n", 2);
 }
 
-int	check_exit_status(t_env **env)
+int	check_exit_status(t_env **env, int help)
 {
-	if (get_shlvl(env) == 1)
+	if (get_shlvl(env) == help)
 		return (1);
 	else
 		return (0);

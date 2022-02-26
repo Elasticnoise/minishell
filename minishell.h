@@ -20,8 +20,8 @@
 # include <termios.h>
 # include <unistd.h>
 # include <signal.h>
-# include "readline/readline.h"
-# include "readline/history.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/readline.h"
+# include "/Users/ghanh/.brew/Cellar/readline/8.1.2/include/readline/history.h"
 # define STDIN	0
 # define STDOUT	1
 # define START	1
@@ -29,8 +29,6 @@
 # define END	3
 
 int	g_exit_status;
-
-//struct termios termios_save;
 
 typedef struct s_fd
 {
@@ -76,17 +74,17 @@ void	redirect(t_token *cmd);
 void	close_in_out_file(t_token *cmd);
 void	final_process_work(t_token **token, int *pipes, int cmd_i);
 void	init_values(t_init *init, t_token **token);
-void	ft_clean(t_token **token, char	**new_env, t_env **n_env);
+void	ft_clean(t_token **token, char	**new_env, t_env **n_env, int help);
 void	free_list(t_token **head);
 
 /*BUILTINS*/
-int	do_builtins(t_token *token, t_env **n_env, char **env);
+int		do_builtins(t_token *token, t_env **n_env, char **env);
 int		is_builtin(char *cmd);
 int		ft_exit(t_token *token, t_env **n_env);
 int		ft_check_exit_status(char *str);
 int		ft_exit_status(char *str);
 void	ft_exit_err_msg(char *str);
-int		check_exit_status(t_env **env);
+int		check_exit_status(t_env **env, int help);
 int		ft_cd(t_token *token, t_env **n_env);
 int		ft_env(t_env **n_env);
 int		ft_unset(t_token *cmd, t_env **env);
@@ -114,7 +112,7 @@ int		check_delimiter(char c);
 int		get_shlvl(t_env **n_env);
 
 /*Dollar_set*/
-void	set_env(char **env, t_env **n_env);
+void	set_env(char **env, t_env **n_env, int *help);
 void	set_dollar(char **str, int start, t_env **env);
 char	**list_to_env(t_env **start);
 void	free_doublechar(char **new_env);

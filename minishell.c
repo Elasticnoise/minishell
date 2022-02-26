@@ -59,10 +59,11 @@ int	main(int argc, char **argv, char **env)
 	t_token	*token;
 	char	**new_env;
 	t_env	*n_env;
+	int		help;
 
 	g_exit_status = 0;
 	n_env = NULL;
-	set_env(env, &n_env);
+	set_env(env, &n_env, &help);
 	lvl_up(&n_env, argv, argc);
 	while (1)
 	{
@@ -74,6 +75,6 @@ int	main(int argc, char **argv, char **env)
 		if (line && *line)
 			add_history(line);
 		ft_shell(&token, &n_env, line, new_env);
-		ft_clean(&token, new_env, &n_env);
+		ft_clean(&token, new_env, &n_env, help);
 	}
 }
