@@ -21,7 +21,7 @@ int	ft_exit(t_token *token, t_env **n_env)
 	{
 		if (token->cmd[1] && token->cmd[2])
 		{
-			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+			ft_putstr_fd("Shkad: exit: too many arguments\n", 2);
 			return (EXIT_FAILURE);
 		}
 		g_exit_status = ft_exit_status(token->cmd[1]);
@@ -29,4 +29,19 @@ int	ft_exit(t_token *token, t_env **n_env)
 			ft_exit_err_msg(token->cmd[1]);
 	}
 	return (g_exit_status);
+}
+
+void	error_msg(t_token *cmd)
+{
+	while (cmd)
+	{
+		if (cmd->cmd)
+		{
+			ft_putstr_fd("Shkad: ", 2);
+			ft_putstr_fd(cmd->cmd[0], 2);
+			ft_putendl_fd(": command not found", 2);
+		}
+		cmd = cmd->next;
+	}
+	g_exit_status = 127;
 }

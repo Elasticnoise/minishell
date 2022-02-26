@@ -62,15 +62,22 @@ void	pipe_switch(int *pipes, t_token *cmd, t_init *init)
 
 void	close_in_out_file(t_token *cmd)
 {
-	int	err;
-
-	err = 0;
 	if (cmd->outfile)
-		err = close(cmd->fd.out_file);
+		close(cmd->fd.out_file);
 	if (cmd->infile)
-		err = close(cmd->fd.in_file);
-	if (err != 0)
-		perror("close_in_out_file:");
+		close(cmd->fd.in_file);
+	if (cmd->fd.in_file == -1)
+	{
+		ft_putstr_fd("Shkad: ", 2);
+		ft_putstr_fd(cmd->infile, 2);
+		ft_putendl_fd(": No such file or directory", 2);
+	}
+	else if (cmd->fd.out_file == -1)
+	{
+		ft_putstr_fd("Shkad: ", 2);
+		ft_putstr_fd(cmd->outfile, 2);
+		ft_putendl_fd(": Permission denied", 2);
+	}
 }
 
 void	init_values(t_init *init, t_token **token)

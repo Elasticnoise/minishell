@@ -27,11 +27,13 @@ void	do_exec_dev(t_token *token, char **envp, t_env **n_env)
 	exit(127);
 }
 
-void	go_exit(t_token **token)
+void	go_exit(t_token **token, t_env **n_env)
 {
+	lvl_down(n_env);
 	ft_putstr_fd("exit\n", 1);
 	free_list(token);
-	exit(EXIT_SUCCESS);
+	if (check_exit_status(n_env))
+		exit(EXIT_SUCCESS);
 }
 
 void	play_command(char *line, t_token **token, t_env **n_env, char **new_env)
@@ -50,7 +52,7 @@ void	ft_shell(t_token **token, t_env **n_env, char *line, char **new_env)
 			free(line);
 	}
 	else
-		go_exit(token);
+		go_exit(token, n_env);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -59,11 +61,10 @@ int	main(int argc, char **argv, char **env)
 	t_token	*token;
 	char	**new_env;
 	t_env	*n_env;
-	int		help;
 
 	g_exit_status = 0;
 	n_env = NULL;
-	set_env(env, &n_env, &help);
+	set_env(env, &n_env);
 	lvl_up(&n_env, argv, argc);
 	while (1)
 	{
@@ -75,6 +76,6 @@ int	main(int argc, char **argv, char **env)
 		if (line && *line)
 			add_history(line);
 		ft_shell(&token, &n_env, line, new_env);
-		ft_clean(&token, new_env, &n_env, help);
+		ft_clean(&token, new_env, &n_env);
 	}
 }

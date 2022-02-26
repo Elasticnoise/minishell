@@ -74,7 +74,7 @@ void	redirect(t_token *cmd);
 void	close_in_out_file(t_token *cmd);
 void	final_process_work(t_token **token, int *pipes, int cmd_i);
 void	init_values(t_init *init, t_token **token);
-void	ft_clean(t_token **token, char	**new_env, t_env **n_env, int help);
+void	ft_clean(t_token **token, char	**new_env, t_env **n_env);
 void	free_list(t_token **head);
 
 /*BUILTINS*/
@@ -84,7 +84,7 @@ int		ft_exit(t_token *token, t_env **n_env);
 int		ft_check_exit_status(char *str);
 int		ft_exit_status(char *str);
 void	ft_exit_err_msg(char *str);
-int		check_exit_status(t_env **env, int help);
+int		check_exit_status(t_env **env);
 int		ft_cd(t_token *token, t_env **n_env);
 int		ft_env(t_env **n_env);
 int		ft_unset(t_token *cmd, t_env **env);
@@ -112,7 +112,7 @@ int		check_delimiter(char c);
 int		get_shlvl(t_env **n_env);
 
 /*Dollar_set*/
-void	set_env(char **env, t_env **n_env, int *help);
+void	set_env(char **env, t_env **n_env);
 void	set_dollar(char **str, int start, t_env **env);
 char	**list_to_env(t_env **start);
 void	free_doublechar(char **new_env);
@@ -128,4 +128,5 @@ char	*destroy_space(char *line);
 void	del_var(t_env **env, char *key);
 void	set_var(t_env **env, char *key);
 int		find_len(char *str);
+void	error_msg(t_token *cmd);
 #endif

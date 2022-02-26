@@ -37,7 +37,7 @@ OBJ = $(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJ)
-		@stty ctlecho
+		@stty -ctlecho
 		@$(MAKE) -C ./libft
 		@$(CC) -lreadline -L ../../.brew/opt/readline/lib -o $(NAME) $(OBJ) ./libft/libft.a
 		@echo "\x1b[7m\x1b[47m\x1b[31m\

@@ -40,11 +40,11 @@ void	free_list(t_token **head)
 	}
 }
 
-void	ft_clean(t_token **token, char	**new_env, t_env **n_env, int help)
+void	ft_clean(t_token **token, char	**new_env, t_env **n_env)
 {
 	free_doublechar(new_env);
 	unlink(".tmp_file");
 	free_list(token);
-	if (check_exit_status(n_env, help))
+	if (check_exit_status(n_env))
 		exit(g_exit_status);
 }

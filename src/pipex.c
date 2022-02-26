@@ -98,14 +98,25 @@ int	do_pipex(t_token **token, char **env, t_env **n_env)
 	int		cmd_i;
 	int		*pipes;
 	t_token	*cmd;
+	int		i;
 
 	cmd = *token;
 	cmd_i = get_cmd_count(token);
-	pipes = open_pipes(cmd_i);
-	if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
-		do_one_builtins(do_builtins(cmd, n_env, env));
-	else
-		loop(token, env, n_env, pipes);
-	final_process_work(token, pipes, cmd_i);
+	i = 0;
+	while (env[i])
+	{
+		if (!ft_strncmp(env[i], "PATH=", 5))
+		{
+			pipes = open_pipes(cmd_i);
+			if (cmd->cmd && cmd->next == NULL && is_builtin(cmd->cmd[0]))
+				do_one_builtins(do_builtins(cmd, n_env, env));
+			else
+				loop(token, env, n_env, pipes);
+			final_process_work(token, pipes, cmd_i);
+			return (EXIT_SUCCESS);
+		}
+		i++;
+	}
+	error_msg(cmd);
 	return (EXIT_SUCCESS);
 }
